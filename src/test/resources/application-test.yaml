@@ -1,0 +1,5 @@
+testcontainers:
+    postgres:
+      version: ${POSTGRES_V:18.4}
+    redis:
+      version: ${REDIS_V:8.8.1}
