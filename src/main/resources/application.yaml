@@ -1,3 +1,21 @@
 spring:
+  config:
+    import:
+      - optional:file:.env[.properties]
   application:
     name: sigdosi
+  mvc:
+    servlet:
+      path: /api
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_NAME:sigdosi}
+    password: ${POSTGRES_PASS:12345}
+    username: ${POSTGRES_USER:postgres}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASS:12345}
+
+server:
+  port: ${SERVER_PORT:8000}
