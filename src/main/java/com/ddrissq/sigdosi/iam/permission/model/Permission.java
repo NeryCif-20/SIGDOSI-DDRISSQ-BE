@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.permission.model;
 
-import com.ddrissq.sigdosi.shared.model.Auditable;
+import com.ddrissq.sigdosi.shared.model.AbstractModel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,13 +9,11 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Permission extends Auditable {
+@Builder
+public class Permission extends AbstractModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
     private String module;
     @Enumerated(value = EnumType.STRING)
     private PermissionAction action;

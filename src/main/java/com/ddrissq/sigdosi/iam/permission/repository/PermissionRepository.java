@@ -11,4 +11,6 @@ public interface PermissionRepository extends JpaRepository<Permission, UUID>, J
 
     boolean existsByModuleAndAction(String module, PermissionAction action);
 
+    boolean existsByModuleAndActionAndIdNot(String module, PermissionAction action, UUID id);
+
 }

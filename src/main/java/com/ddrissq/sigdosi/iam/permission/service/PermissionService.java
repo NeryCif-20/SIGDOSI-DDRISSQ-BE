@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface PermissionService {
@@ -16,9 +17,10 @@ public interface PermissionService {
     PermissionResponse get(UUID id);
     PermissionResponse create(PermissionCreateRequest request);
     PermissionResponse update(UUID id, PermissionUpdateRequest request);
-    void delete(UUID id);
     Page<PermissionResponse> getAll(Pageable pageable, PermissionSearchRequest request);
 
     Permission findById(UUID id);
+    Set<Permission> findAllById(Set<UUID> ids);
+    void delete(UUID id);
 
 }

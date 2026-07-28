@@ -6,6 +6,7 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.specification.PermissionSpecification;
 import com.ddrissq.sigdosi.shared.exception.EntityAlreadyExistsException;
@@ -17,7 +18,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -35,12 +38,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionResponse create(PermissionCreateRequest request) {
-        boolean alreadyExists = repository.existsByModuleAndAction(
-                request.module(), request.action());
-        if (alreadyExists) {
-            throw new EntityAlreadyExistsException(
-                    "Ya existe un permiso con el modulo y acción especificados.");
-        }
+        validateUniqueModuleAction(request.module(), request.action());
         Permission permission = mapper.toPermission(request);
         Permission savedPermission = repository.save(permission);
         return mapper.toResponse(savedPermission);
@@ -49,15 +47,15 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public PermissionResponse update(UUID id, PermissionUpdateRequest request) {
         Permission permission = findById(id);
+        String module = request.module() == null
+                ? permission.getModule()
+                : request.module();
+        PermissionAction action = request.action() == null
+                ? permission.getAction()
+                : request.action();
+        validateUniqueModuleAction(module, action, id);
         mapper.updatePermission(request, permission);
-        Permission savedPermission = repository.save(permission);
-        return mapper.toResponse(savedPermission);
-    }
-
-    @Override
-    public void delete(UUID id) {
-        Permission permission = findById(id);
-        repository.delete(permission);
+        return mapper.toResponse(permission);
     }
 
     @Override
@@ -75,4 +73,32 @@ public class PermissionServiceImpl implements PermissionService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "El permiso solicitado no fue encontrado"));
     }
+
+    @Override
+    public Set<Permission> findAllById(Set<UUID> ids) {
+        return repository.findAllById(ids)
+                .stream()
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public void delete(UUID id) {
+        Permission permission = findById(id);
+        repository.delete(permission);
+    }
+
+    private void validateUniqueModuleAction(String module, PermissionAction action) {
+        validateUniqueModuleAction(module, action, null);
+    }
+
+    private void validateUniqueModuleAction(String module, PermissionAction action, UUID id) {
+        boolean exists = id == null
+                ? repository.existsByModuleAndAction(module, action)
+                : repository.existsByModuleAndActionAndIdNot(module, action, id);
+        if (exists) {
+            throw new EntityAlreadyExistsException(
+                    "Ya existe un permiso con el modulo y acción especificados.");
+        }
+    }
+
 }
