@@ -19,3 +19,11 @@ spring:
 
 server:
   port: ${SERVER_PORT:8000}
+
+security:
+  access-token:
+    expiration-time: ${AT_EXP}
+    public-key: file:${AT_PUBLIC_KEY}
+    private-key: file:${AT_PRIVATE_KEY}
+  refresh-token:
+    expiration-time: ${RT_EXP}

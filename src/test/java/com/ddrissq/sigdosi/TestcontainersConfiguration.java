@@ -10,7 +10,7 @@ import org.testcontainers.utility.DockerImageName;
 
 @EnableConfigurationProperties(value = TestcontainersProperties.class)
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+public class TestcontainersConfiguration {
 
     @Bean
     @ServiceConnection

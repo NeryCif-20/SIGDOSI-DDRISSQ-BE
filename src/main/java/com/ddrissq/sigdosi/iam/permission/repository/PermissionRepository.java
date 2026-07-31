@@ -10,7 +10,6 @@ import java.util.UUID;
 public interface PermissionRepository extends JpaRepository<Permission, UUID>, JpaSpecificationExecutor<Permission> {
 
     boolean existsByModuleAndAction(String module, PermissionAction action);
-
     boolean existsByModuleAndActionAndIdNot(String module, PermissionAction action, UUID id);
 
 }

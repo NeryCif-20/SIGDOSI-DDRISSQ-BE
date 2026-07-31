@@ -1,4 +1,4 @@
-package com.ddrissq.sigdosi.shared.configuration.pageable;
+package com.ddrissq.sigdosi.configuration.pageable;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.data.web.config.PageableHandlerMethodArgumentResolver
 public class PageableConfiguration {
 
     @Bean
-    PageableHandlerMethodArgumentResolverCustomizer pageableCustomizer() {
+    PageableHandlerMethodArgumentResolverCustomizer resolverCustomizer() {
         return resolver -> {
             resolver.setFallbackPageable(Pageable.unpaged());
         };

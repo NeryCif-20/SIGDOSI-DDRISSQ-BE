@@ -2,13 +2,17 @@ package com.ddrissq.sigdosi.iam.permission.specification;
 
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
-public class PermissionSpecification {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class PermissionSpecification {
 
     public static Specification<Permission> hasModule(String module) {
         return (root, query, builder) -> {
-            if (module == null || module.isBlank()) {
+            if (!StringUtils.hasText(module)) {
                 return null;
             }
             return builder.like(

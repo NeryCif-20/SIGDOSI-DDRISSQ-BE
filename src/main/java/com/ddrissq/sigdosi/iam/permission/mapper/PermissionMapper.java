@@ -9,17 +9,11 @@ import org.mapstruct.*;
 @Mapper
 public interface PermissionMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     Permission toPermission(PermissionCreateRequest request);
 
     PermissionResponse toResponse(Permission permission);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
     void updatePermission(PermissionUpdateRequest request, @MappingTarget Permission permission);
 
 }

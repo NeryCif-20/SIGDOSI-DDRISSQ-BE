@@ -4,6 +4,7 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
+import com.ddrissq.sigdosi.iam.permission.exception.PermissionExceptionMessages;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
@@ -71,7 +72,7 @@ public class PermissionServiceImpl implements PermissionService {
     public Permission findById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "El permiso solicitado no fue encontrado"));
+                        PermissionExceptionMessages.NOT_FOUND));
     }
 
     @Override
@@ -97,7 +98,7 @@ public class PermissionServiceImpl implements PermissionService {
                 : repository.existsByModuleAndActionAndIdNot(module, action, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    "Ya existe un permiso con el modulo y acción especificados.");
+                    PermissionExceptionMessages.ALREADY_EXISTS);
         }
     }
 
