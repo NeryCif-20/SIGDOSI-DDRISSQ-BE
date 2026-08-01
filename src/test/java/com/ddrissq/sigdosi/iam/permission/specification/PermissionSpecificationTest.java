@@ -21,13 +21,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
 @DataJpaTest
-@Import(TestcontainersConfiguration.class)
+@Import(value = TestcontainersConfiguration.class)
 class PermissionSpecificationTest {
 
     private final PermissionRepository repository;
 
     @Test
-    @DisplayName("Filtra ignorando mayúsculas y espacios cuando se proporciona un módulo válido")
+    @DisplayName(value = "Filtra ignorando mayúsculas y espacios cuando se proporciona un módulo válido")
     void givenValidModuleWithSpacesAndLowerCase_whenFindAll_thenReturnsMatchingPermissions() {
         // Given
         String moduleFilter = " " + MODULE.toLowerCase() + " ";
@@ -44,7 +44,7 @@ class PermissionSpecificationTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", "\t", "\n"})
-    @DisplayName("Devuelve todos los registros cuando el filtro de módulo es nulo o blanco")
+    @DisplayName(value = "Devuelve todos los registros cuando el filtro de módulo es nulo o blanco")
     void givenNullOrBlankModule_whenFindAll_thenReturnsAllPermissions(String moduleFilter) {
         // Given
         List<Permission> expectedPermissions = repository.saveAll(
@@ -57,7 +57,7 @@ class PermissionSpecificationTest {
     }
 
     @Test
-    @DisplayName("Devuelve lista vacía cuando ningún módulo coincide con el filtro")
+    @DisplayName(value = "Devuelve lista vacía cuando ningún módulo coincide con el filtro")
     void givenNonMatchingModule_whenFindAll_thenReturnsEmptyList() {
         // Given
         repository.saveAll(PermissionTestData.generateForModule(MODULE));
@@ -69,7 +69,7 @@ class PermissionSpecificationTest {
     }
 
     @Test
-    @DisplayName("Filtra correctamente por la acción especificada cuando existe coincidencia")
+    @DisplayName(value = "Filtra correctamente por la acción especificada cuando existe coincidencia")
     void givenMatchingAction_whenFindAll_thenReturnsMatchingPermissions() {
         // Given
         List<Permission> expectedPermissions = repository.saveAll(
@@ -83,7 +83,7 @@ class PermissionSpecificationTest {
     }
 
     @Test
-    @DisplayName("Devuelve todos los registros cuando el filtro de acción es nulo")
+    @DisplayName(value = "Devuelve todos los registros cuando el filtro de acción es nulo")
     void givenNullAction_whenFindAll_thenReturnsAllPermissions() {
         // Given
         List<Permission> expectedPermissions = repository.saveAll(
@@ -96,7 +96,7 @@ class PermissionSpecificationTest {
     }
 
     @Test
-    @DisplayName("Devuelve lista vacía cuando ninguna entidad coincide con la acción especificada")
+    @DisplayName(value = "Devuelve lista vacía cuando ninguna entidad coincide con la acción especificada")
     void givenNonMatchingAction_whenFindAll_thenReturnsEmptyList() {
         // Given
         repository.saveAll(PermissionTestData.generateForAction(ACTION));
@@ -108,7 +108,7 @@ class PermissionSpecificationTest {
     }
 
     @Test
-    @DisplayName("Filtra correctamente por módulo y acción cuando ambos criterios coinciden")
+    @DisplayName(value = "Filtra correctamente por módulo y acción cuando ambos criterios coinciden")
     void givenModuleAndAction_whenFindAll_thenReturnsMatchingPermission() {
         // Given
         Permission expectedPermission = repository.save(

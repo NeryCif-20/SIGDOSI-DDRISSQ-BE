@@ -52,7 +52,7 @@ class PermissionControllerTest {
     private PermissionService service;
 
     @Test
-    @DisplayName("Devuelve 200 OK y la respuesta del permiso cuando el ID existe")
+    @DisplayName(value = "Devuelve 200 OK y la respuesta del permiso cuando el ID existe")
     void givenExistingId_whenGet_thenReturns200AndPermissionResponse() {
         // Given
         PermissionResponse response = PermissionResponseTestData.aResponse()
@@ -75,7 +75,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 404 NOT FOUND cuando el permiso buscado no existe")
+    @DisplayName(value = "Devuelve 404 NOT FOUND cuando el permiso buscado no existe")
     void givenNonExistingId_whenGet_thenReturns404NotFound() {
         // Given
         EntityNotFoundException exception = new EntityNotFoundException(
@@ -98,7 +98,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 400 BAD REQUEST cuando el formato del UUID en la URL es inválido")
+    @DisplayName(value = "Devuelve 400 BAD REQUEST cuando el formato del UUID en la URL es inválido")
     void givenInvalidUuidFormat_whenGet_thenReturns400BadRequest() throws Exception {
         // Given
         String invalidId = "135135-315135";
@@ -118,7 +118,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 201 CREATED y el permiso creado cuando los datos son válidos")
+    @DisplayName(value = "Devuelve 201 CREATED y el permiso creado cuando los datos son válidos")
     void givenValidRequest_whenCreate_thenReturns201Created() {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
@@ -145,7 +145,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 404 BAD REQUEST cuando la validación @Valid del DTO de creación falla")
+    @DisplayName(value = "Devuelve 404 BAD REQUEST cuando la validación @Valid del DTO de creación falla")
     void givenInvalidRequest_whenCreate_thenReturns400BadRequest() {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
@@ -175,7 +175,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 409 CONFLICT cuando ya existe un permiso duplicado al crear")
+    @DisplayName(value = "Devuelve 409 CONFLICT cuando ya existe un permiso duplicado al crear")
     void givenDuplicateRequest_whenCreate_thenHandlesAlreadyExistsException() {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
@@ -202,7 +202,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 400 BAD REQUEST cuando el cuerpo de la solicitud contiene un JSON mal formado")
+    @DisplayName(value = "Devuelve 400 BAD REQUEST cuando el cuerpo de la solicitud contiene un JSON mal formado")
     void givenMalformedJson_whenCreate_thenReturns400BadRequest() {
         // Given
         String malformedJson = "{ invalid json ";
@@ -225,7 +225,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 200 OK y el permiso actualizado cuando la solicitud de actualización es válida")
+    @DisplayName(value = "Devuelve 200 OK y el permiso actualizado cuando la solicitud de actualización es válida")
     void givenValidUpdateRequest_whenUpdate_thenReturns200Ok() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -252,7 +252,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 404 NOT FOUND al actualizar cuando el ID del permiso no existe")
+    @DisplayName(value = "Devuelve 404 NOT FOUND al actualizar cuando el ID del permiso no existe")
     void givenNonExistingId_whenUpdate_thenReturns404NotFound() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -279,7 +279,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 409 CONFLICT al actualizar si el módulo y acción ya pertenecen a otro permiso")
+    @DisplayName(value = "Devuelve 409 CONFLICT al actualizar si el módulo y acción ya pertenecen a otro permiso")
     void givenDuplicateUpdateRequest_whenUpdate_thenReturns409Conflict() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -306,7 +306,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 405 METHOD NOT ALLOWED cuando se intenta actualizar un permiso con el método PUT")
+    @DisplayName(value = "Devuelve 405 METHOD NOT ALLOWED cuando se intenta actualizar un permiso con el método PUT")
     void givenPutRequest_whenUpdate_thenReturns405MethodNotAllowed() {
         // When
         MvcTestResult result = mockMvcTester.put()
@@ -325,7 +325,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 204 NO CONTENT cuando se elimina un permiso existente")
+    @DisplayName(value = "Devuelve 204 NO CONTENT cuando se elimina un permiso existente")
     void givenExistingId_whenDelete_thenReturns204NoContent() {
         // When
         MvcTestResult result = mockMvcTester.delete()
@@ -339,7 +339,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 404 NOT FOUND cuando se intenta eliminar un permiso inexistente")
+    @DisplayName(value = "Devuelve 404 NOT FOUND cuando se intenta eliminar un permiso inexistente")
     void givenNonExistingId_whenDelete_thenReturns404NotFound() {
         // Given
         EntityNotFoundException exception = new EntityNotFoundException(
@@ -362,7 +362,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 200 OK y una página de permisos cuando existen registros que coinciden")
+    @DisplayName(value = "Devuelve 200 OK y una página de permisos cuando existen registros que coinciden")
     void givenValidFilters_whenGetAll_thenReturns200AndPageWithContent() {
         // Given
         PermissionResponse response = PermissionResponseTestData.aResponse()
@@ -400,7 +400,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 200 OK y una página de permisos cuando no se envian filtros")
+    @DisplayName(value = "Devuelve 200 OK y una página de permisos cuando no se envian filtros")
     void givenNoFilters_whenGetAll_thenReturns200Ok() {
         // Given
         PermissionResponse response = PermissionResponseTestData.aResponse()
@@ -434,7 +434,7 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName("Devuelve 200 OK y una página vacía cuando ningún permiso coincide con los filtros")
+    @DisplayName(value = "Devuelve 200 OK y una página vacía cuando ningún permiso coincide con los filtros")
     void givenNoMatches_whenGetAll_thenReturns200AndEmptyPage() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);

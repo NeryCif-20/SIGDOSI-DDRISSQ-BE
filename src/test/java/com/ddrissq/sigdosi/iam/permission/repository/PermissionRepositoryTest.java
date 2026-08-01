@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
 @DataJpaTest
-@Import(TestcontainersConfiguration.class)
+@Import(value = TestcontainersConfiguration.class)
 class PermissionRepositoryTest {
 
     private final PermissionRepository repository;
@@ -29,7 +29,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve true cuando existe un permiso por módulo y acción")
+    @DisplayName(value = "Devuelve true cuando existe un permiso por módulo y acción")
     void givenExistingPermission_whenExistsByModuleAndAction_thenReturnsTrue() {
         // When
         boolean exists = repository.existsByModuleAndAction(
@@ -40,7 +40,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve false cuando el módulo no coincide")
+    @DisplayName(value = "Devuelve false cuando el módulo no coincide")
     void givenDifferentModule_whenExistsByModuleAndAction_thenReturnsFalse() {
         // When
         boolean exists = repository.existsByModuleAndAction(
@@ -51,7 +51,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve false cuando la acción no coincide")
+    @DisplayName(value = "Devuelve false cuando la acción no coincide")
     void givenDifferentAction_whenExistsByModuleAndAction_thenReturnsFalse() {
         // When
         boolean exists = repository.existsByModuleAndAction(
@@ -62,7 +62,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve false cuando ni el módulo ni la acción coinciden")
+    @DisplayName(value = "Devuelve false cuando ni el módulo ni la acción coinciden")
     void givenDifferentModuleAndAction_whenExistsByModuleAndAction_thenReturnsFalse() {
         // When
         boolean exists = repository.existsByModuleAndAction(
@@ -73,7 +73,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve true cuando existe otro permiso con igual módulo y acción pero ID distinto")
+    @DisplayName(value = "Devuelve true cuando existe otro permiso con igual módulo y acción pero ID distinto")
     void givenPermissionExistsAndDifferentExcludedId_whenExistsByModuleAndActionAndIdNot_thenReturnsTrue() {
         // When
         boolean exists = repository.existsByModuleAndActionAndIdNot(
@@ -85,7 +85,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve false cuando el único permiso coincidente coincide con el ID excluido")
+    @DisplayName(value = "Devuelve false cuando el único permiso coincidente coincide con el ID excluido")
     void givenSameExcludedId_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
         boolean exists = repository.existsByModuleAndActionAndIdNot(
@@ -97,7 +97,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve false al buscar excluyendo un ID si el módulo no coincide")
+    @DisplayName(value = "Devuelve false al buscar excluyendo un ID si el módulo no coincide")
     void givenDifferentModule_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
         boolean exists = repository.existsByModuleAndActionAndIdNot(
@@ -109,7 +109,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve false al buscar excluyendo un ID si la acción no coincide")
+    @DisplayName(value = "Devuelve false al buscar excluyendo un ID si la acción no coincide")
     void givenDifferentAction_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
         boolean exists = repository.existsByModuleAndActionAndIdNot(
@@ -121,7 +121,7 @@ class PermissionRepositoryTest {
     }
 
     @Test
-    @DisplayName("Devuelve false al buscar excluyendo un ID si ni el módulo ni la acción coinciden")
+    @DisplayName(value = "Devuelve false al buscar excluyendo un ID si ni el módulo ni la acción coinciden")
     void givenDifferentModuleAndAction_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
         boolean exists = repository.existsByModuleAndActionAndIdNot(

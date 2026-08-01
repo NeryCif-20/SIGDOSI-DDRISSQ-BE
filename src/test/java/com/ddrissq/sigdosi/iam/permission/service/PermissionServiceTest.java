@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(value = MockitoExtension.class)
 class PermissionServiceTest {
 
     @Mock
@@ -48,7 +48,7 @@ class PermissionServiceTest {
     private PermissionServiceImpl service;
 
     @Test
-    @DisplayName("Devuelve la respuesta del permiso cuando existe el id buscado")
+    @DisplayName(value = "Devuelve la respuesta del permiso cuando existe el id buscado")
     void givenExistingId_whenGet_thenReturnPermissionResponse() {
         // Given
         Permission permission = PermissionTestData.aPermission()
@@ -67,7 +67,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Lanza EntityNotFoundException cuando el permiso no existe")
+    @DisplayName(value = "Lanza EntityNotFoundException cuando el permiso no existe")
     void givenNonExistingId_whenGet_thenThrowsEntityNotFoundException() {
         // Given
         given(repository.findById(ID)).willReturn(Optional.empty());
@@ -80,7 +80,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Crea y devuelve un permiso correctamente cuando el módulo y la acción son únicos")
+    @DisplayName(value = "Crea y devuelve un permiso correctamente cuando el módulo y la acción son únicos")
     void givenValidPermissionCreateRequest_whenCreate_thenReturnsPermissionResponse() {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
@@ -108,7 +108,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Lanza EntityAlreadyExistsException cuando ya existe un permiso con el mismo módulo y acción")
+    @DisplayName(value = "Lanza EntityAlreadyExistsException cuando ya existe un permiso con el mismo módulo y acción")
     void givenDuplicateModuleAndAction_whenCreate_thenThrowsEntityAlreadyExistsException() {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
@@ -125,7 +125,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Actualiza y devuelve el permiso cuando los datos son válidos y únicos")
+    @DisplayName(value = "Actualiza y devuelve el permiso cuando los datos son válidos y únicos")
     void givenValidUpdateRequest_whenUpdate_thenReturnsUpdatedPermissionResponse() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -155,7 +155,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Usa los valores actuales del permiso para validar cuando la solicitud tiene campos nulos")
+    @DisplayName(value = "Usa los valores actuales del permiso para validar cuando la solicitud tiene campos nulos")
     void givenRequestWithNullFields_whenUpdate_thenValidatesUsingExistingPermissionValues() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -181,7 +181,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Lanza EntityNotFoundException cuando el permiso a actualizar no existe")
+    @DisplayName(value = "Lanza EntityNotFoundException cuando el permiso a actualizar no existe")
     void givenNonExistingId_whenUpdate_thenThrowsEntityNotFoundException() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -197,7 +197,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Usa el módulo existente y la acción del request cuando solo el módulo es nulo")
+    @DisplayName(value = "Usa el módulo existente y la acción del request cuando solo el módulo es nulo")
     void givenRequestWithNullModule_whenUpdate_thenValidatesUsingExistingModuleAndRequestAction() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -225,7 +225,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Usa la acción existente y el módulo del request cuando solo la acción es nula")
+    @DisplayName(value = "Usa la acción existente y el módulo del request cuando solo la acción es nula")
     void givenRequestWithNullAction_whenUpdate_thenValidatesUsingRequestModuleAndExistingAction() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -253,7 +253,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Lanza EntityAlreadyExistsException cuando el módulo y acción ya existen en otro permiso")
+    @DisplayName(value = "Lanza EntityAlreadyExistsException cuando el módulo y acción ya existen en otro permiso")
     void givenDuplicateModuleAndAction_whenUpdate_thenThrowsEntityAlreadyExistsException() {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
@@ -279,7 +279,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Devuelve una página paginada de respuestas cuando existen permisos que coinciden con los filtros")
+    @DisplayName(value = "Devuelve una página paginada de respuestas cuando existen permisos que coinciden con los filtros")
     void givenValidPageableAndSearchRequest_whenGetAll_thenReturnsPageOfPermissionResponses() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
@@ -303,7 +303,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Devuelve una página vacía cuando ningún permiso coincide con los filtros de búsqueda")
+    @DisplayName(value = "Devuelve una página vacía cuando ningún permiso coincide con los filtros de búsqueda")
     void givenSearchRequestWithNoMatches_whenGetAll_thenReturnsEmptyPage() {
         // Given
         Pageable pageable = PageRequest.of(0, 10);
@@ -322,7 +322,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Devuelve la entidad Permission cuando existe el ID buscado")
+    @DisplayName(value = "Devuelve la entidad Permission cuando existe el ID buscado")
     void givenExistingId_whenFindById_thenReturnsPermission() {
         // Given
         Permission expectedPermission = PermissionTestData.aPermission()
@@ -337,7 +337,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Lanza EntityNotFoundException cuando el permiso no existe")
+    @DisplayName(value = "Lanza EntityNotFoundException cuando el permiso no existe")
     void givenNonExistingId_whenFindById_thenThrowsEntityNotFoundException() {
         // Given
         given(repository.findById(ID)).willReturn(Optional.empty());
@@ -349,7 +349,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Devuelve un conjunto inmodificable de permisos cuando existen los IDs proporcionados")
+    @DisplayName(value = "Devuelve un conjunto inmodificable de permisos cuando existen los IDs proporcionados")
     void givenExistingIds_whenFindAllById_thenReturnsUnmodifiableSetOfPermissions() {
         // Given
         Set<UUID> ids = Set.of(ID, DIFFERENT_ID);
@@ -370,7 +370,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Devuelve un conjunto vacío cuando no se encuentran coincidencias para los IDs")
+    @DisplayName(value = "Devuelve un conjunto vacío cuando no se encuentran coincidencias para los IDs")
     void givenNonExistingIds_whenFindAllById_thenReturnsEmptySet() {
         // Given
         Set<UUID> ids = Set.of(ID, DIFFERENT_ID);
@@ -383,7 +383,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Elimina el permiso correctamente cuando el ID existe")
+    @DisplayName(value = "Elimina el permiso correctamente cuando el ID existe")
     void givenExistingId_whenDelete_thenDeletesPermission() {
         // Given
         Permission permission = PermissionTestData.aPermission()
@@ -398,7 +398,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("Lanza EntityNotFoundException cuando el permiso a eliminar no existe")
+    @DisplayName(value = "Lanza EntityNotFoundException cuando el permiso a eliminar no existe")
     void givenNonExistingId_whenDelete_thenThrowsEntityNotFoundException() {
         // Given
         given(repository.findById(ID)).willReturn(Optional.empty());

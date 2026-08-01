@@ -18,7 +18,7 @@ class PermissionMapperTest {
     private final PermissionMapper mapper = new PermissionMapperImpl();
 
     @Test
-    @DisplayName("Mapea una solicitud de creación a una entidad Permission")
+    @DisplayName(value = "Mapea una solicitud de creación a una entidad Permission")
     void givenCreateRequest_whenToPermission_thenMapsAllFields() {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
@@ -31,7 +31,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("Mapea una solicitud de creación con valores nulos a una entidad Permission")
+    @DisplayName(value = "Mapea una solicitud de creación con valores nulos a una entidad Permission")
     void givenCreateRequestWithNullValues_whenToPermission_thenMapsNullValues() {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
@@ -46,7 +46,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("Mapea una solicitud de creación nula a a una entidad nula")
+    @DisplayName(value = "Mapea una solicitud de creación nula a a una entidad nula")
     void givenNullCreateRequest_whenToPermission_thenReturnsNull() {
         // When
         Permission result = mapper.toPermission(null);
@@ -55,7 +55,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("Mapea una entidad Permission a su DTO de respuesta")
+    @DisplayName(value = "Mapea una entidad Permission a su DTO de respuesta")
     void givenPermissionEntity_whenToResponse_thenMapsAllFields() {
         // Given
         Permission permission = PermissionTestData.aPermission()
@@ -70,7 +70,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("Mapea una entidad Permission nula a su DTO de respuesta")
+    @DisplayName(value = "Mapea una entidad Permission nula a su DTO de respuesta")
     void givenNullPermissionEntity_whenToResponse_thenReturnsNull() {
         // When
         PermissionResponse response = mapper.toResponse(null);
@@ -79,7 +79,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("Actualiza todos los campos de la entidad cuando se proporcionan todos los datos")
+    @DisplayName(value = "Actualiza todos los campos de la entidad cuando se proporcionan todos los datos")
     void givenUpdateRequestWithAllFields_whenUpdatePermission_thenUpdatesAllFields() {
         // Given
         Permission permission = PermissionTestData.aPermission()
@@ -98,7 +98,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("Actualiza solo los campos no nulos recibidos en la solicitud")
+    @DisplayName(value = "Actualiza solo los campos no nulos recibidos en la solicitud")
     void givenUpdateRequestWithPartialFields_whenUpdatePermission_thenUpdatesOnlyNonNullFields() {
         // Given
         Permission permission = PermissionTestData.aPermission()
@@ -115,7 +115,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("No modifica la entidad cuando todos los campos de la solicitud son nulos")
+    @DisplayName(value = "No modifica la entidad cuando todos los campos de la solicitud son nulos")
     void givenUpdateRequestWithNullFields_whenUpdatePermission_thenDoesNotModifyPermission() {
         // Given
         Permission permission = PermissionTestData.aPermission()
@@ -130,7 +130,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName("No modifica la entidad cuando la solicitud es nula")
+    @DisplayName(value = "No modifica la entidad cuando la solicitud es nula")
     void givenNullUpdateRequest_whenUpdatingPermission_thenKeepsExistingValues () {
         // Given
         Permission permission = PermissionTestData.aPermission()

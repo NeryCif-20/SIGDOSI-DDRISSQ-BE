@@ -22,6 +22,7 @@ public class Role extends AbstractModel {
 
     private String name;
     private String description;
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "role_permission",

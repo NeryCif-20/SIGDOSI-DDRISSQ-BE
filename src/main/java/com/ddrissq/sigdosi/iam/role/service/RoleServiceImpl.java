@@ -6,6 +6,7 @@ import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
 import com.ddrissq.sigdosi.iam.role.dto.RoleSearchRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
+import com.ddrissq.sigdosi.iam.role.exception.RoleExceptionMessages;
 import com.ddrissq.sigdosi.iam.role.mapper.RoleMapper;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import com.ddrissq.sigdosi.iam.role.repository.RoleRepository;
@@ -70,7 +71,7 @@ public class RoleServiceImpl implements RoleService{
     public Role findById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "El rol solicitado no fue encontrado"));
+                        RoleExceptionMessages.NOT_FOUND));
     }
 
     private void validateUniqueName(String name) {
@@ -84,7 +85,7 @@ public class RoleServiceImpl implements RoleService{
                 : repository.existsByNameAndIdNot(name, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    "Ya existe un rol con el nombre especificado.");
+                    RoleExceptionMessages.ALREADY_EXISTS);
         }
     }
 
