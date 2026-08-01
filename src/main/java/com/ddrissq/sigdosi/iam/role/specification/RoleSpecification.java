@@ -4,9 +4,12 @@ import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import jakarta.persistence.criteria.Join;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
-public class RoleSpecification {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class RoleSpecification {
 
     public static Specification<Role> hasName(String name) {
         return (root, query, builder) -> {

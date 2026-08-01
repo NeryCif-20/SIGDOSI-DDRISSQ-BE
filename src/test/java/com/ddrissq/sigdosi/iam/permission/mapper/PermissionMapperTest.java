@@ -46,7 +46,7 @@ class PermissionMapperTest {
     }
 
     @Test
-    @DisplayName(value = "Mapea una solicitud de creación nula a a una entidad nula")
+    @DisplayName(value = "Mapea una solicitud de creación nula a una entidad")
     void givenNullCreateRequest_whenToPermission_thenReturnsNull() {
         // When
         Permission result = mapper.toPermission(null);
@@ -131,7 +131,7 @@ class PermissionMapperTest {
 
     @Test
     @DisplayName(value = "No modifica la entidad cuando la solicitud es nula")
-    void givenNullUpdateRequest_whenUpdatingPermission_thenKeepsExistingValues () {
+    void givenNullUpdateRequest_whenUpdatePermission_thenKeepsExistingValues () {
         // Given
         Permission permission = PermissionTestData.aPermission()
                 .build();
