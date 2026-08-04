@@ -1,9 +1,11 @@
-package com.ddrissq.sigdosi.configuration.security;
+package com.ddrissq.sigdosi.iam.security.configuration;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.Resource;
+
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 @Getter
 @Setter
@@ -25,8 +27,8 @@ public class SecurityProperties {
     @Setter
     public static class JwtToken extends Token {
 
-        private Resource privateKey;
-        private Resource publicKey;
+        private RSAPrivateKey privateKey;
+        private RSAPublicKey publicKey;
 
     }
 

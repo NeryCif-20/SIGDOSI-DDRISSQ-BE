@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 public final  class RoleExceptionMessages {
 
     public static final String NOT_FOUND = "El rol solicitado no fue encontrado";
-    public static final String ALREADY_EXISTS = "Ya existe un rol con el nombre especificado.";
+    public static final String ALREADY_EXISTS = "Ya existe un rol con el nombre especificado";
 
 }

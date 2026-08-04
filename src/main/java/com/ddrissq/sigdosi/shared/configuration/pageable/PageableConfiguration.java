@@ -1,4 +1,4 @@
-package com.ddrissq.sigdosi.configuration.pageable;
+package com.ddrissq.sigdosi.shared.configuration.pageable;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

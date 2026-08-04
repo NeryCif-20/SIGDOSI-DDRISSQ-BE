@@ -1,4 +1,4 @@
-package com.ddrissq.sigdosi.configuration.auditing;
+package com.ddrissq.sigdosi.shared.configuration.auditing;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

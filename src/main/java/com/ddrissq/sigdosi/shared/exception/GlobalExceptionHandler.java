@@ -44,8 +44,9 @@ public class GlobalExceptionHandler {
         ProblemDetail detail = ProblemDetail
                 .forStatusAndDetail(
                         HttpStatus.BAD_REQUEST,
-                        ExceptionMessages.invalidParameter(ex.getName()));
+                        ExceptionMessages.INVALID_PARAMETER);
         detail.setTitle("Invalid Parameter");
+        detail.setProperty("parameter", ex.getPropertyName());
         detail.setProperty("error_category", "Validation");
         detail.setProperty("timestamp", Instant.now());
         return detail;

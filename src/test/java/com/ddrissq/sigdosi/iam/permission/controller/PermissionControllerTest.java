@@ -99,7 +99,7 @@ class PermissionControllerTest {
 
     @Test
     @DisplayName(value = "Devuelve 400 BAD REQUEST cuando el formato del UUID en la URL es inválido")
-    void givenInvalidUuidFormat_whenGet_thenReturns400BadRequest() throws Exception {
+    void givenInvalidUuidFormat_whenGet_thenReturns400BadRequest() {
         // Given
         String invalidId = "135135-315135";
         // When
@@ -113,7 +113,11 @@ class PermissionControllerTest {
                 .hasContentType(MediaType.APPLICATION_PROBLEM_JSON);
         assertThat(result)
                 .bodyJson().extractingPath("$.detail")
-                .isEqualTo(ExceptionMessages.invalidParameter("id"));
+                .isEqualTo(ExceptionMessages.INVALID_PARAMETER);
+        assertThat(result)
+                .bodyJson()
+                .extractingPath("$.parameter")
+                .isNotNull();
         verifyNoInteractions(service);
     }
 
