@@ -1,14 +1,13 @@
-package com.ddrissq.sigdosi.iam.role.model;
+package com.ddrissq.sigdosi.iam.role.entity;
 
-import com.ddrissq.sigdosi.iam.permission.model.Permission;
-import com.ddrissq.sigdosi.shared.model.AbstractModel;
+import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.shared.entity.AbstractEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.*;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Role extends AbstractModel {
+public class Role extends AbstractEntity {
 
     private String name;
     private String description;
@@ -31,7 +30,7 @@ public class Role extends AbstractModel {
     private Set<Permission> permissions = new HashSet<>();
 
     public Set<Permission> getPermissions() {
-        return Collections.unmodifiableSet(this.permissions);
+        return Set.copyOf(this.permissions);
     }
 
     public void setPermissions(Set<Permission> permissions) {

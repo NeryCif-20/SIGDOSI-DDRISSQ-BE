@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.iam.security.handler;
 
+import com.ddrissq.sigdosi.iam.security.exception.SecurityExceptionMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +37,9 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     private String resolveDetail(Throwable cause) {
         return switch (cause) {
-            case JwtValidationException ex -> SecurityErrorMessages.EXPIRED_TOKEN;
-            case BadJwtException ex -> SecurityErrorMessages.INVALID_TOKEN;
-            default -> SecurityErrorMessages.AUTHENTICATION_REQUIRED;
+            case JwtValidationException ex -> SecurityExceptionMessages.EXPIRED_TOKEN;
+            case BadJwtException ex -> SecurityExceptionMessages.INVALID_TOKEN;
+            default -> SecurityExceptionMessages.AUTHENTICATION_REQUIRED;
         };
     }
 

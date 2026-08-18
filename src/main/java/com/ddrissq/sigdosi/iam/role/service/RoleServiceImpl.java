@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.role.service;
 
-import com.ddrissq.sigdosi.iam.permission.model.Permission;
+import com.ddrissq.sigdosi.iam.permission.entity.Permission;
 import com.ddrissq.sigdosi.iam.permission.service.PermissionService;
 import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
@@ -8,7 +8,7 @@ import com.ddrissq.sigdosi.iam.role.dto.RoleSearchRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
 import com.ddrissq.sigdosi.iam.role.exception.RoleExceptionMessages;
 import com.ddrissq.sigdosi.iam.role.mapper.RoleMapper;
-import com.ddrissq.sigdosi.iam.role.model.Role;
+import com.ddrissq.sigdosi.iam.role.entity.Role;
 import com.ddrissq.sigdosi.iam.role.repository.RoleRepository;
 import com.ddrissq.sigdosi.iam.role.specification.RoleSpecification;
 import com.ddrissq.sigdosi.shared.exception.EntityAlreadyExistsException;
@@ -35,7 +35,7 @@ public class RoleServiceImpl implements RoleService{
 
     @Override
     public RoleResponse get(UUID id) {
-        Role role = findById(id);
+        Role role = getByIdOrThrow(id);
         return mapper.toResponse(role);
     }
 
@@ -50,7 +50,7 @@ public class RoleServiceImpl implements RoleService{
 
     @Override
     public RoleResponse update(UUID id, RoleUpdateRequest request) {
-        Role role = findById(id);
+        Role role = getByIdOrThrow(id);
         validateUniqueName(request.name(), id);
         mapper.updateRole(request, role);
         updatePermissions(request.permissions(), role);
@@ -58,7 +58,7 @@ public class RoleServiceImpl implements RoleService{
     }
 
     @Override
-    public Page<RoleResponse> getAll(Pageable pageable, RoleSearchRequest request) {
+    public Page<RoleResponse> getAll(RoleSearchRequest request, Pageable pageable) {
         Specification<Role> spec = Specification.allOf(
                 RoleSpecification.hasName(request.name()),
                 RoleSpecification.hasModule(request.module()),
@@ -68,7 +68,7 @@ public class RoleServiceImpl implements RoleService{
     }
 
     @Override
-    public Role findById(UUID id) {
+    public Role getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         RoleExceptionMessages.NOT_FOUND));
@@ -90,11 +90,9 @@ public class RoleServiceImpl implements RoleService{
     }
 
     private void updatePermissions(Set<UUID> ids, Role role) {
-        Set<Permission> permissions = new HashSet<>();
         if (ids != null && !ids.isEmpty()) {
-            permissions = permissionService.findAllById(ids);
+            role.setPermissions(permissionService.getAllById(ids));
         }
-        role.setPermissions(permissions);
     }
 
 }

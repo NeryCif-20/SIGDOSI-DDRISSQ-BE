@@ -46,9 +46,9 @@ public class RoleController {
 
     @GetMapping
     public ResponseEntity<Page<RoleResponse>> getAll(
-            Pageable pageable,
-            RoleSearchRequest request) {
-        Page<RoleResponse> response = service.getAll(pageable, request);
+            RoleSearchRequest request,
+            Pageable pageable) {
+        Page<RoleResponse> response = service.getAll(request, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

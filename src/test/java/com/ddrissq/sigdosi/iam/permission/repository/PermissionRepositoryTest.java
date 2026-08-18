@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.permission.repository;
 
 import com.ddrissq.sigdosi.TestcontainersConfiguration;
-import com.ddrissq.sigdosi.iam.permission.model.Permission;
+import com.ddrissq.sigdosi.iam.permission.entity.Permission;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionTestData;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;

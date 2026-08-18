@@ -9,21 +9,38 @@ spring:
       path: /api
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_NAME:sigdosi}
-    password: ${POSTGRES_PASS:12345}
+    password: ${POSTGRES_PASS}
     username: ${POSTGRES_USER:postgres}
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASS:12345}
+  servlet:
+    multipart:
+      max-file-size: 5MB
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    password: ${MAIL_PASS}
+    username: ${MAIL_USER}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 server:
   port: ${SERVER_PORT:8000}
 
+app:
+  client:
+    origin: ${CLIENT_ORIGIN:http://localhost:4200}
+
 security:
-  access-token:
-    expiration-time: ${AT_EXP}
-    public-key: file:${AT_PUBLIC_KEY}
-    private-key: file:${AT_PRIVATE_KEY}
+  flow-token:
+    expiration-time: ${FLOW_EXP:5m}
+  password-token:
+    expiration-time: ${PASS_EXP:10m}
   refresh-token:
-    expiration-time: ${RT_EXP}
+    expiration-time: ${REFRESH_EXP:7d}
+  access-token:
+    expiration-time: ${ACCESS_EXP:15m}
+    public-key: file:${ACCESS_PUBLIC_KEY}
+    private-key: file:${ACCESS_PRIVATE_KEY}

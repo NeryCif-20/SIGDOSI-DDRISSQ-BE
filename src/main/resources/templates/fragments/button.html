@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="button(link, text)">
+    <a th:href="${link}"
+       th:text="${text}"
+       href="#"
+       style="
+           display: inline-block;
+           padding: 11px 22px;
+           border-radius: 6px;
+           background-color: #1c1917;
+           color: #ffffff !important;
+           font-size: 14px;
+           font-weight: 600;
+           text-decoration: none;
+       ">
+        Acción
+    </a>
+</th:block>
+</html>

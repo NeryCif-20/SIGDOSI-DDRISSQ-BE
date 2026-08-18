@@ -6,7 +6,7 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
 import com.ddrissq.sigdosi.iam.permission.exception.PermissionExceptionMessages;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
-import com.ddrissq.sigdosi.iam.permission.model.Permission;
+import com.ddrissq.sigdosi.iam.permission.entity.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.specification.PermissionSpecification;
@@ -33,7 +33,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionResponse get(UUID id) {
-        Permission permission = findById(id);
+        Permission permission = getByIdOrThrow(id);
         return mapper.toResponse(permission);
     }
 
@@ -47,7 +47,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public PermissionResponse update(UUID id, PermissionUpdateRequest request) {
-        Permission permission = findById(id);
+        Permission permission = getByIdOrThrow(id);
         String module = request.module() == null
                 ? permission.getModule()
                 : request.module();
@@ -60,7 +60,7 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Page<PermissionResponse> getAll(Pageable pageable, PermissionSearchRequest request) {
+    public Page<PermissionResponse> getAll(PermissionSearchRequest request, Pageable pageable) {
         Specification<Permission> spec = Specification.allOf(
                 PermissionSpecification.hasModule(request.module()),
                 PermissionSpecification.hasAction(request.action()));
@@ -69,23 +69,17 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Permission findById(UUID id) {
+    public Permission getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         PermissionExceptionMessages.NOT_FOUND));
     }
 
     @Override
-    public Set<Permission> findAllById(Set<UUID> ids) {
+    public Set<Permission> getAllById(Set<UUID> ids) {
         return repository.findAllById(ids)
                 .stream()
                 .collect(Collectors.toUnmodifiableSet());
-    }
-
-    @Override
-    public void delete(UUID id) {
-        Permission permission = findById(id);
-        repository.delete(permission);
     }
 
     private void validateUniqueModuleAction(String module, PermissionAction action) {

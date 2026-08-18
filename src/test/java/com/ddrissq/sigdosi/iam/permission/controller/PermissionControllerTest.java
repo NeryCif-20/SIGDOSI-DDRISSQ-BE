@@ -329,43 +329,6 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName(value = "Devuelve 204 NO CONTENT cuando se elimina un permiso existente")
-    void givenExistingId_whenDelete_thenReturns204NoContent() {
-        // When
-        MvcTestResult result = mockMvcTester.delete()
-                .uri(BASE_URL + "/{id}", ID)
-                .with(jwt())
-                .exchange();
-        // Then
-        assertThat(result)
-                .hasStatus(HttpStatus.NO_CONTENT);
-        verify(service).delete(ID);
-    }
-
-    @Test
-    @DisplayName(value = "Devuelve 404 NOT FOUND cuando se intenta eliminar un permiso inexistente")
-    void givenNonExistingId_whenDelete_thenReturns404NotFound() {
-        // Given
-        EntityNotFoundException exception = new EntityNotFoundException(
-                PermissionExceptionMessages.NOT_FOUND);
-        willThrow(exception).given(service).delete(ID);
-        // When
-        MvcTestResult result = mockMvcTester.delete()
-                .uri(BASE_URL + "/{id}", ID)
-                .with(jwt())
-                .exchange();
-        // Then
-        assertThat(result)
-                .hasStatus(HttpStatus.NOT_FOUND)
-                .hasContentType(MediaType.APPLICATION_PROBLEM_JSON);
-        assertThat(result)
-                .bodyJson()
-                .extractingPath("$.detail")
-                .isEqualTo(PermissionExceptionMessages.NOT_FOUND);
-        verify(service).delete(ID);
-    }
-
-    @Test
     @DisplayName(value = "Devuelve 200 OK y una página de permisos cuando existen registros que coinciden")
     void givenValidFilters_whenGetAll_thenReturns200AndPageWithContent() {
         // Given
@@ -374,8 +337,8 @@ class PermissionControllerTest {
         Page<PermissionResponse> expectedPage = new PageImpl<>(
                 List.of(response), PageRequest.of(0, 10), 1);
         given(service.getAll(
-                any(Pageable.class),
-                any(PermissionSearchRequest.class)))
+                any(PermissionSearchRequest.class),
+                any(Pageable.class)))
                 .willReturn(expectedPage);
         // When
         MvcTestResult result = mockMvcTester.get()
@@ -400,7 +363,7 @@ class PermissionControllerTest {
                 .extractingPath("$.content")
                 .convertTo(InstanceOfAssertFactories.list(PermissionResponse.class))
                 .containsExactlyInAnyOrderElementsOf(expectedPage.getContent());
-        verify(service).getAll(any(Pageable.class), any(PermissionSearchRequest.class));
+        verify(service).getAll(any(PermissionSearchRequest.class), any(Pageable.class));
     }
 
     @Test
@@ -412,8 +375,8 @@ class PermissionControllerTest {
         Page<PermissionResponse> expectedPage = new PageImpl<>(
                 List.of(response), Pageable.unpaged(), 1);
         given(service.getAll(
-                any(Pageable.class),
-                any(PermissionSearchRequest.class)))
+                any(PermissionSearchRequest.class),
+                any(Pageable.class)))
                 .willReturn(expectedPage);
         // When
         MvcTestResult result = mockMvcTester.get()
@@ -434,7 +397,7 @@ class PermissionControllerTest {
                 .extractingPath("$.content")
                 .convertTo(InstanceOfAssertFactories.list(PermissionResponse.class))
                 .containsExactlyInAnyOrderElementsOf(expectedPage.getContent());
-        verify(service).getAll(any(Pageable.class), any(PermissionSearchRequest.class));
+        verify(service).getAll(any(PermissionSearchRequest.class), any(Pageable.class));
     }
 
     @Test
@@ -444,8 +407,8 @@ class PermissionControllerTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<PermissionResponse> expectedPage = Page.empty(pageable);
         given(service.getAll(
-                any(Pageable.class),
-                any(PermissionSearchRequest.class)))
+                any(PermissionSearchRequest.class),
+                any(Pageable.class)))
                 .willReturn(expectedPage);
         // When
         MvcTestResult result = mockMvcTester.get()
@@ -469,7 +432,7 @@ class PermissionControllerTest {
                 .extractingPath("$.content")
                 .convertTo(InstanceOfAssertFactories.list(PermissionResponse.class))
                 .isEmpty();
-        verify(service).getAll(any(Pageable.class), any(PermissionSearchRequest.class));
+        verify(service).getAll(any(PermissionSearchRequest.class), any(Pageable.class));
     }
 
 }

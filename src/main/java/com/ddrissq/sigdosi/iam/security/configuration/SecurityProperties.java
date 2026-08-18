@@ -6,12 +6,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "security")
 public class SecurityProperties {
 
+    private Token flowToken;
+    private Token passwordToken;
     private Token refreshToken;
     private JwtToken accessToken;
 
@@ -19,7 +22,7 @@ public class SecurityProperties {
     @Setter
     public static class Token {
 
-        private long expirationTime;
+        private Duration expirationTime;
 
     }
 

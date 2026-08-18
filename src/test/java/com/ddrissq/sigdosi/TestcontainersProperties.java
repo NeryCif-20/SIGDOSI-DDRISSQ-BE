@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class TestcontainersProperties {
 
     private Container postgres;
-    private Container redis;
 
     @Getter
     @Setter

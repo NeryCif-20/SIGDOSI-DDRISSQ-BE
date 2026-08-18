@@ -6,7 +6,7 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
 import com.ddrissq.sigdosi.iam.permission.exception.PermissionExceptionMessages;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
-import com.ddrissq.sigdosi.iam.permission.model.Permission;
+import com.ddrissq.sigdosi.iam.permission.entity.Permission;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.support.*;
 import com.ddrissq.sigdosi.shared.exception.EntityAlreadyExistsException;
@@ -295,7 +295,7 @@ class PermissionServiceTest {
                 ArgumentMatchers.<Specification<Permission>>any(), eq(pageable))).willReturn(expectedPage);
         given(mapper.toResponse(permission)).willReturn(expectedResponse);
         // When
-        Page<PermissionResponse> response = service.getAll(pageable, request);
+        Page<PermissionResponse> response = service.getAll(request, pageable);
         // Then
         assertThat(response.getContent()).containsExactly(expectedResponse);
         verify(repository).findAll(ArgumentMatchers.<Specification<Permission>>any(), eq(pageable));
@@ -313,7 +313,7 @@ class PermissionServiceTest {
         given(repository.findAll(
                 ArgumentMatchers.<Specification<Permission>>any(), eq(pageable))).willReturn(expectedPage);
         // When
-        Page<PermissionResponse> response = service.getAll(pageable, request);
+        Page<PermissionResponse> response = service.getAll(request, pageable);
         // Then
         assertThat(response.getContent()).isEmpty();
         verify(repository).findAll(
@@ -330,7 +330,7 @@ class PermissionServiceTest {
         expectedPermission.setId(ID);
         given(repository.findById(ID)).willReturn(Optional.of(expectedPermission));
         // When
-        Permission permission = service.findById(ID);
+        Permission permission = service.getByIdOrThrow(ID);
         // Then
         assertThat(permission).isEqualTo(expectedPermission);
         verify(repository).findById(ID);
@@ -342,7 +342,7 @@ class PermissionServiceTest {
         // Given
         given(repository.findById(ID)).willReturn(Optional.empty());
         // When + Then
-        assertThatThrownBy(() -> service.findById(ID))
+        assertThatThrownBy(() -> service.getByIdOrThrow(ID))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(PermissionExceptionMessages.NOT_FOUND);
         verify(repository).findById(ID);
@@ -361,7 +361,7 @@ class PermissionServiceTest {
         secondPermission.setId(DIFFERENT_ID);
         given(repository.findAllById(ids)).willReturn(List.of(firstPermission, secondPermission));
         // When
-        Set<Permission> permissions = service.findAllById(ids);
+        Set<Permission> permissions = service.getAllById(ids);
         // Then
         assertThat(permissions).containsExactlyInAnyOrder(firstPermission, secondPermission);
         assertThatThrownBy(() -> permissions.add(firstPermission))
@@ -376,38 +376,10 @@ class PermissionServiceTest {
         Set<UUID> ids = Set.of(ID, DIFFERENT_ID);
         given(repository.findAllById(ids)).willReturn(List.of());
         // When
-        Set<Permission> permissions = service.findAllById(ids);
+        Set<Permission> permissions = service.getAllById(ids);
         // Then
         assertThat(permissions).isEmpty();
         verify(repository).findAllById(ids);
-    }
-
-    @Test
-    @DisplayName(value = "Elimina el permiso correctamente cuando el ID existe")
-    void givenExistingId_whenDelete_thenDeletesPermission() {
-        // Given
-        Permission permission = PermissionTestData.aPermission()
-                .build();
-        permission.setId(ID);
-        given(repository.findById(ID)).willReturn(Optional.of(permission));
-        // When
-        service.delete(ID);
-        // Then
-        verify(repository).findById(ID);
-        verify(repository).delete(permission);
-    }
-
-    @Test
-    @DisplayName(value = "Lanza EntityNotFoundException cuando el permiso a eliminar no existe")
-    void givenNonExistingId_whenDelete_thenThrowsEntityNotFoundException() {
-        // Given
-        given(repository.findById(ID)).willReturn(Optional.empty());
-        // When + Then
-        assertThatThrownBy(() -> service.delete(ID))
-                .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage(PermissionExceptionMessages.NOT_FOUND);
-        verify(repository).findById(ID);
-        verifyNoMoreInteractions(repository);
     }
 
 }

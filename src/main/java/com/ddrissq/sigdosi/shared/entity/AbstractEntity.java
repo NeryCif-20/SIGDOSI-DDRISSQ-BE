@@ -1,4 +1,4 @@
-package com.ddrissq.sigdosi.shared.model;
+package com.ddrissq.sigdosi.shared.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,16 +6,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(value = AuditingEntityListener.class)
 @MappedSuperclass
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public abstract class AbstractModel {
+public abstract class AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,9 +23,9 @@ public abstract class AbstractModel {
     private UUID id;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @LastModifiedDate
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
 
 }
