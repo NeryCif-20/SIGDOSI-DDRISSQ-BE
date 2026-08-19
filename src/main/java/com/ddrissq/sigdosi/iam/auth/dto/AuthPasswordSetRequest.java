@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.auth.dto;
 
-import com.ddrissq.sigdosi.shared.validation.annotation.FieldMatch;
+import com.ddrissq.sigdosi.common.validation.annotation.FieldMatch;
 import jakarta.validation.constraints.NotBlank;
 
 @FieldMatch(

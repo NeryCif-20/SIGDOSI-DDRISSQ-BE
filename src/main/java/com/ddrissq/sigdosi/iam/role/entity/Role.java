@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.role.entity;
 
 import com.ddrissq.sigdosi.iam.permission.entity.Permission;
-import com.ddrissq.sigdosi.shared.entity.AbstractEntity;
+import com.ddrissq.sigdosi.common.entity.AbstractEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;

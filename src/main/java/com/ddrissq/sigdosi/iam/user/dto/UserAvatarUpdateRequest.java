@@ -1,8 +1,8 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
-import com.ddrissq.sigdosi.shared.validation.annotation.RequiredFile;
-import com.ddrissq.sigdosi.shared.validation.annotation.ImageFile;
-import com.ddrissq.sigdosi.shared.validation.annotation.MaxFileSize;
+import com.ddrissq.sigdosi.common.validation.annotation.RequiredFile;
+import com.ddrissq.sigdosi.common.validation.annotation.ImageFile;
+import com.ddrissq.sigdosi.common.validation.annotation.MaxFileSize;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 

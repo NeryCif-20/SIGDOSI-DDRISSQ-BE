@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.entity;
 
-import com.ddrissq.sigdosi.shared.entity.AbstractEntity;
+import com.ddrissq.sigdosi.common.entity.AbstractEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;

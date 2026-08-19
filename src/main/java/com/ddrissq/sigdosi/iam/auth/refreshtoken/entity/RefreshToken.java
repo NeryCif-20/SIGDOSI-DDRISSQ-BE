@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.auth.refreshtoken.entity;
 
 import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
-import com.ddrissq.sigdosi.shared.entity.AbstractEntity;
+import com.ddrissq.sigdosi.common.entity.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

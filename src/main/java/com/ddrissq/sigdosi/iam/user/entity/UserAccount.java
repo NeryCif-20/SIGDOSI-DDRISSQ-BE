@@ -2,7 +2,7 @@ package com.ddrissq.sigdosi.iam.user.entity;
 
 import com.ddrissq.sigdosi.iam.role.entity.Role;
 import com.ddrissq.sigdosi.iam.user.model.UserAccountStatus;
-import com.ddrissq.sigdosi.shared.entity.AbstractEntity;
+import com.ddrissq.sigdosi.common.entity.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +24,7 @@ public class UserAccount extends AbstractEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserProfile profile;
 
-    public void setUserProfile(UserProfile profile) {
+    public void setProfile(UserProfile profile) {
         this.profile = profile;
         profile.setUser(this);
     }

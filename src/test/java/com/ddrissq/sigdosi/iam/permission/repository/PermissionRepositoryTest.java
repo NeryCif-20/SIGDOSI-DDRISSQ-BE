@@ -1,21 +1,18 @@
 package com.ddrissq.sigdosi.iam.permission.repository;
 
-import com.ddrissq.sigdosi.TestcontainersConfiguration;
 import com.ddrissq.sigdosi.iam.permission.entity.Permission;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionTestData;
+import com.ddrissq.sigdosi.shared.annotation.JpaTest;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
 import static com.ddrissq.sigdosi.iam.permission.support.PermissionTestConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
-@DataJpaTest
-@Import(value = TestcontainersConfiguration.class)
+@JpaTest
 class PermissionRepositoryTest {
 
     private final PermissionRepository repository;

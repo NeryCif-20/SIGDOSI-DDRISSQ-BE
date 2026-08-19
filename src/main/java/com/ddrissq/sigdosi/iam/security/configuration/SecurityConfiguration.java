@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.security.configuration;
 
-import com.ddrissq.sigdosi.shared.configuration.application.ApplicationProperties;
+import com.ddrissq.sigdosi.common.configuration.application.ApplicationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;

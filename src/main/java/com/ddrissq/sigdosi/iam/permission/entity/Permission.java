@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.permission.entity;
 
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
-import com.ddrissq.sigdosi.shared.entity.AbstractEntity;
+import com.ddrissq.sigdosi.common.entity.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

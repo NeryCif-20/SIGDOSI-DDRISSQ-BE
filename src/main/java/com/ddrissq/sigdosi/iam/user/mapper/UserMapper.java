@@ -26,6 +26,9 @@ public interface UserMapper {
     UserResponse toResponse(UserAccount user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "profile.cui", source = "cui")
