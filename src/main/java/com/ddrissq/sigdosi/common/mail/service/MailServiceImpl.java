@@ -38,7 +38,7 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
         } catch (MessagingException ex) {
             throw new MailSendingException(
-                    MailErrorMessages.EMAIL_SENDING_FAILED);
+                    MailErrorMessages.EMAIL_SEND_FAILED);
         }
     }
 
