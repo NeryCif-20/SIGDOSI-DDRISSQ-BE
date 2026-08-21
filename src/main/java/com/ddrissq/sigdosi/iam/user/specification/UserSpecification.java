@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.user.specification;
 
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
-import com.ddrissq.sigdosi.iam.user.model.UserAccountStatus;
+import com.ddrissq.sigdosi.iam.user.model.User;
+import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UserSpecification {
 
-    public static Specification<UserAccount> hasEmail(String email) {
+    public static Specification<User> hasEmail(String email) {
         return (root, query, builder) -> {
             if (!StringUtils.hasText(email)) {
                 return null;
@@ -21,7 +21,7 @@ public final class UserSpecification {
         };
     }
 
-    public static Specification<UserAccount> hasStatus(UserAccountStatus status) {
+    public static Specification<User> hasStatus(UserStatus status) {
         return (root, query, builder) -> {
             if (status == null) {
                 return null;
@@ -30,7 +30,7 @@ public final class UserSpecification {
         };
     }
 
-    public static Specification<UserAccount> hasCui(String cui) {
+    public static Specification<User> hasCui(String cui) {
         return (root, query, builder) -> {
             if (!StringUtils.hasText(cui)) {
                 return null;
@@ -41,7 +41,7 @@ public final class UserSpecification {
         };
     }
 
-    public static Specification<UserAccount> hasName(String name) {
+    public static Specification<User> hasName(String name) {
         return (root, query, builder) -> {
             if (!StringUtils.hasText(name)) {
                 return null;
@@ -57,7 +57,7 @@ public final class UserSpecification {
         };
     }
 
-    public static Specification<UserAccount> hasPhoneNumber(String phoneNumber) {
+    public static Specification<User> hasPhoneNumber(String phoneNumber) {
         return (root, query, builder) -> {
             if (!StringUtils.hasText(phoneNumber)) {
                 return null;

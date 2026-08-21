@@ -4,7 +4,7 @@ import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
 import com.ddrissq.sigdosi.iam.role.dto.RoleSearchRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
-import com.ddrissq.sigdosi.iam.role.entity.Role;
+import com.ddrissq.sigdosi.iam.role.model.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

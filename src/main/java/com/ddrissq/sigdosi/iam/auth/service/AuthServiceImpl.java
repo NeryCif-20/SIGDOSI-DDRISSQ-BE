@@ -1,30 +1,34 @@
 package com.ddrissq.sigdosi.iam.auth.service;
 
+import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthIdentifyRequest;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthLoginRequest;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthPasswordValidateRequest;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthPasswordSetRequest;
-import com.ddrissq.sigdosi.iam.auth.flowtoken.entity.FlowToken;
+import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
+import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenResult;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.service.FlowTokenService;
-import com.ddrissq.sigdosi.iam.auth.passwordtoken.entity.PasswordToken;
+import com.ddrissq.sigdosi.iam.auth.mail.model.PasswordSetEmailData;
+import com.ddrissq.sigdosi.iam.auth.mail.service.AuthMailService;
+import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenPurpose;
+import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenResult;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.service.PasswordTokenService;
-import com.ddrissq.sigdosi.iam.auth.refreshtoken.entity.RefreshToken;
-import com.ddrissq.sigdosi.iam.auth.exception.AuthExceptionMessages;
-import com.ddrissq.sigdosi.iam.auth.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.auth.exception.AuthorizationException;
+import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
+import com.ddrissq.sigdosi.iam.auth.constant.AuthErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
+import com.ddrissq.sigdosi.iam.exception.AuthorizationException;
 import com.ddrissq.sigdosi.iam.auth.model.AuthIdentityResult;
 import com.ddrissq.sigdosi.iam.auth.model.AuthResult;
-import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowStep;
+import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
+import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.service.RefreshTokenService;
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
-import com.ddrissq.sigdosi.iam.security.configuration.SecurityProperties;
-import com.ddrissq.sigdosi.iam.security.token.model.JwtCreateParams;
-import com.ddrissq.sigdosi.iam.security.token.service.TokenService;
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
-import com.ddrissq.sigdosi.iam.user.model.UserAccountStatus;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
+import com.ddrissq.sigdosi.iam.security.jwt.model.JwtGenerateData;
+import com.ddrissq.sigdosi.iam.security.jwt.service.JwtService;
+import com.ddrissq.sigdosi.iam.user.model.User;
+import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import com.ddrissq.sigdosi.iam.user.service.UserService;
-import com.ddrissq.sigdosi.common.mail.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,69 +44,79 @@ import java.util.List;
 public class AuthServiceImpl implements AuthService {
 
     private final UserService userService;
-    private final SecurityProperties properties;
+    private final AuthProperties props;
     private final PasswordEncoder passwordEncoder;
-    private final TokenService tokenService;
+    private final JwtService jwtService;
     private final FlowTokenService flowTokenService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordTokenService passwordTokenService;
-    private final MailService mailService;
+    private final AuthMailService mailService;
 
     @Override
     public AuthIdentityResult identify(AuthIdentifyRequest request) {
-        UserAccount user = userService.getByEmailOrThrow(request.email());
-        FlowStep step = resolveStep(user.getStatus());
-        String flowToken = flowTokenService.create(user, step);
+        User user = userService.getByEmailOrThrow(request.email());
+        FlowTokenStep step = resolveStep(user.getStatus());
+        FlowTokenResult result = flowTokenService.create(user, step);
         return AuthIdentityResult.builder()
-                .flowToken(flowToken)
-                .step(step)
+                .flowToken(result.token())
+                .step(result.step())
+                .expiresAt(result.expiresAt())
                 .build();
     }
 
     @Override
     public AuthResult login(String token, AuthLoginRequest request) {
         FlowToken flowToken = flowTokenService.getByTokenOrThrow(
-                token, FlowStep.PASSWORD);
-        UserAccount user = flowToken.getUser();
+                token, FlowTokenStep.PASSWORD);
+        User user = flowToken.getUser();
         boolean passwordInvalid = !passwordEncoder.matches(
                 request.password(),
                 user.getPasswordHash());
         if (passwordInvalid) {
             throw new AuthenticationException(
-                    AuthExceptionMessages.BAD_CREDENTIALS);
+                    AuthErrorMessages.BAD_CREDENTIALS);
         }
         flowToken.setRevokedAt(Instant.now());
+        RefreshTokenResult result = refreshTokenService.create(user);
         return AuthResult.builder()
                 .accessToken(issueAccessToken(user))
-                .refreshToken(refreshTokenService.create(user))
+                .refreshToken(result.token())
+                .expiresAt(result.expiresAt())
                 .build();
     }
 
     @Override
     public AuthResult refresh(String token) {
         RefreshToken refreshToken = refreshTokenService.getByTokenOrThrow(token);
-        UserAccount user = refreshToken.getUser();
+        RefreshTokenResult result = refreshTokenService.rotate(refreshToken);
         return AuthResult.builder()
-                .accessToken(issueAccessToken(user))
-                .refreshToken(refreshTokenService.rotate(refreshToken))
+                .accessToken(issueAccessToken(refreshToken.getUser()))
+                .refreshToken(result.token())
+                .expiresAt(result.expiresAt())
                 .build();
     }
 
     @Override
     public void sendSetupPasswordEmail(String token) {
         FlowToken flowToken = flowTokenService.getByTokenOrThrow(
-                token, FlowStep.SETUP_PASSWORD);
-        UserAccount user = flowToken.getUser();
-        sendPasswordEmail(user, PasswordTokenPurpose.SETUP_PASSWORD);
+                token, FlowTokenStep.SETUP_PASSWORD);
+        User user = flowToken.getUser();
+        PasswordTokenResult result = passwordTokenService.create(
+                user, PasswordTokenPurpose.SETUP_PASSWORD);
+        mailService.sendSetupPasswordEmail(
+                buildPasswordSetEmailData(result));
         flowToken.setRevokedAt(Instant.now());
     }
 
     @Override
     public void sendResetPasswordEmail(String token) {
         FlowToken flowToken = flowTokenService.getByTokenOrThrow(
-                token, FlowStep.PASSWORD);
-        UserAccount user = flowToken.getUser();
-        sendPasswordEmail(user, PasswordTokenPurpose.RESET_PASSWORD);
+                token, FlowTokenStep.PASSWORD);
+        User user = flowToken.getUser();
+        PasswordTokenResult result = passwordTokenService.create(
+                user, PasswordTokenPurpose.RESET_PASSWORD);
+        mailService.sendResetPasswordEmail(
+                buildPasswordSetEmailData(result));
         flowToken.setRevokedAt(Instant.now());
     }
 
@@ -115,16 +129,18 @@ public class AuthServiceImpl implements AuthService {
     public AuthResult setPassword(AuthPasswordSetRequest request) {
         PasswordToken passwordToken = passwordTokenService
                 .getByTokenOrThrow(request.token());
-        UserAccount user = passwordToken.getUser();
+        User user = passwordToken.getUser();
         String newPasswordHash = passwordEncoder.encode(request.newPassword());
         user.setPasswordHash(newPasswordHash);
-        if (user.getStatus() == UserAccountStatus.PENDING) {
-            user.setStatus(UserAccountStatus.ACTIVE);
+        if (user.getStatus() == UserStatus.PENDING) {
+            user.setStatus(UserStatus.ACTIVE);
         }
         passwordToken.setRevokedAt(Instant.now());
+        RefreshTokenResult result = refreshTokenService.create(user);
         return AuthResult.builder()
                 .accessToken(issueAccessToken(user))
-                .refreshToken(refreshTokenService.create(user))
+                .refreshToken(result.token())
+                .expiresAt(result.expiresAt())
                 .build();
     }
 
@@ -134,33 +150,35 @@ public class AuthServiceImpl implements AuthService {
         refreshToken.setRevokedAt(Instant.now());
     }
 
-    private FlowStep resolveStep(UserAccountStatus status) {
+    private FlowTokenStep resolveStep(UserStatus status) {
         return switch (status) {
-            case ACTIVE -> FlowStep.PASSWORD;
-            case PENDING -> FlowStep.SETUP_PASSWORD;
+            case ACTIVE -> FlowTokenStep.PASSWORD;
+            case PENDING -> FlowTokenStep.SETUP_PASSWORD;
             default -> throw new AuthorizationException(
-                    AuthExceptionMessages.USER_DISABLED);
+                    AuthErrorMessages.USER_DISABLED);
         };
     }
 
-    private String issueAccessToken(UserAccount user) {
-        Duration exp = properties.getAccessToken().getExpirationTime();
+    private String issueAccessToken(User user) {
+        Duration timeToLive = props.accessToken().timeToLive();
         List<String> authorities = user.getRole().getPermissions().stream()
                 .map(Permission::getAuthority)
                 .toList();
-        JwtCreateParams request = JwtCreateParams.builder()
+        JwtGenerateData params = JwtGenerateData.builder()
                 .subject(user.getId().toString())
-                .expirationTime(exp)
+                .timeToLive(timeToLive)
                 .claim("authorities", authorities)
                 .build();
-        return tokenService.generateJwt(request);
+        return jwtService.generate(params);
     }
 
-    private void sendPasswordEmail(UserAccount user, PasswordTokenPurpose purpose) {
-        String to = user.getEmail();
-        String name = user.getProfile().getFullName();
-        String token = passwordTokenService.create(user, purpose);
-        mailService.sendPasswordEmail(to, name, token, purpose);
+    private PasswordSetEmailData buildPasswordSetEmailData(PasswordTokenResult result) {
+        return PasswordSetEmailData.builder()
+                .to(result.user().getEmail())
+                .name(result.user().getProfile().getFullName())
+                .token(result.token())
+                .expiresAt(result.expiresAt())
+                .build();
     }
 
 }

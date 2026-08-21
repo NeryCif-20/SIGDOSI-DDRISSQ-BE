@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.security.handler;
 
-import com.ddrissq.sigdosi.iam.security.exception.SecurityExceptionMessages;
+import com.ddrissq.sigdosi.iam.security.constant.SecurityErrorMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     public void handle(
             HttpServletRequest request,
             HttpServletResponse response,
-            AccessDeniedException accessDeniedException) throws IOException {
+            AccessDeniedException exception) throws IOException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON.toString());
         response.getWriter().write(buildResponse(request.getRequestURI()));
@@ -35,7 +35,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     private String buildResponse(String path) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.FORBIDDEN,
-                SecurityExceptionMessages.ACCESS_DENIED);
+                SecurityErrorMessages.ACCESS_DENIED);
         detail.setInstance(URI.create(path));
         detail.setTitle("Authorization Error");
         detail.setProperty("error_category", "Auth");

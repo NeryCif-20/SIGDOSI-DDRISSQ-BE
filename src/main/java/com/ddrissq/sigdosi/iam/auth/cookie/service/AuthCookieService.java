@@ -1,11 +1,13 @@
 package com.ddrissq.sigdosi.iam.auth.cookie.service;
 
-import com.ddrissq.sigdosi.iam.auth.cookie.AuthCookieNames;
-import com.ddrissq.sigdosi.iam.security.configuration.SecurityProperties;
 import com.ddrissq.sigdosi.common.cookie.service.CookieService;
+import com.ddrissq.sigdosi.iam.auth.cookie.constant.AuthCookieNames;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.Instant;
 
 
 @RequiredArgsConstructor
@@ -13,13 +15,13 @@ import org.springframework.stereotype.Service;
 public class AuthCookieService {
 
     private final CookieService service;
-    private final SecurityProperties properties;
 
-    public ResponseCookie createRefreshTokenCookie(String token) {
+    public ResponseCookie createRefreshTokenCookie(String token, Instant expiresAt) {
+        Duration maxAge = Duration.between(Instant.now(), expiresAt);
         return service.create(
                 AuthCookieNames.REFRESH_TOKEN,
                 token,
-                properties.getRefreshToken().getExpirationTime()
+                maxAge
         );
     }
 
@@ -27,11 +29,12 @@ public class AuthCookieService {
         return service.delete(AuthCookieNames.REFRESH_TOKEN);
     }
 
-    public ResponseCookie createFlowTokenCookie(String value) {
+    public ResponseCookie createFlowTokenCookie(String value, Instant expiresAt) {
+        Duration maxAge = Duration.between(Instant.now(), expiresAt);
         return service.create(
                 AuthCookieNames.FLOW_TOKEN,
                 value,
-                properties.getFlowToken().getExpirationTime()
+                maxAge
         );
     }
 

@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.security.configuration;
 
-import com.ddrissq.sigdosi.common.configuration.application.ApplicationProperties;
+import com.ddrissq.sigdosi.configuration.ApplicationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +27,10 @@ import java.util.List;
 public class SecurityConfiguration {
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(ApplicationProperties properties) {
+    public CorsConfigurationSource corsConfigurationSource(ApplicationProperties props) {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
-                List.of(properties.getClient().getOrigin()));
+                List.of(props.client().origin()));
         configuration.setAllowedMethods(
                 List.of("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(

@@ -1,8 +1,8 @@
 package com.ddrissq.sigdosi.iam.role.specification;
 
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
-import com.ddrissq.sigdosi.iam.role.entity.Role;
+import com.ddrissq.sigdosi.iam.role.model.Role;
 import jakarta.persistence.criteria.Join;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

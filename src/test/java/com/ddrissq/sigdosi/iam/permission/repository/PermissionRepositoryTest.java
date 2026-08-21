@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.permission.repository;
 
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionTestData;
 import com.ddrissq.sigdosi.shared.annotation.JpaTest;
 import lombok.RequiredArgsConstructor;

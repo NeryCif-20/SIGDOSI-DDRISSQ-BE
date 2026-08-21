@@ -5,9 +5,9 @@ import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
 import com.ddrissq.sigdosi.iam.role.dto.RoleSearchRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
-import com.ddrissq.sigdosi.iam.role.exception.RoleExceptionMessages;
+import com.ddrissq.sigdosi.iam.role.constant.RoleErrorMessages;
 import com.ddrissq.sigdosi.iam.role.mapper.RoleMapper;
-import com.ddrissq.sigdosi.iam.role.entity.Role;
+import com.ddrissq.sigdosi.iam.role.model.Role;
 import com.ddrissq.sigdosi.iam.role.repository.RoleRepository;
 import com.ddrissq.sigdosi.iam.role.specification.RoleSpecification;
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
@@ -69,7 +69,7 @@ public class RoleServiceImpl implements RoleService{
     public Role getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        RoleExceptionMessages.NOT_FOUND));
+                        RoleErrorMessages.NOT_FOUND));
     }
 
     private void validateUniqueName(String name) {
@@ -83,7 +83,7 @@ public class RoleServiceImpl implements RoleService{
                 : repository.existsByNameAndIdNot(name, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    RoleExceptionMessages.ALREADY_EXISTS);
+                    RoleErrorMessages.ALREADY_EXISTS);
         }
     }
 

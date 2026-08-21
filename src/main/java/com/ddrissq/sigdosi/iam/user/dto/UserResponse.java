@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
-import com.ddrissq.sigdosi.iam.user.model.UserAccountStatus;
+import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import lombok.Builder;
 
 import java.util.UUID;
@@ -9,7 +9,7 @@ import java.util.UUID;
 public record UserResponse(
         UUID id,
         String email,
-        UserAccountStatus status,
+        UserStatus status,
         String cui,
         String firstName,
         String lastName,

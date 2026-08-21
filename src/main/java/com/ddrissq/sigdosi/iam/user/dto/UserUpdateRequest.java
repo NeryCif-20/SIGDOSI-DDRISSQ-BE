@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
-import com.ddrissq.sigdosi.iam.user.model.UserAccountStatus;
+import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -10,7 +10,7 @@ import lombok.Builder;
 public record UserUpdateRequest(
         @Email(message = "El email no tiene un formato valido")
         String email,
-        UserAccountStatus status,
+        UserStatus status,
         @Pattern(regexp = "^\\d{13}$", message = "El CUI debe ser de 13 dígitos")
         String cui,
         @Size(max = 50, message = "El nombre no debe exceder los {max} caracteres")

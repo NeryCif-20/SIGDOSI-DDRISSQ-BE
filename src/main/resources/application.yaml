@@ -32,15 +32,22 @@ server:
 app:
   client:
     origin: ${CLIENT_ORIGIN:http://localhost:4200}
+  cookies:
+    same-site: ${COOKIES_SITE:strict}
+    path: ${COOKIES_PATH:/}
+  zone: ${ZONE:America/Guatemala}
 
-security:
-  flow-token:
-    expiration-time: ${FLOW_EXP:5m}
-  password-token:
-    expiration-time: ${PASS_EXP:10m}
-  refresh-token:
-    expiration-time: ${REFRESH_EXP:7d}
-  access-token:
-    expiration-time: ${ACCESS_EXP:15m}
-    public-key: file:${ACCESS_PUBLIC_KEY}
-    private-key: file:${ACCESS_PRIVATE_KEY}
+iam:
+  security:
+    jwt:
+      public-key: file:${JWT_PUBLIC_KEY}
+      private-key: file:${JWT_PRIVATE_KEY}
+  auth:
+    flow-token:
+      time-to-live: ${FLOW_TTL:5m}
+    password-token:
+      time-to-live: ${PASS_TTL:10m}
+    refresh-token:
+      time-to-live: ${REFRESH_TTL:7d}
+    access-token:
+      time-to-live: ${ACCESS_TTL:15m}

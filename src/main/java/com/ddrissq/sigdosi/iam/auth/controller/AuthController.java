@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.auth.controller;
 
-import com.ddrissq.sigdosi.iam.auth.cookie.AuthCookieNames;
+import com.ddrissq.sigdosi.iam.auth.cookie.constant.AuthCookieNames;
 import com.ddrissq.sigdosi.iam.auth.cookie.service.AuthCookieService;
 import com.ddrissq.sigdosi.iam.auth.dto.*;
 import com.ddrissq.sigdosi.iam.auth.model.AuthIdentityResult;
@@ -26,8 +26,8 @@ public class AuthController {
     public ResponseEntity<AuthIdentifyResponse> identify(
             @RequestBody @Valid AuthIdentifyRequest request) {
         AuthIdentityResult result = service.identify(request);
-        ResponseCookie flowTokenCookie = cookieService.createFlowTokenCookie
-                (result.flowToken());
+        ResponseCookie flowTokenCookie = cookieService.createFlowTokenCookie(
+                result.flowToken(), result.expiresAt());
         AuthIdentifyResponse response = AuthIdentifyResponse.builder()
                 .step(result.step())
                 .build();
@@ -43,7 +43,7 @@ public class AuthController {
         AuthResult result = service.login(token, request);
         ResponseCookie flowTokenCookie = cookieService.deleteFlowTokenCookie();
         ResponseCookie refreshTokenCookie = cookieService.createRefreshTokenCookie(
-                result.refreshToken());
+                result.refreshToken(), result.expiresAt());
         AuthResponse response = AuthResponse.builder()
                 .accessToken(result.accessToken())
                 .build();
@@ -78,7 +78,7 @@ public class AuthController {
             @CookieValue(value = AuthCookieNames.REFRESH_TOKEN) String token) {
         AuthResult result = service.refresh(token);
         ResponseCookie refreshTokenCookie = cookieService.createRefreshTokenCookie(
-                result.refreshToken());
+                result.refreshToken(), result.expiresAt());
         AuthResponse response = AuthResponse.builder()
                 .accessToken(result.accessToken())
                 .build();
@@ -100,7 +100,7 @@ public class AuthController {
             @RequestBody @Valid AuthPasswordSetRequest request) {
         AuthResult result = service.setPassword(request);
         ResponseCookie refreshTokenCookie = cookieService.createRefreshTokenCookie(
-                result.refreshToken());
+                result.refreshToken(), result.expiresAt());
         AuthResponse response = AuthResponse.builder()
                 .accessToken(result.accessToken())
                 .build();

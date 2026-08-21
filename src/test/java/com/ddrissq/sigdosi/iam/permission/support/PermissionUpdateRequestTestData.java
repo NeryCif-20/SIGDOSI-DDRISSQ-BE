@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class PermissionUpdateRequestTestData {
+public final class PermissionUpdateRequestTestData {
 
     public static PermissionUpdateRequest.PermissionUpdateRequestBuilder aRequest() {
         return PermissionUpdateRequest.builder();

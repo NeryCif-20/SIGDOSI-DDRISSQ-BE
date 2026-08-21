@@ -4,9 +4,9 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
-import com.ddrissq.sigdosi.iam.permission.exception.PermissionExceptionMessages;
+import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessages;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.support.*;
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
@@ -74,7 +74,7 @@ class PermissionServiceTest {
         // When + Then
         assertThatThrownBy(() -> service.get(ID))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage(PermissionExceptionMessages.NOT_FOUND);
+                .hasMessage(PermissionErrorMessages.NOT_FOUND);
         verify(repository).findById(ID);
         verifyNoInteractions(mapper);
     }
@@ -118,7 +118,7 @@ class PermissionServiceTest {
         // When + Then
         assertThatThrownBy(() -> service.create(request))
                 .isInstanceOf(EntityAlreadyExistsException.class)
-                .hasMessage(PermissionExceptionMessages.ALREADY_EXISTS);
+                .hasMessage(PermissionErrorMessages.ALREADY_EXISTS);
         verify(repository).existsByModuleAndAction(request.module(), request.action());
         verifyNoMoreInteractions(repository);
         verifyNoInteractions(mapper);
@@ -190,7 +190,7 @@ class PermissionServiceTest {
         // When + Then
         assertThatThrownBy(() -> service.update(ID, request))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage(PermissionExceptionMessages.NOT_FOUND);
+                .hasMessage(PermissionErrorMessages.NOT_FOUND);
         verify(repository).findById(ID);
         verifyNoMoreInteractions(repository);
         verifyNoInteractions(mapper);
@@ -271,7 +271,7 @@ class PermissionServiceTest {
         // When + Then
         assertThatThrownBy(() -> service.update(ID, request))
                 .isInstanceOf(EntityAlreadyExistsException.class)
-                .hasMessage(PermissionExceptionMessages.ALREADY_EXISTS);
+                .hasMessage(PermissionErrorMessages.ALREADY_EXISTS);
         verify(repository).findById(ID);
         verify(repository)
                 .existsByModuleAndActionAndIdNot(request.module(), request.action(), ID);
@@ -344,7 +344,7 @@ class PermissionServiceTest {
         // When + Then
         assertThatThrownBy(() -> service.getByIdOrThrow(ID))
                 .isInstanceOf(EntityNotFoundException.class)
-                .hasMessage(PermissionExceptionMessages.NOT_FOUND);
+                .hasMessage(PermissionErrorMessages.NOT_FOUND);
         verify(repository).findById(ID);
     }
 

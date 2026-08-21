@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.auth.passwordtoken.repository;
 
-import com.ddrissq.sigdosi.iam.auth.passwordtoken.entity.PasswordToken;
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
+import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
+import com.ddrissq.sigdosi.iam.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,7 +31,7 @@ public interface PasswordTokenRepository extends JpaRepository<PasswordToken, UU
             AND pt.revokedAt IS NULL
             AND pt.expiresAt > CURRENT_TIMESTAMP
     """)
-    void revokeAllActiveTokensByUser(@Param("user") UserAccount user);
+    void revokeAllActiveTokensByUser(@Param("user") User user);
 
     void deleteAllByExpiresAtBefore(Instant expiresAtBefore);
 

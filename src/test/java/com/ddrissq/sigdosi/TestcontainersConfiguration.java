@@ -13,8 +13,8 @@ public class TestcontainersConfiguration {
 
     @Bean
     @ServiceConnection
-    PostgreSQLContainer postgresContainer(TestcontainersProperties properties) {
-        String imageName = "postgres:" + properties.getPostgres().getVersion();
+    PostgreSQLContainer postgresContainer(TestcontainersProperties props) {
+        String imageName = "postgres:" + props.postgres().version();
         return new PostgreSQLContainer(
                 DockerImageName.parse(imageName));
     }

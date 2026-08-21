@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.security.handler;
 
-import com.ddrissq.sigdosi.iam.security.exception.SecurityExceptionMessages;
+import com.ddrissq.sigdosi.iam.security.constant.SecurityErrorMessages;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,18 +28,18 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     public void commence(
             HttpServletRequest request,
             HttpServletResponse response,
-            AuthenticationException authException) throws IOException {
+            AuthenticationException exception) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON.toString());
-        String detail = resolveDetail(authException.getCause());
+        String detail = resolveDetail(exception.getCause());
         response.getWriter().write(buildResponse(detail, request.getRequestURI()));
     }
 
     private String resolveDetail(Throwable cause) {
         return switch (cause) {
-            case JwtValidationException ex -> SecurityExceptionMessages.EXPIRED_TOKEN;
-            case BadJwtException ex -> SecurityExceptionMessages.INVALID_TOKEN;
-            default -> SecurityExceptionMessages.AUTHENTICATION_REQUIRED;
+            case JwtValidationException ex -> SecurityErrorMessages.EXPIRED_TOKEN;
+            case BadJwtException ex -> SecurityErrorMessages.INVALID_TOKEN;
+            default -> SecurityErrorMessages.AUTHENTICATION_REQUIRED;
         };
     }
 

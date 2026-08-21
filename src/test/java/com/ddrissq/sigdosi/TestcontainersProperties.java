@@ -1,20 +1,15 @@
 package com.ddrissq.sigdosi;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Getter
-@Setter
 @ConfigurationProperties(prefix = "testcontainers")
-public class TestcontainersProperties {
+public record TestcontainersProperties(
+       ContainerProperties postgres
+) {
 
-    private Container postgres;
-
-    @Getter
-    @Setter
-    public static class Container {
-        private String version;
+    public record ContainerProperties(
+            String version
+    ) {
     }
 
 }

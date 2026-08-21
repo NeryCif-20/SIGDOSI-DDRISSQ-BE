@@ -4,9 +4,9 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
-import com.ddrissq.sigdosi.iam.permission.exception.PermissionExceptionMessages;
+import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessages;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.specification.PermissionSpecification;
@@ -72,7 +72,7 @@ public class PermissionServiceImpl implements PermissionService {
     public Permission getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        PermissionExceptionMessages.NOT_FOUND));
+                        PermissionErrorMessages.NOT_FOUND));
     }
 
     @Override
@@ -92,7 +92,7 @@ public class PermissionServiceImpl implements PermissionService {
                 : repository.existsByModuleAndActionAndIdNot(module, action, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    PermissionExceptionMessages.ALREADY_EXISTS);
+                    PermissionErrorMessages.ALREADY_EXISTS);
         }
     }
 

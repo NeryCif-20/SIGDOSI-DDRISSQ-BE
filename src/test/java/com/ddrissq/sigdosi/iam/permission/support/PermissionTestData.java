@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.permission.support;
 
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.List;
 import static com.ddrissq.sigdosi.iam.permission.support.PermissionTestConstants.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class PermissionTestData {
+public final class PermissionTestData {
 
     public static Permission.PermissionBuilder aPermission() {
         return Permission.builder()

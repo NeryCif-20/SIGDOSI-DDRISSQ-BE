@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.user.service;
 
 import com.ddrissq.sigdosi.iam.user.dto.*;
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
+import com.ddrissq.sigdosi.iam.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,7 +18,7 @@ public interface UserService {
     UserResponse update(UserUpdateRequest request);
     void updatePassword(UserPasswordUpdateRequest request);
     UserResponse updateAvatar(UserAvatarUpdateRequest request);
-    UserAccount getByIdOrThrow(UUID id);
-    UserAccount getByEmailOrThrow(String email);
+    User getByIdOrThrow(UUID id);
+    User getByEmailOrThrow(String email);
 
 }

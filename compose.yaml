@@ -5,6 +5,6 @@ services:
       - 'POSTGRES_DB=${POSTGRES_NAME}'
       - 'POSTGRES_PASSWORD=${POSTGRES_PASS}'
       - 'POSTGRES_USER=${POSTGRES_USER}'
-      - 'TZ=America/Guatemala'
+      - 'TZ=${ZONE}'
     ports:
       - '${POSTGRES_PORT}:5432'

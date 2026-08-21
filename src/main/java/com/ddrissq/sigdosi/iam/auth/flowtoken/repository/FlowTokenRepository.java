@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.auth.flowtoken.repository;
 
-import com.ddrissq.sigdosi.iam.auth.flowtoken.entity.FlowToken;
-import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowStep;
+import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
+import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,7 +21,7 @@ public interface FlowTokenRepository extends JpaRepository<FlowToken, UUID> {
             AND ft.revokedAt IS NULL
     """)
     Optional<FlowToken> findValidToken(
-            @Param("tokenHash") String tokenHash, @Param("step") FlowStep step);
+            @Param("tokenHash") String tokenHash, @Param("step") FlowTokenStep step);
 
     void deleteAllByExpiresAtBefore(Instant expiresAtBefore);
 

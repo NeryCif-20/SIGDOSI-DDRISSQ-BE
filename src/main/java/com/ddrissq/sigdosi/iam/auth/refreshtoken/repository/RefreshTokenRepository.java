@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.auth.refreshtoken.repository;
 
-import com.ddrissq.sigdosi.iam.auth.refreshtoken.entity.RefreshToken;
+import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

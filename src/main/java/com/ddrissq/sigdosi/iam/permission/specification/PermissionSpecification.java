@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.permission.specification;
 
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

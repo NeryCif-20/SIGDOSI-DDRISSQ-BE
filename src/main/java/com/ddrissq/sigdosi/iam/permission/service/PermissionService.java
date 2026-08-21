@@ -4,7 +4,7 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
-import com.ddrissq.sigdosi.iam.permission.entity.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

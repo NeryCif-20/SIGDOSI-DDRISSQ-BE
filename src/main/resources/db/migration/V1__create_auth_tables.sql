@@ -55,7 +55,7 @@ CREATE TABLE user_profile
     first_name      VARCHAR(50) NOT NULL,
     last_name       VARCHAR(50) NOT NULL,
     avatar          VARCHAR(45) UNIQUE,
-    phone_number    VARCHAR(8) UNIQUE,
+    phone_number    VARCHAR(8)  UNIQUE,
     created_at      TIMESTAMPTZ NOT NULL,
     updated_at      TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id),

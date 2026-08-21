@@ -4,7 +4,7 @@ import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
 import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
-import com.ddrissq.sigdosi.iam.role.entity.Role;
+import com.ddrissq.sigdosi.iam.role.model.Role;
 import org.mapstruct.*;
 
 @Mapper(uses = {PermissionMapper.class})

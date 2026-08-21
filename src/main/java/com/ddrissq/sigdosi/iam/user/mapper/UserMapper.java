@@ -3,7 +3,7 @@ package com.ddrissq.sigdosi.iam.user.mapper;
 import com.ddrissq.sigdosi.iam.user.dto.UserCreateRequest;
 import com.ddrissq.sigdosi.iam.user.dto.UserResponse;
 import com.ddrissq.sigdosi.iam.user.dto.UserUpdateRequest;
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
+import com.ddrissq.sigdosi.iam.user.model.User;
 import org.mapstruct.*;
 
 @Mapper
@@ -16,14 +16,14 @@ public interface UserMapper {
     @Mapping(target = "profile.firstName", source = "firstName")
     @Mapping(target = "profile.lastName", source = "lastName")
     @Mapping(target = "profile.phoneNumber", source = "phoneNumber")
-    UserAccount toUser(UserCreateRequest request);
+    User toUser(UserCreateRequest request);
 
     @Mapping(target = "cui", source = "profile.cui")
     @Mapping(target = "firstName", source = "profile.firstName")
     @Mapping(target = "lastName", source = "profile.lastName")
     @Mapping(target = "avatar", source = "profile.avatar")
     @Mapping(target = "phoneNumber", source = "profile.phoneNumber")
-    UserResponse toResponse(UserAccount user);
+    UserResponse toResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
@@ -35,6 +35,6 @@ public interface UserMapper {
     @Mapping(target = "profile.firstName", source = "firstName")
     @Mapping(target = "profile.lastName", source = "lastName")
     @Mapping(target = "profile.phoneNumber", source = "phoneNumber")
-    void updateUser(UserUpdateRequest request, @MappingTarget UserAccount user);
+    void updateUser(UserUpdateRequest request, @MappingTarget User user);
 
 }

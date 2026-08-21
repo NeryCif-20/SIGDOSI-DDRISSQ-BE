@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.role.repository;
 
-import com.ddrissq.sigdosi.iam.role.entity.Role;
+import com.ddrissq.sigdosi.iam.role.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

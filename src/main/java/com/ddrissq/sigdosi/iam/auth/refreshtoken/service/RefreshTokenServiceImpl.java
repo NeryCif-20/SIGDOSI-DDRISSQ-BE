@@ -1,15 +1,15 @@
 package com.ddrissq.sigdosi.iam.auth.refreshtoken.service;
 
-import com.ddrissq.sigdosi.iam.auth.refreshtoken.entity.RefreshToken;
-import com.ddrissq.sigdosi.iam.auth.exception.AuthExceptionMessages;
-import com.ddrissq.sigdosi.iam.auth.exception.AuthenticationException;
+import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
+import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
+import com.ddrissq.sigdosi.iam.auth.constant.AuthErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
+import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.repository.RefreshTokenRepository;
-import com.ddrissq.sigdosi.iam.security.configuration.SecurityProperties;
-import com.ddrissq.sigdosi.iam.security.token.service.TokenService;
-import com.ddrissq.sigdosi.iam.security.util.Hashing;
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
+import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
+import com.ddrissq.sigdosi.iam.security.crypto.util.Sha256Digest;
+import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +22,16 @@ import java.util.UUID;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final RefreshTokenRepository repository;
-    private final SecurityProperties properties;
-    private final TokenService tokenService;
+    private final SecureTokenService tokenService;
+    private final AuthProperties props;
 
     @Override
-    public String create(UserAccount user) {
+    public RefreshTokenResult create(User user) {
         return issueRefreshToken(user, null);
     }
 
     @Override
-    public String rotate(RefreshToken refreshToken) {
+    public RefreshTokenResult rotate(RefreshToken refreshToken) {
         refreshToken.setRevokedAt(Instant.now());
         return issueRefreshToken(
                 refreshToken.getUser(),
@@ -40,27 +40,32 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshToken getByTokenOrThrow(String token) {
-        String tokenHash = Hashing.sha256(token);
+        String tokenHash = Sha256Digest.hash(token);
         RefreshToken refreshToken =  repository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        AuthExceptionMessages.BAD_CREDENTIALS));
+                        AuthErrorMessages.BAD_CREDENTIALS));
         if (refreshToken.isRevoked()) {
             repository.revokeAllByFamilyId(refreshToken.getFamilyId());
             throw new AuthenticationException(
-                    AuthExceptionMessages.BAD_CREDENTIALS);
+                    AuthErrorMessages.BAD_CREDENTIALS);
         }
         if (refreshToken.isExpired()) {
             throw new AuthenticationException(
-                    AuthExceptionMessages.BAD_CREDENTIALS);
+                    AuthErrorMessages.BAD_CREDENTIALS);
         }
         return refreshToken;
     }
 
-    public String issueRefreshToken(UserAccount user, UUID familyId) {
-        String token = tokenService.generateOpaque();
-        String tokenHash = Hashing.sha256(token);
+    @Override
+    public void deleteAllExpiredTokens() {
+        repository.deleteAllByExpiresAtBefore(Instant.now());
+    }
+
+    private RefreshTokenResult issueRefreshToken(User user, UUID familyId) {
+        String token = tokenService.generate();
+        String tokenHash = Sha256Digest.hash(token);
         Instant expiresAt = Instant.now().plus(
-                properties.getRefreshToken().getExpirationTime());
+                props.refreshToken().timeToLive());
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(user)
                 .tokenHash(tokenHash)
@@ -70,11 +75,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                         : UUID.randomUUID())
                 .build();
         repository.save(refreshToken);
-        return token;
+        return RefreshTokenResult.builder()
+                .token(token)
+                .expiresAt(expiresAt)
+                .build();
     }
 
-    @Override
-    public void deleteAllExpiredTokens() {
-        repository.deleteAllByExpiresAtBefore(Instant.now());
-    }
 }

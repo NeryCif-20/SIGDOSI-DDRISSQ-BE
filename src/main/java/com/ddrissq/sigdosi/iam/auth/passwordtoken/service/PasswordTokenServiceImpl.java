@@ -1,16 +1,16 @@
 package com.ddrissq.sigdosi.iam.auth.passwordtoken.service;
 
-import com.ddrissq.sigdosi.iam.auth.exception.AuthExceptionMessages;
-import com.ddrissq.sigdosi.iam.auth.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.auth.passwordtoken.entity.PasswordToken;
+import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
+import com.ddrissq.sigdosi.iam.auth.constant.AuthErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
+import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenPurpose;
+import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenResult;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.repository.PasswordTokenRepository;
-import com.ddrissq.sigdosi.iam.security.configuration.SecurityProperties;
-import com.ddrissq.sigdosi.iam.security.token.service.TokenService;
-import com.ddrissq.sigdosi.iam.security.util.Hashing;
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
+import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
+import com.ddrissq.sigdosi.iam.security.crypto.util.Sha256Digest;
+import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,16 +22,16 @@ import java.time.Instant;
 public class PasswordTokenServiceImpl implements PasswordTokenService {
 
     private final PasswordTokenRepository repository;
-    private final TokenService tokenService;
-    private final SecurityProperties properties;
+    private final SecureTokenService tokenService;
+    private final AuthProperties props;
 
     @Override
-    public String create(UserAccount user, PasswordTokenPurpose purpose) {
+    public PasswordTokenResult create(User user, PasswordTokenPurpose purpose) {
         repository.revokeAllActiveTokensByUser(user);
-        String token = tokenService.generateOpaque(32);
-        String tokenHash = Hashing.sha256(token);
+        String token = tokenService.generate(32);
+        String tokenHash = Sha256Digest.hash(token);
         Instant expiresAt = Instant.now().plus(
-                properties.getPasswordToken().getExpirationTime());
+                props.passwordToken().timeToLive());
         PasswordToken passwordToken = PasswordToken.builder()
                 .user(user)
                 .tokenHash(tokenHash)
@@ -39,15 +39,20 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
                 .expiresAt(expiresAt)
                 .build();
         repository.save(passwordToken);
-        return token;
+        return PasswordTokenResult.builder()
+                .user(user)
+                .token(token)
+                .purpose(purpose)
+                .expiresAt(expiresAt)
+                .build();
     }
 
     @Override
     public PasswordToken getByTokenOrThrow(String token) {
-        String tokenHash = Hashing.sha256(token);
+        String tokenHash = Sha256Digest.hash(token);
         return repository.findValidToken(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        AuthExceptionMessages.BAD_CREDENTIALS));
+                        AuthErrorMessages.BAD_CREDENTIALS));
     }
 
     @Override

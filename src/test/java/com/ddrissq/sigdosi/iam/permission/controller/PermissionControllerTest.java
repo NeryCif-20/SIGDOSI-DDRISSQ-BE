@@ -4,14 +4,14 @@ import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
-import com.ddrissq.sigdosi.iam.permission.exception.PermissionExceptionMessages;
+import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessages;
 import com.ddrissq.sigdosi.iam.permission.service.PermissionService;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionCreateRequestTestData;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionResponseTestData;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionUpdateRequestTestData;
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.exception.ExceptionMessages;
+import com.ddrissq.sigdosi.common.constant.ErrorMessages;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
@@ -79,7 +79,7 @@ class PermissionControllerTest {
     void givenNonExistingId_whenGet_thenReturns404NotFound() {
         // Given
         EntityNotFoundException exception = new EntityNotFoundException(
-                PermissionExceptionMessages.NOT_FOUND);
+                PermissionErrorMessages.NOT_FOUND);
         given(service.get(ID)).willThrow(exception);
         // When
         MvcTestResult result = mockMvcTester.get()
@@ -93,7 +93,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionExceptionMessages.NOT_FOUND);
+                .isEqualTo(PermissionErrorMessages.NOT_FOUND);
         verify(service).get(ID);
     }
 
@@ -113,7 +113,7 @@ class PermissionControllerTest {
                 .hasContentType(MediaType.APPLICATION_PROBLEM_JSON);
         assertThat(result)
                 .bodyJson().extractingPath("$.detail")
-                .isEqualTo(ExceptionMessages.INVALID_PARAMETER);
+                .isEqualTo(ErrorMessages.INVALID_PARAMETER);
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.parameter")
@@ -169,7 +169,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(ExceptionMessages.VALIDATION_FAILED);
+                .isEqualTo(ErrorMessages.VALIDATION_FAILED);
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.errors.module")
@@ -185,7 +185,7 @@ class PermissionControllerTest {
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
                 .build();
         EntityAlreadyExistsException exception = new EntityAlreadyExistsException(
-                PermissionExceptionMessages.ALREADY_EXISTS);
+                PermissionErrorMessages.ALREADY_EXISTS);
         given(service.create(request)).willThrow(exception);
         // When
         MvcTestResult result = mockMvcTester.post()
@@ -201,7 +201,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionExceptionMessages.ALREADY_EXISTS);
+                .isEqualTo(PermissionErrorMessages.ALREADY_EXISTS);
         verify(service).create(request);
     }
 
@@ -224,7 +224,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(ExceptionMessages.INVALID_REQUEST_BODY);
+                .isEqualTo(ErrorMessages.INVALID_REQUEST_BODY);
         verifyNoInteractions(service);
     }
 
@@ -262,7 +262,7 @@ class PermissionControllerTest {
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
                 .build();
         EntityNotFoundException exception = new EntityNotFoundException(
-                PermissionExceptionMessages.NOT_FOUND);
+                PermissionErrorMessages.NOT_FOUND);
         given(service.update(ID, request)).willThrow(exception);
         // When
         MvcTestResult result = mockMvcTester.patch()
@@ -278,7 +278,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionExceptionMessages.NOT_FOUND);
+                .isEqualTo(PermissionErrorMessages.NOT_FOUND);
         verify(service).update(ID, request);
     }
 
@@ -289,7 +289,7 @@ class PermissionControllerTest {
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
                 .build();
         EntityAlreadyExistsException exception = new EntityAlreadyExistsException(
-                PermissionExceptionMessages.ALREADY_EXISTS);
+                PermissionErrorMessages.ALREADY_EXISTS);
         given(service.update(ID, request)).willThrow(exception);
         // When
         MvcTestResult result = mockMvcTester.patch()
@@ -305,7 +305,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionExceptionMessages.ALREADY_EXISTS);
+                .isEqualTo(PermissionErrorMessages.ALREADY_EXISTS);
         verify(service).update(ID, request);
     }
 
@@ -324,7 +324,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(ExceptionMessages.METHOD_NOT_ALLOWED);
+                .isEqualTo(ErrorMessages.METHOD_NOT_ALLOWED);
         verifyNoInteractions(service);
     }
 

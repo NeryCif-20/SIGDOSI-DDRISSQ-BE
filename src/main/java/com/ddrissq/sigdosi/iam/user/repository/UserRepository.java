@@ -1,15 +1,15 @@
 package com.ddrissq.sigdosi.iam.user.repository;
 
-import com.ddrissq.sigdosi.iam.user.entity.UserAccount;
+import com.ddrissq.sigdosi.iam.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<UserAccount, UUID>, JpaSpecificationExecutor<UserAccount> {
+public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
 
-    Optional<UserAccount> findByEmail(String email);
+    Optional<User> findByEmail(String email);
     
     boolean existsByEmail(String email);
     boolean existsByEmailAndIdNot(String email, UUID id);
