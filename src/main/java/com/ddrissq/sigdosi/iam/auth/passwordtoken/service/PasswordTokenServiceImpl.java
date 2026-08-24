@@ -1,14 +1,14 @@
 package com.ddrissq.sigdosi.iam.auth.passwordtoken.service;
 
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
-import com.ddrissq.sigdosi.iam.auth.constant.AuthErrorMessages;
-import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenPurpose;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenResult;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.repository.PasswordTokenRepository;
-import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.security.crypto.util.Sha256Digest;
+import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,7 +52,7 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
         String tokenHash = Sha256Digest.hash(token);
         return repository.findValidToken(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        AuthErrorMessages.BAD_CREDENTIALS));
+                        IamErrorMessages.BAD_CREDENTIALS));
     }
 
     @Override

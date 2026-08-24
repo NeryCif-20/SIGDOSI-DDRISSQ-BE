@@ -6,14 +6,20 @@ import java.time.Duration;
 
 @ConfigurationProperties(prefix = "iam.auth")
 public record AuthProperties(
-    TokenProperties flowToken,
-    TokenProperties passwordToken,
-    TokenProperties refreshToken,
+    PersistentTokenProperties flowToken,
+    PersistentTokenProperties passwordToken,
+    PersistentTokenProperties refreshToken,
     TokenProperties accessToken
 ) {
 
     public record TokenProperties(
             Duration timeToLive
+    ) {
+    }
+
+    public record PersistentTokenProperties(
+            Duration timeToLive,
+            String cleanup
     ) {
     }
 

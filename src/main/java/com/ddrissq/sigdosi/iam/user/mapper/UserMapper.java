@@ -4,19 +4,21 @@ import com.ddrissq.sigdosi.iam.user.dto.UserCreateRequest;
 import com.ddrissq.sigdosi.iam.user.dto.UserResponse;
 import com.ddrissq.sigdosi.iam.user.dto.UserUpdateRequest;
 import com.ddrissq.sigdosi.iam.user.model.User;
+import com.ddrissq.sigdosi.iam.user.model.UserProfile;
 import org.mapstruct.*;
 
 @Mapper
 public interface UserMapper {
 
     @Mapping(target = "role", ignore = true)
+    @Mapping(target = "profile", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "status", ignore = true)
-    @Mapping(target = "profile.cui", source = "cui")
-    @Mapping(target = "profile.firstName", source = "firstName")
-    @Mapping(target = "profile.lastName", source = "lastName")
-    @Mapping(target = "profile.phoneNumber", source = "phoneNumber")
     User toUser(UserCreateRequest request);
+
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "avatar", ignore = true)
+    UserProfile toProfile(UserCreateRequest request);
 
     @Mapping(target = "cui", source = "profile.cui")
     @Mapping(target = "firstName", source = "profile.firstName")

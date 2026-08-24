@@ -1,10 +1,13 @@
 package com.ddrissq.sigdosi.iam.user.service;
 
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import com.ddrissq.sigdosi.iam.role.service.RoleService;
 import com.ddrissq.sigdosi.iam.security.user.CurrentUserProvider;
 import com.ddrissq.sigdosi.iam.user.dto.*;
 import com.ddrissq.sigdosi.iam.user.model.User;
+import com.ddrissq.sigdosi.iam.user.model.UserProfile;
 import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import com.ddrissq.sigdosi.iam.user.constant.UserErrorMessages;
 import com.ddrissq.sigdosi.iam.user.mapper.UserMapper;
@@ -48,6 +51,8 @@ public class UserServiceImpl implements UserService {
         Role role = roleService.getByIdOrThrow(request.role());
         String passwordHash = passwordEncoder.encode(UUID.randomUUID().toString());
         User user = mapper.toUser(request);
+        UserProfile profile = mapper.toProfile(request);
+        user.setProfile(profile);
         user.setRole(role);
         user.setPasswordHash(passwordHash);
         user.setStatus(UserStatus.PENDING);
@@ -115,7 +120,7 @@ public class UserServiceImpl implements UserService {
         UUID id = currentUserProvider.getUserId();
         User user = getByIdOrThrow(id);
         if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
-
+            throw new AuthenticationException(IamErrorMessages.BAD_CREDENTIALS);
         }
         String newPasswordHash = passwordEncoder.encode(request.newPassword());
         user.setPasswordHash(newPasswordHash);

@@ -2,12 +2,12 @@ package com.ddrissq.sigdosi.iam.auth.refreshtoken.service;
 
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
-import com.ddrissq.sigdosi.iam.auth.constant.AuthErrorMessages;
-import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.repository.RefreshTokenRepository;
-import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.security.crypto.util.Sha256Digest;
+import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,15 +43,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String tokenHash = Sha256Digest.hash(token);
         RefreshToken refreshToken =  repository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        AuthErrorMessages.BAD_CREDENTIALS));
+                        IamErrorMessages.BAD_CREDENTIALS));
         if (refreshToken.isRevoked()) {
             repository.revokeAllByFamilyId(refreshToken.getFamilyId());
             throw new AuthenticationException(
-                    AuthErrorMessages.BAD_CREDENTIALS);
+                    IamErrorMessages.BAD_CREDENTIALS);
         }
         if (refreshToken.isExpired()) {
             throw new AuthenticationException(
-                    AuthErrorMessages.BAD_CREDENTIALS);
+                    IamErrorMessages.BAD_CREDENTIALS);
         }
         return refreshToken;
     }

@@ -2,13 +2,13 @@ package com.ddrissq.sigdosi.iam.auth.flowtoken.service;
 
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
-import com.ddrissq.sigdosi.iam.auth.constant.AuthErrorMessages;
-import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenResult;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.repository.FlowTokenRepository;
-import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.security.crypto.util.Sha256Digest;
+import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,6 +40,7 @@ public class FlowTokenServiceImpl implements FlowTokenService {
         repository.save(flowToken);
         return FlowTokenResult.builder()
                 .token(token)
+                .step(step)
                 .expiresAt(expiresAt)
                 .build();
     }
@@ -50,7 +51,7 @@ public class FlowTokenServiceImpl implements FlowTokenService {
         return repository
                 .findValidToken(tokenHash, expectedStep)
                 .orElseThrow(() -> new AuthenticationException(
-                        AuthErrorMessages.BAD_CREDENTIALS));
+                        IamErrorMessages.BAD_CREDENTIALS));
     }
 
     @Override

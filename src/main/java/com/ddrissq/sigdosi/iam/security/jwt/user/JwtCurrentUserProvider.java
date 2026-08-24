@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.security.jwt.user;
 
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.security.constant.SecurityErrorMessages;
 import com.ddrissq.sigdosi.iam.security.user.CurrentUserProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +20,7 @@ public class JwtCurrentUserProvider implements CurrentUserProvider {
         String userId = getJwt().getSubject();
         if (userId == null) {
             throw new AuthenticationException(
-                    SecurityErrorMessages.INVALID_TOKEN);
+                    IamErrorMessages.INVALID_TOKEN);
         }
         return UUID.fromString(userId);
     }
@@ -30,7 +30,7 @@ public class JwtCurrentUserProvider implements CurrentUserProvider {
         List<String> authorities = getJwt().getClaimAsStringList("authorities");
         if (authorities == null) {
             throw new AuthenticationException(
-                    SecurityErrorMessages.INVALID_TOKEN);
+                    IamErrorMessages.INVALID_TOKEN);
         }
         return authorities;
     }
@@ -42,7 +42,7 @@ public class JwtCurrentUserProvider implements CurrentUserProvider {
             return jwtAuth.getToken();
         }
         throw new AuthenticationException(
-                SecurityErrorMessages.INVALID_TOKEN);
+                IamErrorMessages.BAD_CREDENTIALS);
     }
 
 }

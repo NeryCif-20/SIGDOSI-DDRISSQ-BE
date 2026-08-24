@@ -4,13 +4,12 @@ spring:
       - optional:file:.env[.properties]
   application:
     name: sigdosi
-  mvc:
-    servlet:
-      path: /api
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_NAME:sigdosi}
     password: ${POSTGRES_PASS}
     username: ${POSTGRES_USER:postgres}
+  jpa:
+    open-in-view: false
   servlet:
     multipart:
       max-file-size: 5MB
@@ -28,14 +27,22 @@ spring:
 
 server:
   port: ${SERVER_PORT:8000}
+  servlet:
+    context-path: /api
+
+springdoc:
+  api-docs:
+    enabled: ${DOCS_ENABLE:false}
+  swagger-ui:
+    enabled: ${DOCS_ENABLE:false}
 
 app:
+  zone: ${ZONE:America/Guatemala}
   client:
     origin: ${CLIENT_ORIGIN:http://localhost:4200}
   cookies:
     same-site: ${COOKIES_SITE:strict}
     path: ${COOKIES_PATH:/}
-  zone: ${ZONE:America/Guatemala}
 
 iam:
   security:
@@ -45,9 +52,12 @@ iam:
   auth:
     flow-token:
       time-to-live: ${FLOW_TTL:5m}
+      cleanup: ${FLOW_CLEANUP:0 */10 * * * *}
     password-token:
       time-to-live: ${PASS_TTL:10m}
+      cleanup: ${PASS_CLEANUP:0 */20 * * * *}
     refresh-token:
       time-to-live: ${REFRESH_TTL:7d}
+      cleanup: ${REFRESH_CLEANUP:0 */30 * * * *}
     access-token:
       time-to-live: ${ACCESS_TTL:15m}

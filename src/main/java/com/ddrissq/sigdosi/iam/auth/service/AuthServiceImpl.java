@@ -3,26 +3,26 @@ package com.ddrissq.sigdosi.iam.auth.service;
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthIdentifyRequest;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthLoginRequest;
-import com.ddrissq.sigdosi.iam.auth.dto.AuthPasswordValidateRequest;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthPasswordSetRequest;
+import com.ddrissq.sigdosi.iam.auth.dto.AuthPasswordValidateRequest;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenResult;
+import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.service.FlowTokenService;
 import com.ddrissq.sigdosi.iam.auth.mail.model.PasswordSetEmailData;
 import com.ddrissq.sigdosi.iam.auth.mail.service.AuthMailService;
+import com.ddrissq.sigdosi.iam.auth.model.AuthIdentityResult;
+import com.ddrissq.sigdosi.iam.auth.model.AuthResult;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenPurpose;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenResult;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.service.PasswordTokenService;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
-import com.ddrissq.sigdosi.iam.auth.constant.AuthErrorMessages;
-import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.exception.AuthorizationException;
-import com.ddrissq.sigdosi.iam.auth.model.AuthIdentityResult;
-import com.ddrissq.sigdosi.iam.auth.model.AuthResult;
-import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.service.RefreshTokenService;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
+import com.ddrissq.sigdosi.iam.exception.AuthorizationException;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.security.jwt.model.JwtGenerateData;
 import com.ddrissq.sigdosi.iam.security.jwt.service.JwtService;
@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
                 user.getPasswordHash());
         if (passwordInvalid) {
             throw new AuthenticationException(
-                    AuthErrorMessages.BAD_CREDENTIALS);
+                    IamErrorMessages.BAD_CREDENTIALS);
         }
         flowToken.setRevokedAt(Instant.now());
         RefreshTokenResult result = refreshTokenService.create(user);
@@ -155,7 +155,7 @@ public class AuthServiceImpl implements AuthService {
             case ACTIVE -> FlowTokenStep.PASSWORD;
             case PENDING -> FlowTokenStep.SETUP_PASSWORD;
             default -> throw new AuthorizationException(
-                    AuthErrorMessages.USER_DISABLED);
+                    IamErrorMessages.USER_DISABLED);
         };
     }
 
