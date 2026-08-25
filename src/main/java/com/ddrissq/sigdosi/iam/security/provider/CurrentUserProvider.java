@@ -1,4 +1,4 @@
-package com.ddrissq.sigdosi.iam.security.user;
+package com.ddrissq.sigdosi.iam.security.provider;
 
 import java.util.List;
 import java.util.UUID;

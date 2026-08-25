@@ -1,10 +1,11 @@
 package com.ddrissq.sigdosi.iam.user.service;
 
+import com.ddrissq.sigdosi.common.file.storage.FileStorage;
 import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import com.ddrissq.sigdosi.iam.role.service.RoleService;
-import com.ddrissq.sigdosi.iam.security.user.CurrentUserProvider;
+import com.ddrissq.sigdosi.iam.security.provider.CurrentUserProvider;
 import com.ddrissq.sigdosi.iam.user.dto.*;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import com.ddrissq.sigdosi.iam.user.model.UserProfile;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final CurrentUserProvider currentUserProvider;
+    private final FileStorage storage;
 
     @Override
     public UserResponse get(UUID id) {
@@ -112,7 +114,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse updateAvatar(UserAvatarUpdateRequest request) {
-        return null;
+        UUID id = currentUserProvider.getUserId();
+        User user = getByIdOrThrow(id);
+        String avatar = storage.save(request.avatar());
+        if  (user.getProfile().getAvatar() != null) {
+            storage.delete(user.getProfile().getAvatar());
+        }
+        user.getProfile().setAvatar(avatar);
+        return mapper.toResponse(user);
     }
 
     @Override

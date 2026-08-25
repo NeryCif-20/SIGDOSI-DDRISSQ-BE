@@ -24,6 +24,15 @@ spring:
           auth: true
           starttls:
             enable: true
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      s3:
+        enabled: ${AWS_S3_ENABLE:false}
 
 server:
   port: ${SERVER_PORT:8000}
@@ -39,10 +48,15 @@ springdoc:
 app:
   zone: ${ZONE:America/Guatemala}
   client:
-    origin: ${CLIENT_ORIGIN:http://localhost:4200}
+    origin: ${CLIENT_ORIGIN}
   cookies:
     same-site: ${COOKIES_SITE:strict}
     path: ${COOKIES_PATH:/}
+  files:
+    storage:
+      type: ${STORAGE_TYPE:local}
+      local:
+        path: ${STORAGE_LOCAL_PATH}
 
 iam:
   security:

@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.common.cookie.service;
 
+import com.ddrissq.sigdosi.common.cookie.configuration.CookieProperties;
 import com.ddrissq.sigdosi.configuration.ApplicationProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
@@ -11,12 +12,12 @@ import java.time.Duration;
 @Service
 public class CookieService {
 
-    private final ApplicationProperties props;
+    private final CookieProperties props;
 
     public ResponseCookie create(String name, String value, Duration maxAge) {
-        String sameSite = props.cookies().sameSite()
+        String sameSite = props.sameSite()
                 .attributeValue();
-        String path = props.cookies().path();
+        String path = props.path();
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
                 .secure(true)

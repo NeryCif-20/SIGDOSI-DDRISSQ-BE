@@ -1,8 +1,7 @@
-package com.ddrissq.sigdosi.iam.security.jwt.user;
+package com.ddrissq.sigdosi.iam.security.provider;
 
 import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.security.user.CurrentUserProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class JwtCurrentUserProvider implements CurrentUserProvider {
+public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
 
     @Override
     public UUID getUserId() {

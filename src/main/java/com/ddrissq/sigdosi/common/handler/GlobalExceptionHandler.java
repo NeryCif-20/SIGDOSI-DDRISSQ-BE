@@ -3,12 +3,14 @@ package com.ddrissq.sigdosi.common.handler;
 import com.ddrissq.sigdosi.common.constant.ErrorMessages;
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.file.exception.FileNotFoundException;
+import com.ddrissq.sigdosi.common.file.exception.FileStorageException;
+import com.ddrissq.sigdosi.common.file.exception.InvalidFileException;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.exception.AuthorizationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,14 +44,34 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    ProblemDetail handleBadCredentialsException(BadCredentialsException e) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.UNAUTHORIZED, e.getMessage());
-        problemDetail.setTitle("Authentication Error");
-        problemDetail.setProperty("error_category", "Auth");
-        problemDetail.setProperty("timestamp", Instant.now());
-        return problemDetail;
+    @ExceptionHandler(FileNotFoundException.class)
+    ProblemDetail handleFileNotFoundException(FileNotFoundException ex) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        detail.setTitle("Error Server");
+        detail.setProperty("error_category", "Generic");
+        detail.setProperty("timestamp", Instant.now());
+        return detail;
+    }
+
+    @ExceptionHandler(FileStorageException.class)
+    ProblemDetail handleFileStorageException(FileStorageException ex) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        detail.setTitle("Error Server");
+        detail.setProperty("error_category", "Generic");
+        detail.setProperty("timestamp", Instant.now());
+        return detail;
+    }
+
+    @ExceptionHandler(InvalidFileException.class)
+    ProblemDetail handleInvalidFileException(InvalidFileException ex) {
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        detail.setTitle("Error Server");
+        detail.setProperty("error_category", "Generic");
+        detail.setProperty("timestamp", Instant.now());
+        return detail;
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

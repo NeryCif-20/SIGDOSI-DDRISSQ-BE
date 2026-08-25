@@ -75,7 +75,7 @@ public class UserController {
 
     @PatchMapping(path = "/me/avatar")
     public ResponseEntity<UserResponse> updateAvatar(
-            @RequestBody @Valid UserAvatarUpdateRequest request) {
+            @ModelAttribute @Valid UserAvatarUpdateRequest request) {
         UserResponse response = service.updateAvatar(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
