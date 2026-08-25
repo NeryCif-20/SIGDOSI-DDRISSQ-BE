@@ -19,8 +19,8 @@ ext {
     springdocVersion = '3.0.3'
     mapstructVersion = '1.6.3'
     bindingVersion = '0.2.0'
-    springCloudAwsVersion = '4.1.0'
     apacheTikaVersion = '3.3.2'
+    springCloudAwsVersion = '4.1.0'
 }
 
 repositories {
@@ -47,8 +47,8 @@ dependencies {
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     implementation "org.apache.tika:tika-core:$apacheTikaVersion"
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     mockitoAgent 'org.mockito:mockito-core'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

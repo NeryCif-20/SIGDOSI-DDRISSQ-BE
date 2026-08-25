@@ -57,6 +57,8 @@ app:
       type: ${STORAGE_TYPE:local}
       local:
         path: ${STORAGE_LOCAL_PATH}
+#      s3:
+#        bucket-name:
 
 iam:
   security:
