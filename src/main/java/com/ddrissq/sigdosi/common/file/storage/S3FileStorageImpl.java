@@ -3,7 +3,9 @@ package com.ddrissq.sigdosi.common.file.storage;
 import com.ddrissq.sigdosi.common.file.configuration.S3StorageProperties;
 import com.ddrissq.sigdosi.common.file.constant.FileErrorMessages;
 import com.ddrissq.sigdosi.common.file.exception.FileStorageException;
+import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.mime.MimeTypeException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,18 +28,18 @@ public class S3FileStorageImpl implements FileStorage {
 
     @Override
     public String save(MultipartFile file) {
-        String extension = StringUtils.getFilenameExtension(
-                file.getOriginalFilename());
-        String filename = UUID.randomUUID() + "." + extension;
-        PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(getBucket())
-                .key(filename)
-                .contentType(file.getContentType())
-                .build();
         try {
+            String extension = FileAnalyzer.detectExtension(file);
+            String filename = UUID.randomUUID() + extension;
+            String contentType = FileAnalyzer.detectContentType(file);
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(getBucket())
+                    .key(filename)
+                    .contentType(contentType)
+                    .build();
             s3Client.putObject(request, RequestBody.fromBytes(file.getBytes()));
             return filename;
-        } catch (IOException ex) {
+        } catch (IOException | MimeTypeException ex) {
             throw new FileStorageException(
                     FileErrorMessages.FILE_STORAGE_FAILED);
         }

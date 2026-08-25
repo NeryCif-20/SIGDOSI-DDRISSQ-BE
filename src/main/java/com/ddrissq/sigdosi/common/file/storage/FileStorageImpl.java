@@ -5,13 +5,14 @@ import com.ddrissq.sigdosi.common.file.constant.FileErrorMessages;
 import com.ddrissq.sigdosi.common.file.exception.FileNotFoundException;
 import com.ddrissq.sigdosi.common.file.exception.FileStorageException;
 import com.ddrissq.sigdosi.common.file.exception.InvalidFileException;
+import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.mime.MimeTypeException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -39,18 +40,17 @@ public class FileStorageImpl implements FileStorage {
 
     @Override
     public String save(MultipartFile file) {
-        String extension = StringUtils.getFilenameExtension(
-                file.getOriginalFilename());
-        String filename = UUID.randomUUID() + "." + extension;
-        Path destinationFile = getPath().resolve(filename)
-                .normalize();
         try {
+            String extension = FileAnalyzer.detectExtension(file);
+            String filename = UUID.randomUUID() + extension;
+            Path destinationFile = getPath().resolve(filename)
+                    .normalize();
             Files.copy(
                     file.getInputStream(),
                     destinationFile,
                     StandardCopyOption.REPLACE_EXISTING);
             return filename;
-        } catch (IOException e) {
+        } catch (IOException | MimeTypeException ex) {
             throw new FileStorageException(
                     FileErrorMessages.FILE_STORAGE_FAILED);
         }
@@ -62,7 +62,7 @@ public class FileStorageImpl implements FileStorage {
                 .normalize();
         try {
             Files.deleteIfExists(file);
-        } catch (IOException e) {
+        } catch (IOException ex) {
             throw new FileStorageException(
                     FileErrorMessages.FILE_DELETE_FAILED);
         }

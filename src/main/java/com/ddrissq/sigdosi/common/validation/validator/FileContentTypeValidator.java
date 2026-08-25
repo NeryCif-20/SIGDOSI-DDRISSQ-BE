@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.common.validation.validator;
 
+import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
 import com.ddrissq.sigdosi.common.validation.annotation.FileContentType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -26,7 +27,7 @@ public class FileContentTypeValidator implements ConstraintValidator<FileContent
             return true;
         }
         try {
-            String detectedType = TIKA.detect(value.getInputStream());
+            String detectedType = FileAnalyzer.detectContentType(value);
             return Arrays.asList(allowed).contains(detectedType);
         } catch (IOException ex) {
             return false;

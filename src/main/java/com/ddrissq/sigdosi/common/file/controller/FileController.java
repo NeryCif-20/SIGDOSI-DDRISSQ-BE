@@ -2,7 +2,6 @@ package com.ddrissq.sigdosi.common.file.controller;
 
 import com.ddrissq.sigdosi.common.file.storage.FileStorageImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@ConditionalOnClass(value = FileStorageImpl.class)
+@ConditionalOnProperty(value = "app.files.storage.type", havingValue = "local")
 @RequestMapping(value = "/v1/files")
 @RestController
 public class FileController {

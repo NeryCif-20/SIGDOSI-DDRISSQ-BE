@@ -10,7 +10,9 @@ public record LocalStorageProperties(
 ) {
 
     public LocalStorageProperties {
-        path = path.toAbsolutePath().normalize();
+        if (path != null) {
+            path = path.toAbsolutePath().normalize();
+        }
     }
 
 }
