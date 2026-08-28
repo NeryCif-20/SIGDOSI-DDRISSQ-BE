@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "app.files.storage.type", havingValue = "local")
-@RequestMapping(value = "/v1/files")
+@ConditionalOnProperty(name = "app.files.storage.type", havingValue = "local")
+@RequestMapping(path = "/v1/files")
 @RestController
 public class FileController {
 
     private final FileStorageImpl storage;
 
-    @GetMapping(value = "/{filename}")
+    @GetMapping(path = "/{filename}")
     public ResponseEntity<Resource> load(
             @PathVariable String filename) {
         Resource resource = storage.load(filename);

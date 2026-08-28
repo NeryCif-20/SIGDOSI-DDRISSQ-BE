@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
+import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
 import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import lombok.Builder;
 
@@ -8,6 +9,7 @@ import java.util.UUID;
 @Builder
 public record UserResponse(
         UUID id,
+        RoleResponse role,
         String email,
         UserStatus status,
         String cui,

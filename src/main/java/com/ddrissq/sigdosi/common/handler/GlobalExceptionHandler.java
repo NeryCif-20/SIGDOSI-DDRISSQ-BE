@@ -24,7 +24,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AuthenticationException.class)
+    @ExceptionHandler(exception = AuthenticationException.class)
     ProblemDetail handleAuthenticationException(AuthenticationException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.UNAUTHORIZED, ex.getMessage());
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(AuthorizationException.class)
+    @ExceptionHandler(exception = AuthorizationException.class)
     ProblemDetail handleAuthorizationException(AuthorizationException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.FORBIDDEN, ex.getMessage());
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(FileNotFoundException.class)
+    @ExceptionHandler(exception = FileNotFoundException.class)
     ProblemDetail handleFileNotFoundException(FileNotFoundException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(FileStorageException.class)
+    @ExceptionHandler(exception = FileStorageException.class)
     ProblemDetail handleFileStorageException(FileStorageException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(InvalidFileException.class)
+    @ExceptionHandler(exception = InvalidFileException.class)
     ProblemDetail handleInvalidFileException(InvalidFileException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(exception = EntityNotFoundException.class)
     ProblemDetail handleEntityNotFoundException(EntityNotFoundException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.NOT_FOUND, ex.getMessage());
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(EntityAlreadyExistsException.class)
+    @ExceptionHandler(exception = EntityAlreadyExistsException.class)
     ProblemDetail handleEntityAlreadyExistsException(EntityAlreadyExistsException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.CONFLICT, ex.getMessage());
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ExceptionHandler(exception = MethodArgumentTypeMismatchException.class)
     public ProblemDetail handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         ProblemDetail detail = ProblemDetail
                 .forStatusAndDetail(
@@ -107,7 +107,7 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(exception = MethodArgumentNotValidException.class)
     ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getFieldErrors().forEach(error -> {
@@ -123,7 +123,7 @@ public class GlobalExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ExceptionHandler(exception = HttpMessageNotReadableException.class)
     public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         ProblemDetail problemDetail = ProblemDetail
                 .forStatusAndDetail(
@@ -135,7 +135,7 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ExceptionHandler(exception = HttpRequestMethodNotSupportedException.class)
     public ProblemDetail handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         ProblemDetail problemDetail = ProblemDetail
                 .forStatusAndDetail(

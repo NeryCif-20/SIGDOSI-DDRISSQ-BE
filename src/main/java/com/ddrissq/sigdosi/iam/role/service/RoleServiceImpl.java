@@ -49,7 +49,10 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public RoleResponse update(UUID id, RoleUpdateRequest request) {
         Role role = getByIdOrThrow(id);
-        validateUniqueName(request.name(), id);
+        String name = request.name() == null
+                ? role.getName()
+                : request.name();
+        validateUniqueName(name, id);
         mapper.updateRole(request, role);
         updatePermissions(request.permissions(), role);
         return mapper.toResponse(role);
@@ -77,10 +80,10 @@ public class RoleServiceImpl implements RoleService{
     }
 
     private void validateUniqueName(String name, UUID id) {
-        if (name == null) return;
+        String normalizedName = name.trim().toUpperCase();
         boolean exists = id == null
-                ? repository.existsByName(name)
-                : repository.existsByNameAndIdNot(name, id);
+                ? repository.existsByName(normalizedName)
+                : repository.existsByNameAndIdNot(normalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     RoleErrorMessages.ALREADY_EXISTS);

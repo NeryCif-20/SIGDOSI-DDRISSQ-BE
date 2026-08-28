@@ -80,7 +80,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PatchMapping("/me/password")
+    @PatchMapping(path = "/me/password")
     public ResponseEntity<Void> updatePassword(
             @RequestBody @Valid UserPasswordUpdateRequest request) {
         service.updatePassword(request);

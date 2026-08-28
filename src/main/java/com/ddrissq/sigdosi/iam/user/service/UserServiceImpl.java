@@ -65,9 +65,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(UUID id, UserUpdateRequest request) {
         User user = getByIdOrThrow(id);
-        validateEmail(request.email(), id);
-        validateCui(request.cui(), id);
-        validatePhoneNumber(request.phoneNumber(), id);
+        String email = request.email() == null
+                ? user.getEmail()
+                : request.email();
+        validateEmail(email, id);
+        String cui = request.cui() == null
+                ? user.getProfile().getCui()
+                : request.cui();
+        validateCui(cui, id);
+        String phoneNumber = request.phoneNumber() == null
+                ? user.getProfile().getPhoneNumber()
+                : request.phoneNumber();
+        validatePhoneNumber(phoneNumber, id);
         mapper.updateUser(request, user);
         return mapper.toResponse(user);
     }
@@ -154,7 +163,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateEmail(String email, UUID id) {
-        if (email == null) return;
         boolean exists = id == null
                 ? repository.existsByEmail(email)
                 : repository.existsByEmailAndIdNot(email, id);
@@ -169,7 +177,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateCui(String cui, UUID id) {
-        if (cui == null) return;
         boolean exists = id == null
                 ? repository.existsByProfile_Cui(cui)
                 : repository.existsByProfile_CuiAndIdNot(cui, id);
@@ -184,7 +191,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validatePhoneNumber(String phoneNumber, UUID id) {
-        if (phoneNumber == null) return;
         boolean exists = id == null
                 ? repository.existsByProfile_PhoneNumber(phoneNumber)
                 : repository.existsByProfile_PhoneNumberAndIdNot(phoneNumber, id);

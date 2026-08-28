@@ -87,9 +87,10 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     private void validateUniqueModuleAction(String module, PermissionAction action, UUID id) {
+        String normalizedModule = module.trim().toUpperCase();
         boolean exists = id == null
-                ? repository.existsByModuleAndAction(module, action)
-                : repository.existsByModuleAndActionAndIdNot(module, action, id);
+                ? repository.existsByModuleAndAction(normalizedModule, action)
+                : repository.existsByModuleAndActionAndIdNot(normalizedModule, action, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     PermissionErrorMessages.ALREADY_EXISTS);

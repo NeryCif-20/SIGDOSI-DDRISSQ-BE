@@ -1,0 +1,95 @@
+package com.ddrissq.sigdosi.healthcarenetwork.riss.service;
+
+import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.healthcarenetwork.dms.model.Dms;
+import com.ddrissq.sigdosi.healthcarenetwork.dms.service.DmsService;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.constant.RissErrorMessages;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissCreateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissResponse;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissSearchRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissUpdateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.mapper.RissMapper;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.model.Riss;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.repository.RissRepository;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.specification.RissSpecification;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+
+@RequiredArgsConstructor
+@Service
+@Transactional
+public class RissServiceImpl implements RissService {
+
+    private final RissRepository repository;
+    private final RissMapper mapper;
+    private final DmsService dmsService;
+
+    @Override
+    public RissResponse get(UUID id) {
+        return null;
+    }
+
+    @Override
+    public RissResponse create(RissCreateRequest request) {
+        Dms dms = dmsService.getByIdOrThrow(request.dms());
+        validateUniqueDmsName(dms.getId(), request.name());
+        Riss riss = mapper.toRiss(request);
+        riss.setDms(dms);
+        Riss savedRiss = repository.save(riss);
+        return mapper.toResponse(savedRiss);
+    }
+
+    @Override
+    public RissResponse update(UUID id, RissUpdateRequest request) {
+        Riss riss = getByIdOrThrow(id);
+        Dms dms = request.dms() == null
+                ? riss.getDms()
+                : dmsService.getByIdOrThrow(request.dms());
+        String name = request.name() == null
+                ? riss.getName()
+                : request.name();
+        validateUniqueDmsName(dms.getId(), name, id);
+        mapper.updateRiss(request, riss);
+        riss.setDms(dms);
+        return mapper.toResponse(riss);
+    }
+
+    @Override
+    public Page<RissResponse> getAll(RissSearchRequest request, Pageable pageable) {
+        Specification<Riss> spec = Specification.allOf(
+                RissSpecification.hasName(request.name()),
+                RissSpecification.hasDmsName(request.dmsName()));
+        return repository.findAll(spec, pageable)
+                .map(mapper::toResponse);
+    }
+
+    @Override
+    public Riss getByIdOrThrow(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        RissErrorMessages.NOT_FOUND));
+    }
+
+    private void validateUniqueDmsName(UUID dms, String name) {
+        validateUniqueDmsName(dms, name, null);
+    }
+
+    private void validateUniqueDmsName(UUID dms, String name, UUID id) {
+        String normalizedName = name.trim().toUpperCase();
+        boolean exists = id == null
+                ? repository.existsByDms_IdAndName(dms, normalizedName)
+                : repository.existsByDms_IdAndNameAndIdNot(dms, normalizedName, id);
+        if (exists) {
+            throw new EntityAlreadyExistsException(
+                    RissErrorMessages.ALREADY_EXISTS);
+        }
+    }
+
+}

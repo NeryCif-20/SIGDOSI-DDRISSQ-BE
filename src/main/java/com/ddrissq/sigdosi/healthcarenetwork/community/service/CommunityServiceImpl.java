@@ -1,0 +1,118 @@
+package com.ddrissq.sigdosi.healthcarenetwork.community.service;
+
+import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.healthcarenetwork.community.constant.CommunityErrorMessages;
+import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityCreateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityResponse;
+import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunitySearchRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityUpdateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.community.mapper.CommunityMapper;
+import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
+import com.ddrissq.sigdosi.healthcarenetwork.community.repository.CommunityRepository;
+import com.ddrissq.sigdosi.healthcarenetwork.community.specification.CommunitySpecification;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.model.Riss;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.service.RissService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.UUID;
+
+@RequiredArgsConstructor
+@Service
+@Transactional
+public class CommunityServiceImpl implements CommunityService {
+
+    private final CommunityRepository repository;
+    private final CommunityMapper mapper;
+    private final RissService rissService;
+
+    @Override
+    public CommunityResponse get(UUID id) {
+        Community community =  getByIdOrThrow(id);
+        return mapper.toResponse(community);
+    }
+
+    @Override
+    public CommunityResponse create(CommunityCreateRequest request) {
+        Riss riss = rissService.getByIdOrThrow(request.riss());
+        validateUniqueRissNameTerritorySector(
+                request.riss(),
+                request.name(),
+                request.territory(),
+                request.sector());
+        Community community = mapper.toCommunity(request);
+        community.setRiss(riss);
+        Community savedCommunity = repository.save(community);
+        return mapper.toResponse(savedCommunity);
+    }
+
+    @Override
+    public CommunityResponse update(UUID id, CommunityUpdateRequest request) {
+        Community community = getByIdOrThrow(id);
+        Riss riss = request.riss() == null
+                ? community.getRiss()
+                : rissService.getByIdOrThrow(request.riss());
+        String name = request.name() == null
+                ? community.getName()
+                : request.name();
+        Integer territory = request.territory() == null
+                ? community.getTerritory()
+                : request.territory();
+        String sector = request.sector() == null
+                ? community.getSector()
+                : request.sector();
+        validateUniqueRissNameTerritorySector(
+                riss.getId(), name, territory, sector, id);
+        mapper.updateCommunity(request, community);
+        community.setRiss(riss);
+        return mapper.toResponse(community);
+    }
+
+    @Override
+    public Page<CommunityResponse> getAll(CommunitySearchRequest request, Pageable pageable) {
+        Specification<Community> spec = Specification.allOf(
+                CommunitySpecification.hasName(request.name()),
+                CommunitySpecification.hasRissName(request.rissName()),
+                CommunitySpecification.hasDmsName(request.dmsName()),
+                CommunitySpecification.hasTerritory(request.territory()),
+                CommunitySpecification.hasSector(request.sector()),
+                CommunitySpecification.populationBetween(
+                        request.minPopulation(), request.maxPopulation()));
+        return repository.findAll(spec, pageable)
+                .map(mapper::toResponse);
+    }
+
+    @Override
+    public Community getByIdOrThrow(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        CommunityErrorMessages.NOT_FOUND));
+    }
+
+    private void validateUniqueRissNameTerritorySector(
+            UUID riss, String name, Integer territory, String sector) {
+        validateUniqueRissNameTerritorySector(riss, name, territory, sector, null);
+    }
+
+    private void validateUniqueRissNameTerritorySector(
+            UUID riss, String name, Integer territory, String sector, UUID id) {
+        String capitalizedName = StringUtils.capitalize(name.trim());
+        String normalizedSector = sector.trim().toUpperCase();
+        boolean exists = id == null
+                ? repository.existsByRiss_IdAndNameAndTerritoryAndSector(
+                        riss, capitalizedName, territory, normalizedSector)
+                : repository.existsByRiss_IdAndNameAndTerritoryAndSectorAndIdNot(
+                        riss, capitalizedName, territory, normalizedSector, id);
+        if (exists) {
+            throw new EntityAlreadyExistsException(
+                    CommunityErrorMessages.ALREADY_EXISTS);
+        }
+    }
+
+}

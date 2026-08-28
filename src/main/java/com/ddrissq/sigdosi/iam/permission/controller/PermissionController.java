@@ -39,7 +39,7 @@ public class PermissionController {
     @PatchMapping(path = "/{id}")
     public ResponseEntity<PermissionResponse> update(
             @PathVariable UUID id,
-            @RequestBody PermissionUpdateRequest request) {
+            @RequestBody @Valid PermissionUpdateRequest request) {
         PermissionResponse response = service.update(id, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
