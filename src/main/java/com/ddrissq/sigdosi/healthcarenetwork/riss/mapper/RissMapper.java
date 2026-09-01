@@ -12,7 +12,7 @@ import org.mapstruct.*;
 public interface RissMapper {
 
     @Mapping(target = "dms", ignore = true)
-    @Mapping(target = "name", source = "name", qualifiedByName = "toUpperCase")
+    @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     Riss toRiss(RissCreateRequest request);
 
     RissResponse toResponse(Riss riss);
@@ -22,7 +22,7 @@ public interface RissMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "dms", ignore = true)
-    @Mapping(target = "name", source = "name", qualifiedByName = "toUpperCase")
+    @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     void updateRiss(RissUpdateRequest request, @MappingTarget Riss riss);
 
 }

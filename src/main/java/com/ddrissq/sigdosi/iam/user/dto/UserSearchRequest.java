@@ -5,10 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record UserSearchRequest(
-        String email,
-        UserStatus status,
-        String cui,
-        String name,
-        String phoneNumber
+        String q,
+        UserStatus status
 ) {
 }

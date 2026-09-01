@@ -1,9 +1,7 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.dto;
 
 public record CommunitySearchRequest(
-        String name,
-        String rissName,
-        String dmsName,
+        String q,
         Integer territory,
         String sector,
         Long minPopulation,

@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record PermissionSearchRequest(
-        String module,
+        String q,
         PermissionAction action
 ) {
 }

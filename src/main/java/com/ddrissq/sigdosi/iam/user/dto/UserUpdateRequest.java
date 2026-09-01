@@ -9,6 +9,7 @@ import lombok.Builder;
 @Builder
 public record UserUpdateRequest(
         @Email(message = "El email no tiene un formato valido")
+        @Size(max = 100, message = "El tamaño maximo del email es de {max} caracteres")
         String email,
         UserStatus status,
         @Pattern(regexp = "^\\d{13}$", message = "El CUI debe ser de 13 dígitos")

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
@@ -64,8 +65,9 @@ public class RissServiceImpl implements RissService {
     @Override
     public Page<RissResponse> getAll(RissSearchRequest request, Pageable pageable) {
         Specification<Riss> spec = Specification.allOf(
-                RissSpecification.hasName(request.name()),
-                RissSpecification.hasDmsName(request.dmsName()));
+                Specification.anyOf(
+                        RissSpecification.hasName(request.q()),
+                        RissSpecification.hasDmsName(request.q())));
         return repository.findAll(spec, pageable)
                 .map(mapper::toResponse);
     }
@@ -82,10 +84,10 @@ public class RissServiceImpl implements RissService {
     }
 
     private void validateUniqueDmsName(UUID dms, String name, UUID id) {
-        String normalizedName = name.trim().toUpperCase();
+        String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByDms_IdAndName(dms, normalizedName)
-                : repository.existsByDms_IdAndNameAndIdNot(dms, normalizedName, id);
+                ? repository.existsByDms_IdAndName(dms, capitalizedName)
+                : repository.existsByDms_IdAndNameAndIdNot(dms, capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     RissErrorMessages.ALREADY_EXISTS);

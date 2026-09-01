@@ -5,8 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record RoleSearchRequest(
-        String name,
-        String module,
+        String q,
         PermissionAction action
 ) {
 }

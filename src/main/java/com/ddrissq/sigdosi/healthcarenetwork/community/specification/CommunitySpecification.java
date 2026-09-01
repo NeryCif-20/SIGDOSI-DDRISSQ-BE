@@ -15,8 +15,8 @@ public final class CommunitySpecification {
                 return null;
             }
             return builder.like(
-                    builder.lower(root.get("name")),
-                    "%" + name.trim().toLowerCase() + "%");
+                    builder.upper(root.get("name")),
+                    "%" + name.trim().toUpperCase() + "%");
         };
     }
 

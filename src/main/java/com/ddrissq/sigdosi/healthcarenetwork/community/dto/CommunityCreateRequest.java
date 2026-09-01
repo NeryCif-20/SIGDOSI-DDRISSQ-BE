@@ -1,9 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 
 import java.util.UUID;
 
@@ -11,6 +8,7 @@ public record CommunityCreateRequest(
         @NotNull(message = "La riss es obligatoria")
         UUID riss,
         @NotBlank(message = "El nombre es obligatorio")
+        @Size(max = 50, message = "El tamaño maximo del nombre es de {max} caracteres")
         String name,
         @NotNull(message = "El territorio es obligatorio")
         @Min(value = 0, message = "El territorio no puede ser menor a {value}")

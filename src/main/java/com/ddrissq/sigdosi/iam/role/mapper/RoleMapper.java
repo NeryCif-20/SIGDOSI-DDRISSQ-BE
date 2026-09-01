@@ -12,7 +12,7 @@ import org.mapstruct.*;
 public interface RoleMapper {
 
     @Mapping(target = "permissions", ignore = true)
-    @Mapping(target = "name", source = "name", qualifiedByName = "toUpperCase")
+    @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     Role toRole(RoleCreateRequest request);
 
     RoleResponse toResponse(Role role);
@@ -22,7 +22,7 @@ public interface RoleMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "permissions", ignore = true)
-    @Mapping(target = "name", source = "name", qualifiedByName = "toUpperCase")
+    @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     void updateRole(RoleUpdateRequest request, @MappingTarget Role role);
 
 }

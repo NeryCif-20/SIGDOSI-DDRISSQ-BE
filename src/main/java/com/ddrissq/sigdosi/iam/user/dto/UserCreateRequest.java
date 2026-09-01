@@ -11,6 +11,7 @@ public record UserCreateRequest(
         UUID role,
         @NotBlank(message = "El email es obligatorio")
         @Email(message = "El email no tiene un formato valido")
+        @Size(max = 100, message = "El tamaño maximo del email es de {max} caracteres")
         String email,
         @NotBlank(message = "El CUI es obligatorio")
         @Pattern(regexp = "^\\d{13}$", message = "El CUI debe ser de 13 dígitos")

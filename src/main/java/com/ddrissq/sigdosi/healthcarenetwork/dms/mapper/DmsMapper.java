@@ -10,7 +10,7 @@ import org.mapstruct.*;
 @Mapper(uses = StringMapper.class)
 public interface DmsMapper {
 
-    @Mapping(target = "name", source = "name", qualifiedByName = "toUpperCase")
+    @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     Dms toDms(DmsCreateRequest request);
 
     DmsResponse toResponse(Dms dms);
@@ -19,7 +19,7 @@ public interface DmsMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "name", source = "name", qualifiedByName = "toUpperCase")
+    @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     void updateDms(DmsUpdateRequest request, @MappingTarget Dms dms);
 
 }

@@ -27,7 +27,7 @@ CREATE TABLE community
     riss_id    UUID        NOT NULL,
     name       VARCHAR(50) NOT NULL,
     territory  SMALLINT    NOT NULL,
-    sector     CHAR(1)  NOT NULL,
+    sector     CHAR(1)     NOT NULL,
     population BIGINT      NOT NULL,
     created_at TIMESTAMP   NOT NULL,
     updated_at TIMESTAMP   NOT NULL,
@@ -36,4 +36,14 @@ CREATE TABLE community
         FOREIGN KEY (riss_id) REFERENCES riss (id),
     CONSTRAINT UQ_riss_name_territory_sector
         UNIQUE (riss_id, name, territory, sector)
+);
+
+CREATE TABLE health_facility_type
+(
+    id         UUID        NOT NULL,
+    code       VARCHAR(10) NOT NULL UNIQUE,
+    name       VARCHAR(25) NOT NULL,
+    created_at TIMESTAMP   NOT NULL,
+    updated_at TIMESTAMP   NOT NULL,
+    PRIMARY KEY (id)
 );

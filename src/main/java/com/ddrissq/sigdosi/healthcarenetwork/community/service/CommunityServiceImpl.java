@@ -77,9 +77,10 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public Page<CommunityResponse> getAll(CommunitySearchRequest request, Pageable pageable) {
         Specification<Community> spec = Specification.allOf(
-                CommunitySpecification.hasName(request.name()),
-                CommunitySpecification.hasRissName(request.rissName()),
-                CommunitySpecification.hasDmsName(request.dmsName()),
+                Specification.anyOf(
+                        CommunitySpecification.hasName(request.q()),
+                        CommunitySpecification.hasRissName(request.q()),
+                        CommunitySpecification.hasDmsName(request.q())),
                 CommunitySpecification.hasTerritory(request.territory()),
                 CommunitySpecification.hasSector(request.sector()),
                 CommunitySpecification.populationBetween(

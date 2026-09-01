@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Set;
 import java.util.UUID;
@@ -61,8 +62,9 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public Page<RoleResponse> getAll(RoleSearchRequest request, Pageable pageable) {
         Specification<Role> spec = Specification.allOf(
-                RoleSpecification.hasName(request.name()),
-                RoleSpecification.hasModule(request.module()),
+                Specification.anyOf(
+                        RoleSpecification.hasName(request.q()),
+                        RoleSpecification.hasModule(request.q())),
                 RoleSpecification.hasAction(request.action()));
         return repository.findAll(spec, pageable)
                 .map(mapper::toResponse);
@@ -80,10 +82,10 @@ public class RoleServiceImpl implements RoleService{
     }
 
     private void validateUniqueName(String name, UUID id) {
-        String normalizedName = name.trim().toUpperCase();
+        String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByName(normalizedName)
-                : repository.existsByNameAndIdNot(normalizedName, id);
+                ? repository.existsByName(capitalizedName)
+                : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     RoleErrorMessages.ALREADY_EXISTS);

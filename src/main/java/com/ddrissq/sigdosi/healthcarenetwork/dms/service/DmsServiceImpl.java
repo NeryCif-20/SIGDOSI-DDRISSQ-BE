@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
@@ -54,7 +55,7 @@ public class DmsServiceImpl implements DmsService {
     @Override
     public Page<DmsResponse> getAll(DmsSearchRequest request, Pageable pageable) {
         Specification<Dms> spec = Specification.allOf(
-                DmsSpecification.hasName(request.name()));
+                DmsSpecification.hasName(request.q()));
         return repository.findAll(spec, pageable)
                 .map(mapper::toResponse);
     }
@@ -71,10 +72,10 @@ public class DmsServiceImpl implements DmsService {
     }
 
     private void validateUniqueName(String name, UUID id) {
-        String normalizedName = name.trim().toUpperCase();
+        String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByName(normalizedName)
-                : repository.existsByNameAndIdNot(normalizedName, id);
+                ? repository.existsByName(capitalizedName)
+                : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     DmsErrorMessages.ALREADY_EXISTS);
