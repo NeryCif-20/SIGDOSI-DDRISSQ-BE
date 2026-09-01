@@ -16,11 +16,12 @@ java {
 }
 
 ext {
+    springCloudAwsVersion = '4.1.0'
     springdocVersion = '3.0.3'
     mapstructVersion = '1.6.3'
     bindingVersion = '0.2.0'
     apacheTikaVersion = '3.3.2'
-    springCloudAwsVersion = '4.1.0'
+    jacksonJtsVersion = '3.0.4'
 }
 
 repositories {
@@ -43,11 +44,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.hibernate.orm:hibernate-spatial'
     implementation 'org.flywaydb:flyway-database-postgresql'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     implementation "org.apache.tika:tika-core:$apacheTikaVersion"
+    implementation "org.n52.jackson:jackson-datatype-jts:$jacksonJtsVersion"
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     mockitoAgent 'org.mockito:mockito-core'
     compileOnly 'org.projectlombok:lombok'

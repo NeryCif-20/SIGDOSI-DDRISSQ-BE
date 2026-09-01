@@ -2,8 +2,8 @@ CREATE TABLE dms
 (
     id         UUID        NOT NULL,
     name       VARCHAR(50) NOT NULL UNIQUE,
-    created_at TIMESTAMP   NOT NULL,
-    updated_at TIMESTAMP   NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -12,8 +12,8 @@ CREATE TABLE riss
     id         UUID        NOT NULL,
     dms_id     UUID        NOT NULL,
     name       VARCHAR(50) NOT NULL,
-    created_at TIMESTAMP   NOT NULL,
-    updated_at TIMESTAMP   NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT FK_dms_TO_riss
         FOREIGN KEY (dms_id) REFERENCES dms (id),
@@ -29,8 +29,8 @@ CREATE TABLE community
     territory  SMALLINT    NOT NULL,
     sector     CHAR(1)     NOT NULL,
     population BIGINT      NOT NULL,
-    created_at TIMESTAMP   NOT NULL,
-    updated_at TIMESTAMP   NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT FK_riss_TO_community
         FOREIGN KEY (riss_id) REFERENCES riss (id),
@@ -43,7 +43,7 @@ CREATE TABLE health_facility_type
     id         UUID        NOT NULL,
     code       VARCHAR(10) NOT NULL UNIQUE,
     name       VARCHAR(25) NOT NULL,
-    created_at TIMESTAMP   NOT NULL,
-    updated_at TIMESTAMP   NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id)
 );
