@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringMapper;
+import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementUpdateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.model.BuildingElement;
 import org.mapstruct.*;
 
-@Mapper(uses = StringMapper.class)
+@Mapper(uses = StringFormatter.class)
 public interface BuildingElementMapper {
 
     @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")

@@ -27,7 +27,7 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
 
     @Override
     public PasswordTokenResult create(User user, PasswordTokenPurpose purpose) {
-        repository.revokeAllActiveTokensByUser(user);
+        repository.revokeAllActiveTokensByUserId(user.getId());
         String token = tokenService.generate(32);
         String tokenHash = Sha256Digest.hash(token);
         Instant expiresAt = Instant.now().plus(
@@ -57,7 +57,7 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
 
     @Override
     public void deleteAllExpiredTokens() {
-        repository.deleteAllByExpiresAtBefore(Instant.now());
+        repository.deleteAllExpired();
     }
 
 }

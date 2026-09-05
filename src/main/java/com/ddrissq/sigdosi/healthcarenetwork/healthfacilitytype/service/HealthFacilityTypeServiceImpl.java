@@ -2,6 +2,7 @@ package com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.constant.HealthFacilityTypeErrorMessages;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeResponse;
@@ -45,9 +46,8 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
     @Override
     public HealthFacilityTypeResponse update(UUID id, HealthFacilityTypeUpdateRequest request) {
         HealthFacilityType healthFacilityType = getByIdOrThrow(id);
-        String code = request.code() == null
-                ? healthFacilityType.getCode()
-                : request.code();
+        String code = PatchHelper.resolveValue(
+                request.code(), healthFacilityType.getCode());
         validateUniqueCode(code, id);
         mapper.updateHealthFacilityType(request, healthFacilityType);
         return mapper.toResponse(healthFacilityType);

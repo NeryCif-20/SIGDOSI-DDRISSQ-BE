@@ -56,6 +56,6 @@ public class FlowTokenServiceImpl implements FlowTokenService {
 
     @Override
     public void deleteAllExpiredTokens() {
-        repository.deleteAllByExpiresAtBefore(Instant.now());
+        repository.deleteAllExpired();
     }
 }

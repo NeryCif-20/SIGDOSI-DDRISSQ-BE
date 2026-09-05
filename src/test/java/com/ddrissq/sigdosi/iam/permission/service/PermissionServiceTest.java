@@ -1,16 +1,16 @@
 package com.ddrissq.sigdosi.iam.permission.service;
 
+import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessages;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
-import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessages;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.support.*;
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +26,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.ddrissq.sigdosi.iam.permission.support.PermissionTestConstants.*;
@@ -352,7 +351,7 @@ class PermissionServiceTest {
     @DisplayName(value = "Devuelve un conjunto inmodificable de permisos cuando existen los IDs proporcionados")
     void givenExistingIds_whenFindAllById_thenReturnsUnmodifiableSetOfPermissions() {
         // Given
-        Set<UUID> ids = Set.of(ID, DIFFERENT_ID);
+        List<UUID> ids = List.of(ID, DIFFERENT_ID);
         Permission firstPermission = PermissionTestData.aPermission()
                 .build();
         firstPermission.setId(ID);
@@ -361,7 +360,7 @@ class PermissionServiceTest {
         secondPermission.setId(DIFFERENT_ID);
         given(repository.findAllById(ids)).willReturn(List.of(firstPermission, secondPermission));
         // When
-        Set<Permission> permissions = service.getAllById(ids);
+        List<Permission> permissions = service.getAllById(ids);
         // Then
         assertThat(permissions).containsExactlyInAnyOrder(firstPermission, secondPermission);
         assertThatThrownBy(() -> permissions.add(firstPermission))
@@ -373,10 +372,10 @@ class PermissionServiceTest {
     @DisplayName(value = "Devuelve un conjunto vacío cuando no se encuentran coincidencias para los IDs")
     void givenNonExistingIds_whenFindAllById_thenReturnsEmptySet() {
         // Given
-        Set<UUID> ids = Set.of(ID, DIFFERENT_ID);
+        List<UUID> ids = List.of(ID, DIFFERENT_ID);
         given(repository.findAllById(ids)).willReturn(List.of());
         // When
-        Set<Permission> permissions = service.getAllById(ids);
+        List<Permission> permissions = service.getAllById(ids);
         // Then
         assertThat(permissions).isEmpty();
         verify(repository).findAllById(ids);

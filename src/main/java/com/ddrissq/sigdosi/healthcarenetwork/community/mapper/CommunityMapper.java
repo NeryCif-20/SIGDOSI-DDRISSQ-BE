@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringMapper;
+import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityUpdateRequest;
@@ -8,7 +8,7 @@ import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.mapper.RissMapper;
 import org.mapstruct.*;
 
-@Mapper(uses = {RissMapper.class, StringMapper.class})
+@Mapper(uses = {RissMapper.class, StringFormatter.class})
 public interface CommunityMapper {
 
     @Mapping(target = "riss", ignore = true)

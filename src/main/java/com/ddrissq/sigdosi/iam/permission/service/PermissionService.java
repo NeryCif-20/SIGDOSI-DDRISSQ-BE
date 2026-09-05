@@ -8,7 +8,7 @@ import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public interface PermissionService {
@@ -18,6 +18,6 @@ public interface PermissionService {
     PermissionResponse update(UUID id, PermissionUpdateRequest request);
     Page<PermissionResponse> getAll(PermissionSearchRequest request, Pageable pageable);
     Permission getByIdOrThrow(UUID id);
-    Set<Permission> getAllById(Set<UUID> ids);
+    List<Permission> getAllById(List<UUID> ids);
 
 }

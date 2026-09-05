@@ -14,10 +14,10 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     boolean existsByEmail(String email);
     boolean existsByEmailAndIdNot(String email, UUID id);
 
-    boolean existsByProfile_Cui(String cui);
-    boolean existsByProfile_CuiAndIdNot(String cui, UUID id);
+    boolean existsByProfileCui(String cui);
+    boolean existsByProfileCuiAndIdNot(String cui, UUID id);
 
-    boolean existsByProfile_PhoneNumber(String phoneNumber);
-    boolean existsByProfile_PhoneNumberAndIdNot(String phoneNumber, UUID id);
+    boolean existsByProfilePhoneNumber(String phoneNumber);
+    boolean existsByProfilePhoneNumberAndIdNot(String phoneNumber, UUID id);
 
 }

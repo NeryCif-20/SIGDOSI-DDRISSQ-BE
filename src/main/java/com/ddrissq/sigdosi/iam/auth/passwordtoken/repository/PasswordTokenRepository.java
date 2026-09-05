@@ -1,13 +1,10 @@
 package com.ddrissq.sigdosi.iam.auth.passwordtoken.repository;
 
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
-import com.ddrissq.sigdosi.iam.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,19 +17,23 @@ public interface PasswordTokenRepository extends JpaRepository<PasswordToken, UU
             AND pt.expiresAt > CURRENT_TIMESTAMP
             AND pt.revokedAt IS NULL
     """)
-    Optional<PasswordToken> findValidToken(
-            @Param("tokenHash") String tokenHash);
+    Optional<PasswordToken> findValidToken(String tokenHash);
 
     @Modifying
     @Query("""
         UPDATE PasswordToken pt
         SET pt.revokedAt = CURRENT_TIMESTAMP
-        WHERE pt.user = :user
+        WHERE pt.user.id = :userId
             AND pt.revokedAt IS NULL
             AND pt.expiresAt > CURRENT_TIMESTAMP
     """)
-    void revokeAllActiveTokensByUser(@Param("user") User user);
+    void revokeAllActiveTokensByUserId(UUID userId);
 
-    void deleteAllByExpiresAtBefore(Instant expiresAtBefore);
+    @Modifying
+    @Query(value = """
+    DELETE FROM PasswordToken pt
+    WHERE pt.expiresAt < CURRENT_TIMESTAMP
+    """)
+    void deleteAllExpired();
 
 }

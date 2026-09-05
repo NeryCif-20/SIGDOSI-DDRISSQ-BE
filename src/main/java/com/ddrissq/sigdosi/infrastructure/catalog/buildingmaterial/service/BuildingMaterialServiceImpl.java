@@ -2,6 +2,7 @@ package com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.constant.BuildingMaterialErrorMessages;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialResponse;
@@ -44,9 +45,8 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
     @Override
     public BuildingMaterialResponse update(UUID id, BuildingMaterialUpdateRequest request) {
         BuildingMaterial buildingMaterial = getByIdOrThrow(id);
-        String code = request.code() == null
-                ? buildingMaterial.getCode()
-                : request.code();
+        String code = PatchHelper.resolveValue(
+                request.code(), buildingMaterial.getCode());
         validateUniqueCode(code, id);
         mapper.updateBuildingMaterial(request, buildingMaterial);
         return mapper.toResponse(buildingMaterial);

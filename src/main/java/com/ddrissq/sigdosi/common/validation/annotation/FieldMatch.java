@@ -10,6 +10,7 @@ import java.lang.annotation.*;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = FieldMatchValidator.class)
+@Repeatable(value = FieldMatch.List.class)
 public @interface FieldMatch {
 
     String message() default "Fields do not match";
@@ -21,5 +22,12 @@ public @interface FieldMatch {
     String field();
 
     String fieldMatch();
+
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @interface List {
+        FieldMatch[] value();
+    }
 
 }

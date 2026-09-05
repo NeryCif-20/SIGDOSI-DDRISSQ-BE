@@ -4,15 +4,12 @@ import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
 import com.ddrissq.sigdosi.common.validation.annotation.FileContentType;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 public class FileContentTypeValidator implements ConstraintValidator<FileContentType, MultipartFile> {
-
-    private static final Tika TIKA = new Tika();
 
     private String[] allowed;
 

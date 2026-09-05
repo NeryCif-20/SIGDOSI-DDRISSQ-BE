@@ -11,13 +11,13 @@ public record CommunityCreateRequest(
         @Size(max = 50, message = "El tamaño maximo del nombre es de {max} caracteres")
         String name,
         @NotNull(message = "El territorio es obligatorio")
-        @Min(value = 0, message = "El territorio no puede ser menor a {value}")
+        @Positive(message = "El territorio debe ser un numero positivo")
         Integer territory,
         @NotBlank(message = "El sector es obligatorio")
         @Pattern(regexp = "^[A-Za-z]$", message = "El sector solo puede ser una letra")
         String sector,
         @NotNull(message = "La población es obligatoria")
-        @Min(value = 0, message = "La población no puede ser menor a {value}")
+        @Positive(message = "La poblacion debe ser un numero positivo")
         Long population
 ) {
 }

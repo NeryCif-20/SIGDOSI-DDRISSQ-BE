@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringMapper;
+import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialUpdateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.model.BuildingMaterial;
 import org.mapstruct.*;
 
-@Mapper(uses = StringMapper.class)
+@Mapper(uses = StringFormatter.class)
 public interface BuildingMaterialMapper {
 
     @Mapping(target = "code", source = "code", qualifiedByName = "toUpperCase")

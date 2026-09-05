@@ -2,6 +2,7 @@ package com.ddrissq.sigdosi.healthcarenetwork.riss.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.model.Dms;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.service.DmsService;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.constant.RissErrorMessages;
@@ -50,12 +51,12 @@ public class RissServiceImpl implements RissService {
     @Override
     public RissResponse update(UUID id, RissUpdateRequest request) {
         Riss riss = getByIdOrThrow(id);
-        Dms dms = request.dms() == null
-                ? riss.getDms()
-                : dmsService.getByIdOrThrow(request.dms());
-        String name = request.name() == null
-                ? riss.getName()
-                : request.name();
+        Dms dms = PatchHelper.resolveEntity(
+                request.dms(),
+                riss.getDms(),
+                dmsService::getByIdOrThrow);
+        String name = PatchHelper.resolveValue(
+                request.name(), riss.getName());
         validateUniqueDmsName(dms.getId(), name, id);
         mapper.updateRiss(request, riss);
         riss.setDms(dms);
@@ -86,8 +87,8 @@ public class RissServiceImpl implements RissService {
     private void validateUniqueDmsName(UUID dms, String name, UUID id) {
         String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByDms_IdAndName(dms, capitalizedName)
-                : repository.existsByDms_IdAndNameAndIdNot(dms, capitalizedName, id);
+                ? repository.existsByDmsIdAndName(dms, capitalizedName)
+                : repository.existsByDmsIdAndNameAndIdNot(dms, capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     RissErrorMessages.ALREADY_EXISTS);

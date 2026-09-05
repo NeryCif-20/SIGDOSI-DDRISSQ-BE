@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.riss.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringMapper;
+import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.mapper.DmsMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissResponse;
@@ -8,7 +8,7 @@ import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissUpdateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.model.Riss;
 import org.mapstruct.*;
 
-@Mapper(uses = { DmsMapper.class, StringMapper.class })
+@Mapper(uses = { DmsMapper.class, StringFormatter.class })
 public interface RissMapper {
 
     @Mapping(target = "dms", ignore = true)

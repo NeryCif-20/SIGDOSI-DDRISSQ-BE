@@ -1,17 +1,18 @@
 package com.ddrissq.sigdosi.iam.permission.service;
 
+import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
+import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessages;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
-import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessages;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.specification.PermissionSpecification;
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -48,12 +48,10 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public PermissionResponse update(UUID id, PermissionUpdateRequest request) {
         Permission permission = getByIdOrThrow(id);
-        String module = request.module() == null
-                ? permission.getModule()
-                : request.module();
-        PermissionAction action = request.action() == null
-                ? permission.getAction()
-                : request.action();
+        String module = PatchHelper.resolveValue(
+                request.module(), permission.getModule());
+        PermissionAction action = PatchHelper.resolveValue(
+                request.action(), permission.getAction());
         validateUniqueModuleAction(module, action, id);
         mapper.updatePermission(request, permission);
         return mapper.toResponse(permission);
@@ -76,10 +74,9 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public Set<Permission> getAllById(Set<UUID> ids) {
-        return repository.findAllById(ids)
-                .stream()
-                .collect(Collectors.toUnmodifiableSet());
+    public List<Permission> getAllById(List<UUID> ids) {
+        List<Permission> permissions = repository.findAllById(ids);
+        return List.copyOf(permissions);
     }
 
     private void validateUniqueModuleAction(String module, PermissionAction action) {

@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public interface RissRepository extends JpaRepository<Riss, UUID>, JpaSpecificationExecutor<Riss> {
 
-    boolean existsByDms_IdAndName(UUID dms, String name);
+    boolean existsByDmsIdAndName(UUID dms, String name);
 
-    boolean existsByDms_IdAndNameAndIdNot(UUID dms, String name, UUID id);
+    boolean existsByDmsIdAndNameAndIdNot(UUID dms, String name, UUID id);
 
 }

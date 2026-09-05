@@ -2,6 +2,7 @@ package com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.constant.BuildingElementErrorMessages;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementResponse;
@@ -46,9 +47,8 @@ public class BuildingElementServiceImpl implements BuildingElementService {
     @Override
     public BuildingElementResponse update(UUID id, BuildingElementUpdateRequest request) {
         BuildingElement buildingElement = getByIdOrThrow(id);
-        String name = request.name() == null
-                ? buildingElement.getName()
-                : request.name();
+        String name = PatchHelper.resolveValue(
+                request.name(), buildingElement.getName());
         validateUniqueName(name, id);
         mapper.updateBuildingElement(request, buildingElement);
         return mapper.toResponse(buildingElement);

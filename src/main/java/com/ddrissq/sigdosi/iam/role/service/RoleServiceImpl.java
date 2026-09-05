@@ -1,17 +1,18 @@
 package com.ddrissq.sigdosi.iam.role.service;
 
+import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.iam.permission.service.PermissionService;
+import com.ddrissq.sigdosi.iam.role.constant.RoleErrorMessages;
 import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
 import com.ddrissq.sigdosi.iam.role.dto.RoleSearchRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
-import com.ddrissq.sigdosi.iam.role.constant.RoleErrorMessages;
 import com.ddrissq.sigdosi.iam.role.mapper.RoleMapper;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import com.ddrissq.sigdosi.iam.role.repository.RoleRepository;
 import com.ddrissq.sigdosi.iam.role.specification.RoleSpecification;
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -50,9 +51,8 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public RoleResponse update(UUID id, RoleUpdateRequest request) {
         Role role = getByIdOrThrow(id);
-        String name = request.name() == null
-                ? role.getName()
-                : request.name();
+        String name = PatchHelper.resolveValue(
+                request.name(), role.getName());
         validateUniqueName(name, id);
         mapper.updateRole(request, role);
         updatePermissions(request.permissions(), role);
@@ -92,7 +92,7 @@ public class RoleServiceImpl implements RoleService{
         }
     }
 
-    private void updatePermissions(Set<UUID> ids, Role role) {
+    private void updatePermissions(List<UUID> ids, Role role) {
         if (ids != null && !ids.isEmpty()) {
             role.setPermissions(permissionService.getAllById(ids));
         }

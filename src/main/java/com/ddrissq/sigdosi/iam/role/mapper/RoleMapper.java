@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.role.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringMapper;
+import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
@@ -8,7 +8,7 @@ import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import org.mapstruct.*;
 
-@Mapper(uses = {PermissionMapper.class, StringMapper.class})
+@Mapper(uses = {PermissionMapper.class, StringFormatter.class})
 public interface RoleMapper {
 
     @Mapping(target = "permissions", ignore = true)

@@ -1,6 +1,7 @@
 package com.ddrissq.sigdosi.iam.user.service;
 
 import com.ddrissq.sigdosi.common.file.storage.FileStorage;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.role.model.Role;
@@ -65,17 +66,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(UUID id, UserUpdateRequest request) {
         User user = getByIdOrThrow(id);
-        String email = request.email() == null
-                ? user.getEmail()
-                : request.email();
+        String email = PatchHelper.resolveValue(
+                request.email(), user.getEmail());
         validateEmail(email, id);
-        String cui = request.cui() == null
-                ? user.getProfile().getCui()
-                : request.cui();
+        String cui = PatchHelper.resolveValue(
+                request.cui(), user.getProfile().getCui());
         validateCui(cui, id);
-        String phoneNumber = request.phoneNumber() == null
-                ? user.getProfile().getPhoneNumber()
-                : request.phoneNumber();
+        String phoneNumber = PatchHelper.resolveValue(
+                request.phoneNumber(), user.getProfile().getPhoneNumber());
         validatePhoneNumber(phoneNumber, id);
         mapper.updateUser(request, user);
         return mapper.toResponse(user);
@@ -84,7 +82,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateRole(UUID id, UserRoleUpdateRequest request) {
         User user = getByIdOrThrow(id);
-        Role role = roleService.getByIdOrThrow(request.role());
+        Role role = PatchHelper.resolveEntity(
+                request.role(),
+                user.getRole(),
+                roleService::getByIdOrThrow);
         user.setRole(role);
         return mapper.toResponse(user);
     }
@@ -180,8 +181,8 @@ public class UserServiceImpl implements UserService {
 
     private void validateCui(String cui, UUID id) {
         boolean exists = id == null
-                ? repository.existsByProfile_Cui(cui)
-                : repository.existsByProfile_CuiAndIdNot(cui, id);
+                ? repository.existsByProfileCui(cui)
+                : repository.existsByProfileCuiAndIdNot(cui, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     UserErrorMessages.CUI_ALREADY_EXISTS);
@@ -194,8 +195,8 @@ public class UserServiceImpl implements UserService {
 
     private void validatePhoneNumber(String phoneNumber, UUID id) {
         boolean exists = id == null
-                ? repository.existsByProfile_PhoneNumber(phoneNumber)
-                : repository.existsByProfile_PhoneNumberAndIdNot(phoneNumber, id);
+                ? repository.existsByProfilePhoneNumber(phoneNumber)
+                : repository.existsByProfilePhoneNumberAndIdNot(phoneNumber, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
                     UserErrorMessages.PHONE_NUMBER_ALREADY_EXISTS);

@@ -58,7 +58,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public void deleteAllExpiredTokens() {
-        repository.deleteAllByExpiresAtBefore(Instant.now());
+        repository.deleteAllExpired();
     }
 
     private RefreshTokenResult issueRefreshToken(User user, UUID familyId) {

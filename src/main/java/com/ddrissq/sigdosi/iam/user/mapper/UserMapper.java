@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringMapper;
+import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
 import com.ddrissq.sigdosi.iam.role.controller.RoleController;
 import com.ddrissq.sigdosi.iam.user.dto.UserCreateRequest;
 import com.ddrissq.sigdosi.iam.user.dto.UserResponse;
@@ -9,7 +9,7 @@ import com.ddrissq.sigdosi.iam.user.model.User;
 import com.ddrissq.sigdosi.iam.user.model.UserProfile;
 import org.mapstruct.*;
 
-@Mapper(uses = {RoleController.class, StringMapper.class})
+@Mapper(uses = {RoleController.class, StringFormatter.class})
 public interface UserMapper {
 
     @Mapping(target = "role", ignore = true)

@@ -3,6 +3,7 @@ package com.ddrissq.sigdosi.healthcarenetwork.dms.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.constant.DmsErrorMessages;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsResponse;
@@ -47,7 +48,9 @@ public class DmsServiceImpl implements DmsService {
     @Override
     public DmsResponse update(UUID id, DmsUpdateRequest request) {
         Dms dms =  getByIdOrThrow(id);
-        validateUniqueName(request.name(), id);
+        String name = PatchHelper.resolveValue(
+                request.name(), dms.getName());
+        validateUniqueName(name, id);
         mapper.updateDms(request, dms);
         return mapper.toResponse(dms);
     }

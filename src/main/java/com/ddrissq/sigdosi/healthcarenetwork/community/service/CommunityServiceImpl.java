@@ -2,6 +2,7 @@ package com.ddrissq.sigdosi.healthcarenetwork.community.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
+import com.ddrissq.sigdosi.common.util.service.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.community.constant.CommunityErrorMessages;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityResponse;
@@ -55,18 +56,16 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public CommunityResponse update(UUID id, CommunityUpdateRequest request) {
         Community community = getByIdOrThrow(id);
-        Riss riss = request.riss() == null
-                ? community.getRiss()
-                : rissService.getByIdOrThrow(request.riss());
-        String name = request.name() == null
-                ? community.getName()
-                : request.name();
-        Integer territory = request.territory() == null
-                ? community.getTerritory()
-                : request.territory();
-        String sector = request.sector() == null
-                ? community.getSector()
-                : request.sector();
+        Riss riss = PatchHelper.resolveEntity(
+                request.riss(),
+                community.getRiss(),
+                rissService::getByIdOrThrow);
+        String name = PatchHelper.resolveValue(
+                request.name(), community.getName());
+        Integer territory = PatchHelper.resolveValue(
+                request.territory(), community.getTerritory());
+        String sector = PatchHelper.resolveValue(
+                request.sector(), community.getSector());
         validateUniqueRissNameTerritorySector(
                 riss.getId(), name, territory, sector, id);
         mapper.updateCommunity(request, community);
@@ -106,9 +105,9 @@ public class CommunityServiceImpl implements CommunityService {
         String capitalizedName = StringUtils.capitalize(name.trim());
         String normalizedSector = sector.trim().toUpperCase();
         boolean exists = id == null
-                ? repository.existsByRiss_IdAndNameAndTerritoryAndSector(
+                ? repository.existsByRissIdAndNameAndTerritoryAndSector(
                         riss, capitalizedName, territory, normalizedSector)
-                : repository.existsByRiss_IdAndNameAndTerritoryAndSectorAndIdNot(
+                : repository.existsByRissIdAndNameAndTerritoryAndSectorAndIdNot(
                         riss, capitalizedName, territory, normalizedSector, id);
         if (exists) {
             throw new EntityAlreadyExistsException(

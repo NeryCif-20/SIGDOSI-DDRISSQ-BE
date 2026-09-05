@@ -1,4 +1,4 @@
-package com.ddrissq.sigdosi.common.mapper.util;
+package com.ddrissq.sigdosi.common.util.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -6,7 +6,7 @@ import org.mapstruct.Named;
 import org.springframework.util.StringUtils;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class StringMapper {
+public final class StringFormatter {
 
     @Named(value = "toUpperCase")
     public static String toUpperCase(String value) {
