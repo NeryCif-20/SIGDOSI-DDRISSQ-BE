@@ -1,8 +1,8 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
-import com.ddrissq.sigdosi.common.validation.annotation.WellFormedFile;
-import com.ddrissq.sigdosi.common.validation.annotation.FileContentType;
-import com.ddrissq.sigdosi.common.validation.annotation.MaxFileSize;
+import com.ddrissq.sigdosi.common.validation.wellformedfile.annotation.WellFormedFile;
+import com.ddrissq.sigdosi.common.validation.fieldcontenttype.annotation.FileContentType;
+import com.ddrissq.sigdosi.common.validation.maxfilesize.annotation.MaxFileSize;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;

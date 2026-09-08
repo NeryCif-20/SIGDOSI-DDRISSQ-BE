@@ -1,13 +1,14 @@
 package com.ddrissq.sigdosi.iam.auth.flowtoken.service;
 
+import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenResult;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.repository.FlowTokenRepository;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.security.crypto.util.Sha256Digest;
+import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,13 @@ public class FlowTokenServiceImpl implements FlowTokenService {
     private final FlowTokenRepository repository;
     private final SecureTokenService tokenService;
     private final AuthProperties props;
+    private final HashService hashService;
+    private final MessageService messageService;
 
     @Override
     public FlowTokenResult create(User user, FlowTokenStep step) {
         String token = tokenService.generate(32);
-        String tokenHash = Sha256Digest.hash(token);
+        String tokenHash = hashService.digestHex(token,  "SHA-256");
         Instant expiresAt = Instant.now().plus(
                 props.flowToken().timeToLive());
         FlowToken flowToken = FlowToken.builder()
@@ -47,11 +50,12 @@ public class FlowTokenServiceImpl implements FlowTokenService {
 
     @Override
     public FlowToken getByTokenOrThrow(String token, FlowTokenStep expectedStep) {
-        String tokenHash = Sha256Digest.hash(token);
+        String tokenHash = hashService.digestHex(token,  "SHA-256");
         return repository
                 .findValidToken(tokenHash, expectedStep)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorMessages.BAD_CREDENTIALS));
+                        messageService.getMessage(
+                                IamErrorMessageKeys.BAD_CREDENTIALS)));
     }
 
     @Override

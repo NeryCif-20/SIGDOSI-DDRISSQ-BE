@@ -1,12 +1,13 @@
 package com.ddrissq.sigdosi.iam.auth.refreshtoken.service;
 
+import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.repository.RefreshTokenRepository;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.security.crypto.util.Sha256Digest;
+import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository repository;
     private final SecureTokenService tokenService;
     private final AuthProperties props;
+    private final HashService hashService;
+    private final MessageService messageService;
 
     @Override
     public RefreshTokenResult create(User user) {
@@ -40,18 +43,21 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshToken getByTokenOrThrow(String token) {
-        String tokenHash = Sha256Digest.hash(token);
+        String tokenHash = hashService.digestHex(token, "SHA-256");
         RefreshToken refreshToken =  repository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorMessages.BAD_CREDENTIALS));
+                        messageService.getMessage(
+                                IamErrorMessageKeys.BAD_CREDENTIALS)));
         if (refreshToken.isRevoked()) {
             repository.revokeAllByFamilyId(refreshToken.getFamilyId());
             throw new AuthenticationException(
-                    IamErrorMessages.BAD_CREDENTIALS);
+                    messageService.getMessage(
+                            IamErrorMessageKeys.BAD_CREDENTIALS));
         }
         if (refreshToken.isExpired()) {
             throw new AuthenticationException(
-                    IamErrorMessages.BAD_CREDENTIALS);
+                    messageService.getMessage(
+                            IamErrorMessageKeys.BAD_CREDENTIALS));
         }
         return refreshToken;
     }
@@ -63,7 +69,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private RefreshTokenResult issueRefreshToken(User user, UUID familyId) {
         String token = tokenService.generate();
-        String tokenHash = Sha256Digest.hash(token);
+        String tokenHash = hashService.digestHex(token, "SHA-256");;
         Instant expiresAt = Instant.now().plus(
                 props.refreshToken().timeToLive());
         RefreshToken refreshToken = RefreshToken.builder()

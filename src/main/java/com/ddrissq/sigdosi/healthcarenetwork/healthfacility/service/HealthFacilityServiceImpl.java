@@ -2,10 +2,11 @@ package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
 import com.ddrissq.sigdosi.common.exception.EntityValidationException;
-import com.ddrissq.sigdosi.common.util.service.PatchHelper;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
+import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.community.service.CommunityService;
-import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.constant.HealthFacilityErrorMessages;
+import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.constant.HealthFacilityErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilitySearchRequest;
@@ -33,6 +34,7 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
     private final HealthFacilityMapper mapper;
     private final CommunityService communityService;
     private final HealthFacilityTypeService healthFacilityTypeService;
+    private final MessageService messageService;
 
     @Override
     public HealthFacilityResponse get(UUID id) {
@@ -93,7 +95,8 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
     public HealthFacility getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        HealthFacilityErrorMessages.NOT_FOUND));
+                        messageService.getMessage(
+                                HealthFacilityErrorMessageKeys.NOT_FOUND)));
     }
 
     private void validateTotalLandArea(
@@ -104,7 +107,8 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
                 availableExpansionArea);
         if (estimatedTotalLandArea.compareTo(totalLandArea) > 0) {
             throw new EntityValidationException(
-                    HealthFacilityErrorMessages.TOTAL_LAND_AREA_EXCEEDED);
+                    messageService.getMessage(
+                            HealthFacilityErrorMessageKeys.TOTAL_LAND_AREA_EXCEEDED));
         }
     }
 

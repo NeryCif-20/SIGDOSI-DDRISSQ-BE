@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.iam.auth.service;
 
+import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthIdentifyRequest;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthLoginRequest;
@@ -20,7 +21,7 @@ import com.ddrissq.sigdosi.iam.auth.passwordtoken.service.PasswordTokenService;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.service.RefreshTokenService;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.exception.AuthorizationException;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
@@ -51,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final PasswordTokenService passwordTokenService;
     private final AuthMailService mailService;
+    private final MessageService messageService;
 
     @Override
     public AuthIdentityResult identify(AuthIdentifyRequest request) {
@@ -74,7 +76,8 @@ public class AuthServiceImpl implements AuthService {
                 user.getPasswordHash());
         if (passwordInvalid) {
             throw new AuthenticationException(
-                    IamErrorMessages.BAD_CREDENTIALS);
+                    messageService.getMessage(
+                            IamErrorMessageKeys.BAD_CREDENTIALS));
         }
         flowToken.setRevokedAt(Instant.now());
         RefreshTokenResult result = refreshTokenService.create(user);
@@ -155,7 +158,8 @@ public class AuthServiceImpl implements AuthService {
             case ACTIVE -> FlowTokenStep.PASSWORD;
             case PENDING -> FlowTokenStep.SETUP_PASSWORD;
             default -> throw new AuthorizationException(
-                    IamErrorMessages.USER_DISABLED);
+                    messageService.getMessage(
+                            IamErrorMessageKeys.AUTHENTICATION_DISABLED));
         };
     }
 

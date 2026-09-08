@@ -3,8 +3,9 @@ package com.ddrissq.sigdosi.healthcarenetwork.dms.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.util.service.PatchHelper;
-import com.ddrissq.sigdosi.healthcarenetwork.dms.constant.DmsErrorMessages;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
+import com.ddrissq.sigdosi.common.service.util.PatchHelper;
+import com.ddrissq.sigdosi.healthcarenetwork.dms.constant.DmsErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsSearchRequest;
@@ -30,6 +31,7 @@ public class DmsServiceImpl implements DmsService {
 
     private final DmsRepository repository;
     private final DmsMapper mapper;
+    private final MessageService messageService;
 
     @Override
     public DmsResponse get(UUID id) {
@@ -67,7 +69,8 @@ public class DmsServiceImpl implements DmsService {
     public Dms getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        DmsErrorMessages.NOT_FOUND));
+                        messageService.getMessage(
+                                DmsErrorMessageKeys.NOT_FOUND)));
     }
 
     private void validateUniqueName(String name) {
@@ -81,7 +84,8 @@ public class DmsServiceImpl implements DmsService {
                 : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    DmsErrorMessages.ALREADY_EXISTS);
+                    messageService.getMessage(
+                            DmsErrorMessageKeys.ALREADY_EXISTS));
         }
     }
 

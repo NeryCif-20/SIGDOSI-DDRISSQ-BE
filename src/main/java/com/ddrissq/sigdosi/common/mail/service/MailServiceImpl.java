@@ -1,8 +1,9 @@
 package com.ddrissq.sigdosi.common.mail.service;
 
-import com.ddrissq.sigdosi.common.mail.model.EmailData;
-import com.ddrissq.sigdosi.common.mail.constant.MailErrorMessages;
+import com.ddrissq.sigdosi.common.mail.constant.MailErrorMessageKeys;
 import com.ddrissq.sigdosi.common.mail.exception.MailSendingException;
+import com.ddrissq.sigdosi.common.mail.model.EmailData;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class MailServiceImpl implements MailService {
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final MessageService messageService;
 
     @Override
     public void sendEmail(EmailData data) {
@@ -38,7 +40,8 @@ public class MailServiceImpl implements MailService {
             mailSender.send(message);
         } catch (MessagingException ex) {
             throw new MailSendingException(
-                    MailErrorMessages.EMAIL_SEND_FAILED);
+                    messageService.getMessage(
+                            MailErrorMessageKeys.SEND_FAILED));
         }
     }
 

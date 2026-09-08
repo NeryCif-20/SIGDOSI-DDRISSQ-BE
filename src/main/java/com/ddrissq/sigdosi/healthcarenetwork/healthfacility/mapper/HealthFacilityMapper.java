@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.mapper;
 
-import com.ddrissq.sigdosi.common.util.mapper.GeometryTransformer;
+import com.ddrissq.sigdosi.common.mapper.util.GeometryTransformer;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityUpdateRequest;

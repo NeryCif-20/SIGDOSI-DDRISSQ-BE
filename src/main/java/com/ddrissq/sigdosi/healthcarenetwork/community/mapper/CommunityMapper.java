@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.mapper;
 
-import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
+import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityUpdateRequest;

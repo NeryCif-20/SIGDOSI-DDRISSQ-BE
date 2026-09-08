@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.common.handler;
 
-import com.ddrissq.sigdosi.common.constant.ErrorMessages;
+import com.ddrissq.sigdosi.common.constant.ErrorMessageKeys;
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
 import com.ddrissq.sigdosi.common.file.exception.FileNotFoundException;
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
         ProblemDetail detail = ProblemDetail
                 .forStatusAndDetail(
                         HttpStatus.BAD_REQUEST,
-                        ErrorMessages.INVALID_PARAMETER);
+                        ErrorMessageKeys.REQUEST_PARAMETER_INVALID);
         detail.setTitle("Invalid Parameter");
         detail.setProperty("parameter", ex.getPropertyName());
         detail.setProperty("error_category", "Validation");
@@ -115,7 +115,7 @@ public class GlobalExceptionHandler {
         });
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.BAD_REQUEST,
-                ErrorMessages.VALIDATION_FAILED);
+                ErrorMessageKeys.VALIDATION_FAILED);
         detail.setTitle("Validation Failed");
         detail.setProperty("error_category", "Validation");
         detail.setProperty("timestamp", Instant.now());
@@ -128,7 +128,7 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail
                 .forStatusAndDetail(
                         HttpStatus.BAD_REQUEST,
-                        ErrorMessages.INVALID_REQUEST_BODY);
+                        ErrorMessageKeys.REQUEST_BODY_INVALID);
         problemDetail.setTitle("Invalid Request Body");
         problemDetail.setProperty("error_category", "Validation");
         problemDetail.setProperty("timestamp", Instant.now());
@@ -140,7 +140,7 @@ public class GlobalExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail
                 .forStatusAndDetail(
                         HttpStatus.METHOD_NOT_ALLOWED,
-                        ErrorMessages.METHOD_NOT_ALLOWED);
+                        ErrorMessageKeys.REQUEST_METHOD_NOT_ALLOWED);
         problemDetail.setTitle("Method Not Allowed");
         problemDetail.setProperty("error_category", "Generic");
         problemDetail.setProperty("timestamp", Instant.now());

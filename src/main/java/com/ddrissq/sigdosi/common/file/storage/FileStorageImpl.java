@@ -1,11 +1,12 @@
 package com.ddrissq.sigdosi.common.file.storage;
 
 import com.ddrissq.sigdosi.common.file.configuration.LocalStorageProperties;
-import com.ddrissq.sigdosi.common.file.constant.FileErrorMessages;
+import com.ddrissq.sigdosi.common.file.constant.FileErrorMessageKeys;
 import com.ddrissq.sigdosi.common.file.exception.FileNotFoundException;
 import com.ddrissq.sigdosi.common.file.exception.FileStorageException;
 import com.ddrissq.sigdosi.common.file.exception.InvalidFileException;
 import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.mime.MimeTypeException;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class FileStorageImpl implements FileStorage {
 
     private final LocalStorageProperties props;
+    private final MessageService messageService;
 
     @PostConstruct
     public void init() {
@@ -34,7 +36,8 @@ public class FileStorageImpl implements FileStorage {
             Files.createDirectories(getPath());
         } catch (IOException ex) {
             throw new FileStorageException(
-                    FileErrorMessages.FILE_STORAGE_INITIALIZATION_FAILED);
+                    messageService.getMessage(
+                            FileErrorMessageKeys.STORAGE_INITIALIZATION_FAILED));
         }
     }
 
@@ -52,7 +55,8 @@ public class FileStorageImpl implements FileStorage {
             return filename;
         } catch (IOException | MimeTypeException ex) {
             throw new FileStorageException(
-                    FileErrorMessages.FILE_STORAGE_FAILED);
+                    messageService.getMessage(
+                            FileErrorMessageKeys.STORAGE_FAILED));
         }
     }
 
@@ -64,7 +68,8 @@ public class FileStorageImpl implements FileStorage {
             Files.deleteIfExists(file);
         } catch (IOException ex) {
             throw new FileStorageException(
-                    FileErrorMessages.FILE_DELETE_FAILED);
+                    messageService.getMessage(
+                            FileErrorMessageKeys.DELETE_FAILED));
         }
     }
 
@@ -74,11 +79,13 @@ public class FileStorageImpl implements FileStorage {
         Resource resource = new FileSystemResource(file);
         if (!resource.exists()) {
             throw new FileNotFoundException(
-                    FileErrorMessages.FILE_NOT_FOUND);
+                    messageService.getMessage(
+                            FileErrorMessageKeys.NOT_FOUND));
         }
         if (!resource.isReadable()) {
             throw new InvalidFileException(
-                    FileErrorMessages.FILE_LOAD_FAILED);
+                    messageService.getMessage(
+                            FileErrorMessageKeys.LOAD_FAILED));
         }
         return resource;
     }

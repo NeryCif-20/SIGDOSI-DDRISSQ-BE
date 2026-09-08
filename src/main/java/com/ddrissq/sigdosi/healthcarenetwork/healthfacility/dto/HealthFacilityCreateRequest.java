@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto;
 
-import com.ddrissq.sigdosi.common.validation.annotation.GeometryType;
+import com.ddrissq.sigdosi.common.validation.geometrytype.annotation.GeometryType;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacilityStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyTenure;

@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.mapper;
 
-import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
+import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
 import com.ddrissq.sigdosi.iam.role.controller.RoleController;
 import com.ddrissq.sigdosi.iam.user.dto.UserCreateRequest;
 import com.ddrissq.sigdosi.iam.user.dto.UserResponse;

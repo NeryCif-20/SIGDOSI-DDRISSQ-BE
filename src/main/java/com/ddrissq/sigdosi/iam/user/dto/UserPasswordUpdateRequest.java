@@ -1,12 +1,12 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
-import com.ddrissq.sigdosi.common.validation.annotation.FieldMatch;
+import com.ddrissq.sigdosi.common.validation.compare.annotation.Compare;
 import jakarta.validation.constraints.NotBlank;
 
-@FieldMatch(
-        field = "newPassword",
-        fieldMatch = "confirmNewPassword",
-        message = "No coincide con la nueva contraseña")
+@Compare(
+        firstField = "confirmNewPassword",
+        secondField = "newPassword",
+        message = "Debe coincidir con la nueva contraseña")
 public record UserPasswordUpdateRequest(
         @NotBlank(message = "La contraseña actual es obligatoria")
         String currentPassword,

@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.permission.mapper;
 
-import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
+import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;

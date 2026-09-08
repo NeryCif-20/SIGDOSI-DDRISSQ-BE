@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.mapper;
 
-import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
+import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialUpdateRequest;

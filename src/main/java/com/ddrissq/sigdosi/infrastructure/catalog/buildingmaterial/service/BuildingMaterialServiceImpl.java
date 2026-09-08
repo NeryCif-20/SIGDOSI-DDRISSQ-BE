@@ -2,8 +2,9 @@ package com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.util.service.PatchHelper;
-import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.constant.BuildingMaterialErrorMessages;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
+import com.ddrissq.sigdosi.common.service.util.PatchHelper;
+import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.constant.BuildingMaterialErrorMessageKeys;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialSearchRequest;
@@ -28,6 +29,7 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
 
     private final BuildingMaterialRepository repository;
     private final BuildingMaterialMapper mapper;
+    private final MessageService messageService;
 
     @Override
     public BuildingMaterialResponse get(UUID id) {
@@ -66,7 +68,8 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
     public BuildingMaterial getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        BuildingMaterialErrorMessages.NOT_FOUND));
+                        messageService.getMessage(
+                                BuildingMaterialErrorMessageKeys.NOT_FOUND)));
     }
 
     private void validateUniqueCode(String code) {
@@ -80,7 +83,8 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
                 : repository.existsByCodeAndIdNot(normalizedCode, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    BuildingMaterialErrorMessages.ALREADY_EXISTS);
+                    messageService.getMessage(
+                            BuildingMaterialErrorMessageKeys.ALREADY_EXISTS));
         }
     }
 

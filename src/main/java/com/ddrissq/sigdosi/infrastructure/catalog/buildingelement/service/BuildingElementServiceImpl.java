@@ -2,8 +2,9 @@ package com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.util.service.PatchHelper;
-import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.constant.BuildingElementErrorMessages;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
+import com.ddrissq.sigdosi.common.service.util.PatchHelper;
+import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.constant.BuildingElementErrorMessageKeys;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementSearchRequest;
@@ -29,6 +30,7 @@ public class BuildingElementServiceImpl implements BuildingElementService {
 
     private final BuildingElementRepository repository;
     private final BuildingElementMapper mapper;
+    private final MessageService messageService;
 
     @Override
     public BuildingElementResponse get(UUID id) {
@@ -67,7 +69,8 @@ public class BuildingElementServiceImpl implements BuildingElementService {
     public BuildingElement getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        BuildingElementErrorMessages.NOT_FOUND));
+                        messageService.getMessage(
+                                BuildingElementErrorMessageKeys.NOT_FOUND)));
     }
 
     private void validateUniqueName(String name) {
@@ -81,7 +84,8 @@ public class BuildingElementServiceImpl implements BuildingElementService {
                 : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    BuildingElementErrorMessages.ALREADY_EXISTS);
+                    messageService.getMessage(
+                            BuildingElementErrorMessageKeys.ALREADY_EXISTS));
         }
     }
 

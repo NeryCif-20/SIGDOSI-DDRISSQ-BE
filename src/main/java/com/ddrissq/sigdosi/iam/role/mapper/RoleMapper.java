@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.role.mapper;
 
-import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
+import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;

@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.riss.mapper;
 
-import com.ddrissq.sigdosi.common.util.mapper.StringFormatter;
+import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.mapper.DmsMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissResponse;

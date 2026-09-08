@@ -2,10 +2,11 @@ package com.ddrissq.sigdosi.healthcarenetwork.riss.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.util.service.PatchHelper;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
+import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.model.Dms;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.service.DmsService;
-import com.ddrissq.sigdosi.healthcarenetwork.riss.constant.RissErrorMessages;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.constant.RissErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissSearchRequest;
@@ -32,6 +33,7 @@ public class RissServiceImpl implements RissService {
     private final RissRepository repository;
     private final RissMapper mapper;
     private final DmsService dmsService;
+    private final MessageService messageService;
 
     @Override
     public RissResponse get(UUID id) {
@@ -77,7 +79,8 @@ public class RissServiceImpl implements RissService {
     public Riss getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        RissErrorMessages.NOT_FOUND));
+                        messageService.getMessage(
+                                RissErrorMessageKeys.NOT_FOUND)));
     }
 
     private void validateUniqueDmsName(UUID dms, String name) {
@@ -91,7 +94,8 @@ public class RissServiceImpl implements RissService {
                 : repository.existsByDmsIdAndNameAndIdNot(dms, capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    RissErrorMessages.ALREADY_EXISTS);
+                    messageService.getMessage(
+                            RissErrorMessageKeys.ALREADY_EXISTS));
         }
     }
 

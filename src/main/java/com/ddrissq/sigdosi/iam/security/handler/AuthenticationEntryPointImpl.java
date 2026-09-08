@@ -1,6 +1,7 @@
 package com.ddrissq.sigdosi.iam.security.handler;
 
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.time.Instant;
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     private final ObjectMapper mapper;
+    private final MessageService messageService;
 
     @Override
     public void commence(
@@ -37,16 +39,16 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     private String resolveDetail(Throwable cause) {
         return switch (cause) {
-            case JwtValidationException ex -> IamErrorMessages.EXPIRED_TOKEN;
-            case BadJwtException ex -> IamErrorMessages.INVALID_TOKEN;
-            default -> IamErrorMessages.AUTHENTICATION_REQUIRED;
+            case JwtValidationException ex -> IamErrorMessageKeys.TOKEN_EXPIRED;
+            case BadJwtException ex -> IamErrorMessageKeys.TOKEN_INVALID;
+            default -> IamErrorMessageKeys.AUTHENTICATION_REQUIRED;
         };
     }
 
-    private String buildResponse(String message, String path) {
+    private String buildResponse(String key, String path) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.UNAUTHORIZED,
-                message);
+                messageService.getMessage(key));
         detail.setInstance(URI.create(path));
         detail.setTitle("Authentication Error");
         detail.setProperty("error_category", "Auth");

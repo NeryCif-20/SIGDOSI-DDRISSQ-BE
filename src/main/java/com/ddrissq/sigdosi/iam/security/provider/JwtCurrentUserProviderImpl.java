@@ -1,7 +1,9 @@
 package com.ddrissq.sigdosi.iam.security.provider;
 
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessages;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
+import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -11,15 +13,19 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Component
 public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
+
+    private final MessageService messageService;
 
     @Override
     public UUID getUserId() {
         String userId = getJwt().getSubject();
         if (userId == null) {
             throw new AuthenticationException(
-                    IamErrorMessages.INVALID_TOKEN);
+                    messageService.getMessage(
+                            IamErrorMessageKeys.TOKEN_INVALID));
         }
         return UUID.fromString(userId);
     }
@@ -29,7 +35,8 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
         List<String> authorities = getJwt().getClaimAsStringList("authorities");
         if (authorities == null) {
             throw new AuthenticationException(
-                    IamErrorMessages.INVALID_TOKEN);
+                    messageService.getMessage(
+                            IamErrorMessageKeys.TOKEN_INVALID));
         }
         return authorities;
     }
@@ -41,7 +48,8 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
             return jwtAuth.getToken();
         }
         throw new AuthenticationException(
-                IamErrorMessages.BAD_CREDENTIALS);
+                messageService.getMessage(
+                        IamErrorMessageKeys.BAD_CREDENTIALS));
     }
 
 }
