@@ -8,11 +8,4 @@ import java.nio.file.Path;
 public record LocalStorageProperties(
         Path path
 ) {
-
-    public LocalStorageProperties {
-        if (path != null) {
-            path = path.toAbsolutePath().normalize();
-        }
-    }
-
 }

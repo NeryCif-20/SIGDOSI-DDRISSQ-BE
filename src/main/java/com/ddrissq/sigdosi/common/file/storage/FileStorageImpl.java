@@ -91,7 +91,7 @@ public class FileStorageImpl implements FileStorage {
     }
 
     private Path getPath() {
-        return props.path();
+        return props.path().toAbsolutePath().normalize();
     }
 
 }

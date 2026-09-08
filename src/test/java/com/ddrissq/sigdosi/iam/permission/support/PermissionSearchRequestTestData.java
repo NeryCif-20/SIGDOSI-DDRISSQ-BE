@@ -12,7 +12,7 @@ public final class PermissionSearchRequestTestData {
 
     public static PermissionSearchRequest.PermissionSearchRequestBuilder aPermissionSearchRequest() {
         return PermissionSearchRequest.builder()
-                .module(MODULE)
+                .q(MODULE)
                 .action(ACTION);
     }
 

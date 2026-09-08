@@ -1,3 +1,0 @@
-testcontainers:
-  postgres:
-    version: ${POSTGRES_V:18.4}

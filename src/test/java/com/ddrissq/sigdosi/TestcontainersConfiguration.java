@@ -14,9 +14,10 @@ public class TestcontainersConfiguration {
     @Bean
     @ServiceConnection
     PostgreSQLContainer postgresContainer(TestcontainersProperties props) {
-        String imageName = "postgres:" + props.postgres().version();
+        String imageName = "postgis/postgis:" + props.postgres().version();
         return new PostgreSQLContainer(
-                DockerImageName.parse(imageName));
+                DockerImageName.parse(imageName)
+                        .asCompatibleSubstituteFor("postgres"));
     }
 
 }
