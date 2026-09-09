@@ -8,10 +8,10 @@ import lombok.Builder;
 
 @Builder
 public record PermissionCreateRequest(
-        @NotBlank(message = "El modulo es obligatorio.")
-        @Size(max = 20, message = "El tamaño maximo del modulo es de {max} caracteres")
+        @NotBlank
+        @Size(max = 20)
         String module,
-        @NotNull(message = "La acción es obligatoria.")
+        @NotNull
         PermissionAction action
 ) {
 }

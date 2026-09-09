@@ -15,7 +15,7 @@ public final class StringFormatter {
 
     @Named(value = "capitalize")
     public static String capitalize(String value) {
-        return value == null ? null : StringUtils.capitalize(value.trim());
+        return value == null ? null : StringUtils.capitalize(value.trim().toLowerCase());
     }
 
 }

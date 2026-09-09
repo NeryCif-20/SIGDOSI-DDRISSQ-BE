@@ -2,7 +2,6 @@ package com.ddrissq.sigdosi.healthcarenetwork.community.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.community.constant.CommunityErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityCreateRequest;
@@ -33,7 +32,6 @@ public class CommunityServiceImpl implements CommunityService {
     private final CommunityRepository repository;
     private final CommunityMapper mapper;
     private final RissService rissService;
-    private final MessageService messageService;
 
     @Override
     public CommunityResponse get(UUID id) {
@@ -94,8 +92,7 @@ public class CommunityServiceImpl implements CommunityService {
     public Community getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                CommunityErrorMessageKeys.NOT_FOUND)));
+                        CommunityErrorMessageKeys.NOT_FOUND));
     }
 
     private void validateUniqueRissNameTerritorySector(
@@ -114,8 +111,7 @@ public class CommunityServiceImpl implements CommunityService {
                         riss, capitalizedName, territory, normalizedSector, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            CommunityErrorMessageKeys.ALREADY_EXISTS));
+                    CommunityErrorMessageKeys.ALREADY_EXISTS);
         }
     }
 

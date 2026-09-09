@@ -1,6 +1,7 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto;
 
-import com.ddrissq.sigdosi.common.validation.geometrytype.annotation.GeometryType;
+import com.ddrissq.sigdosi.common.validation.geometry.annotation.GeometryType;
+import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.constant.HealthFacilityErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacilityStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyTenure;
@@ -13,29 +14,31 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record HealthFacilityCreateRequest(
-        @NotNull(message = "La comunidad es obligatorio")
+        @NotNull
         UUID community,
-        @NotNull(message = "El tipo de establecimeinto es obligatorio")
+        @NotNull
         UUID healthFacilityType,
-        @NotNull(message = "Especificar si es sede es obligatorio")
+        @NotNull
         Boolean isHeadquarters,
-        @NotNull(message = "El estado es obligatorio")
+        @NotNull
         HealthFacilityStatus status,
-        @NotNull(message = "El área total es obligatoria")
-        @PositiveOrZero(message = "El area total debe ser mayor o igual a cero")
+        @NotNull
+        @PositiveOrZero
         BigDecimal totalLandArea,
-        @NotNull(message = "El área ocupada es obligatoria")
-        @PositiveOrZero(message = "El área ocupada debe ser mayor o igual a cero")
+        @NotNull
+        @PositiveOrZero
         BigDecimal buildingFootprint,
-        @NotNull(message = "El área disponible es obligatoria")
-        @PositiveOrZero(message = "El área disponible debe ser mayor o igual a cero")
+        @NotNull
+        @PositiveOrZero
         BigDecimal availableExpansionArea,
-        @NotNull(message = "La tenencia de la propiedad es obligatoria")
+        @NotNull
         PropertyTenure propertyTenure,
-        @NotNull(message = "El estado de la propiedad es obligatorio")
+        @NotNull
         PropertyStatus propertyStatus,
         String notes,
-        @GeometryType(expectedType = Point.class, message = "La ubicación debe ser un punto geográfico")
+        @GeometryType(
+                expectedType = Point.class,
+                message = HealthFacilityErrorMessageKeys.LOCATION_INVALID)
         Geometry location
 ) {
 }

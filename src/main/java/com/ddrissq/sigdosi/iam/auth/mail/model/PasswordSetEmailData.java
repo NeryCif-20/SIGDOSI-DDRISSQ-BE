@@ -15,7 +15,12 @@ public record PasswordSetEmailData(
         Instant expiresAt
 ) {
 
+    private static final String TEMPLATE = "/mail/auth/set-password";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy 'a las' HH:mm");
+
+    public String template() {
+        return TEMPLATE;
+    }
 
     public String buildButtonLink(String uri, String path) {
         return UriComponentsBuilder

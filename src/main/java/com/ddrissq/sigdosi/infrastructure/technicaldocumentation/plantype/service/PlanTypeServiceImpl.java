@@ -2,7 +2,6 @@ package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.servi
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.constant.BuildingElementErrorMessageKeys;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.constant.PlanTypeErrorMessageKeys;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeCreateRequest;
@@ -30,7 +29,6 @@ public class PlanTypeServiceImpl implements PlanTypeService {
 
     private final PlanTypeRepository repository;
     private final PlanTypeMapper mapper;
-    private final MessageService messageService;
 
     @Override
     public PlanTypeResponse get(UUID id) {
@@ -71,8 +69,7 @@ public class PlanTypeServiceImpl implements PlanTypeService {
     public PlanType getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                PlanTypeErrorMessageKeys.NOT_FOUND)));
+                        PlanTypeErrorMessageKeys.NOT_FOUND));
     }
 
     private void validateUniqueCode(String name) {
@@ -86,8 +83,7 @@ public class PlanTypeServiceImpl implements PlanTypeService {
                 : repository.existsByCodeAndIdNot(capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            BuildingElementErrorMessageKeys.ALREADY_EXISTS));
+                    BuildingElementErrorMessageKeys.ALREADY_EXISTS);
         }
     }
 

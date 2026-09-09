@@ -1,22 +1,18 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
-import com.ddrissq.sigdosi.common.validation.wellformedfile.annotation.WellFormedFile;
-import com.ddrissq.sigdosi.common.validation.fieldcontenttype.annotation.FileContentType;
-import com.ddrissq.sigdosi.common.validation.maxfilesize.annotation.MaxFileSize;
+import com.ddrissq.sigdosi.common.validation.file.annotation.FileMetadata;
+import com.ddrissq.sigdosi.common.validation.file.annotation.FileContentType;
+import com.ddrissq.sigdosi.common.validation.file.annotation.MaxFileSize;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 public record UserAvatarUpdateRequest(
-        @NotNull(message = "El avatar es obligatorio")
-        @WellFormedFile(message = "El archivo debe ser valido")
-        @FileContentType(
-                message = "El avatar debe ser una imagen valida",
-                allowed = {"image/jpeg", "image/png", "image/webp"})
-        @MaxFileSize(
-                value = "2MB",
-                message = "El tamaño de la imagen no debe superar los {value}")
+        @NotNull
+        @FileMetadata
+        @FileContentType(allowed = {"image/jpeg", "image/png", "image/webp"})
+        @MaxFileSize(value = "2MB")
         MultipartFile avatar
 ) {
 }

@@ -44,9 +44,6 @@ class PermissionServiceTest {
     @Mock
     private PermissionMapper mapper;
 
-    @Mock
-    private MessageService messageService;
-
     @InjectMocks
     private PermissionServiceImpl service;
 
@@ -74,14 +71,11 @@ class PermissionServiceTest {
     void givenNonExistingId_whenGet_thenThrowsEntityNotFoundException() {
         // Given
         given(repository.findById(ID)).willReturn(Optional.empty());
-        given(messageService.getMessage(PermissionErrorMessageKeys.NOT_FOUND))
-                .willReturn(PermissionErrorMessageKeys.NOT_FOUND);
         // When + Then
         assertThatThrownBy(() -> service.get(ID))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(PermissionErrorMessageKeys.NOT_FOUND);
         verify(repository).findById(ID);
-        verify(messageService).getMessage(PermissionErrorMessageKeys.NOT_FOUND);
         verifyNoInteractions(mapper);
     }
 
@@ -121,14 +115,11 @@ class PermissionServiceTest {
                 .build();
         given(repository.existsByModuleAndAction(
                 request.module(), request.action())).willReturn(true);
-        given(messageService.getMessage(PermissionErrorMessageKeys.ALREADY_EXISTS))
-            .willReturn(PermissionErrorMessageKeys.ALREADY_EXISTS);
         // When + Then
         assertThatThrownBy(() -> service.create(request))
                 .isInstanceOf(EntityAlreadyExistsException.class)
                 .hasMessage(PermissionErrorMessageKeys.ALREADY_EXISTS);
         verify(repository).existsByModuleAndAction(request.module(), request.action());
-        verify(messageService).getMessage(PermissionErrorMessageKeys.ALREADY_EXISTS);
         verifyNoMoreInteractions(repository);
         verifyNoInteractions(mapper);
     }
@@ -196,14 +187,11 @@ class PermissionServiceTest {
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
                 .build();
         given(repository.findById(ID)).willReturn(Optional.empty());
-        given(messageService.getMessage(PermissionErrorMessageKeys.NOT_FOUND))
-            .willReturn(PermissionErrorMessageKeys.NOT_FOUND);
         // When + Then
         assertThatThrownBy(() -> service.update(ID, request))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(PermissionErrorMessageKeys.NOT_FOUND);
         verify(repository).findById(ID);
-        verify(messageService).getMessage(PermissionErrorMessageKeys.NOT_FOUND);
         verifyNoMoreInteractions(repository);
         verifyNoInteractions(mapper);
     }
@@ -280,8 +268,6 @@ class PermissionServiceTest {
         given(repository.findById(ID)).willReturn(Optional.of(permission));
         given(repository.existsByModuleAndActionAndIdNot(
                 request.module(), request.action(), ID)).willReturn(true);
-        given(messageService.getMessage(PermissionErrorMessageKeys.ALREADY_EXISTS))
-                .willReturn(PermissionErrorMessageKeys.ALREADY_EXISTS);
         // When + Then
         assertThatThrownBy(() -> service.update(ID, request))
                 .isInstanceOf(EntityAlreadyExistsException.class)
@@ -289,7 +275,6 @@ class PermissionServiceTest {
         verify(repository).findById(ID);
         verify(repository)
                 .existsByModuleAndActionAndIdNot(request.module(), request.action(), ID);
-        verify(messageService).getMessage(PermissionErrorMessageKeys.ALREADY_EXISTS);
         verifyNoInteractions(mapper);
     }
 
@@ -356,14 +341,11 @@ class PermissionServiceTest {
     void givenNonExistingId_whenFindById_thenThrowsEntityNotFoundException() {
         // Given
         given(repository.findById(ID)).willReturn(Optional.empty());
-        given(messageService.getMessage(PermissionErrorMessageKeys.NOT_FOUND))
-                .willReturn(PermissionErrorMessageKeys.NOT_FOUND);
         // When + Then
         assertThatThrownBy(() -> service.getByIdOrThrow(ID))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(PermissionErrorMessageKeys.NOT_FOUND);
         verify(repository).findById(ID);
-        verify(messageService).getMessage(PermissionErrorMessageKeys.NOT_FOUND);
     }
 
     @Test

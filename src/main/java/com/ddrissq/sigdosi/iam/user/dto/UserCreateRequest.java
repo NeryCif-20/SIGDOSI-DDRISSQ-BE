@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
+import com.ddrissq.sigdosi.iam.user.constant.UserErrorMessageKeys;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 
@@ -7,22 +8,22 @@ import java.util.UUID;
 
 @Builder
 public record UserCreateRequest(
-        @NotNull(message = "El rol es obligatorio")
+        @NotNull
         UUID role,
-        @NotBlank(message = "El email es obligatorio")
-        @Email(message = "El email no tiene un formato valido")
-        @Size(max = 100, message = "El tamaño maximo del email es de {max} caracteres")
+        @NotBlank
+        @Email
+        @Size(max = 100)
         String email,
-        @NotBlank(message = "El CUI es obligatorio")
-        @Pattern(regexp = "^\\d{13}$", message = "El CUI debe ser de 13 dígitos")
+        @NotBlank
+        @Pattern(regexp = "^\\d{13}$", message = UserErrorMessageKeys.CUI_PATTERN)
         String cui,
-        @NotBlank(message = "El nombre es obligatorio")
-        @Size(max = 50, message = "El nombre no debe exceder los {max} caracteres")
+        @NotBlank
+        @Size(max = 50)
         String firstName,
-        @NotBlank(message = "El apellido es obligatorio")
-        @Size(max = 50, message = "El apellido no debe exceder los {max} caracteres")
+        @NotBlank
+        @Size(max = 50)
         String lastName,
-        @Pattern(regexp = "^\\d{8}$", message = "El número de teléfono debe ser de 8 dígitos")
+        @Pattern(regexp = "^\\d{8}$", message = UserErrorMessageKeys.PHONE_NUMBER_PATTERN)
         String phoneNumber
 ) {
 }

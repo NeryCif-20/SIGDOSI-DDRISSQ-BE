@@ -25,7 +25,7 @@ public final class HashService {
         } catch (NoSuchAlgorithmException ex) {
             throw new HashGenerationException(
                     messageService.getMessage(
-                            HashErrorMessageKeys.NO_SUCH_ALGORITHM,
+                            HashErrorMessageKeys.ALGORITHM_NOT_FOUND,
                             algorithm));
         }
     }

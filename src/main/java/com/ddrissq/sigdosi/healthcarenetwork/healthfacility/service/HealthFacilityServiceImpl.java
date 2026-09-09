@@ -2,7 +2,6 @@ package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
 import com.ddrissq.sigdosi.common.exception.EntityValidationException;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.community.service.CommunityService;
@@ -34,7 +33,6 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
     private final HealthFacilityMapper mapper;
     private final CommunityService communityService;
     private final HealthFacilityTypeService healthFacilityTypeService;
-    private final MessageService messageService;
 
     @Override
     public HealthFacilityResponse get(UUID id) {
@@ -95,8 +93,7 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
     public HealthFacility getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                HealthFacilityErrorMessageKeys.NOT_FOUND)));
+                        HealthFacilityErrorMessageKeys.NOT_FOUND));
     }
 
     private void validateTotalLandArea(
@@ -107,8 +104,7 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
                 availableExpansionArea);
         if (estimatedTotalLandArea.compareTo(totalLandArea) > 0) {
             throw new EntityValidationException(
-                    messageService.getMessage(
-                            HealthFacilityErrorMessageKeys.TOTAL_LAND_AREA_EXCEEDED));
+                    HealthFacilityErrorMessageKeys.TOTAL_LAND_AREA_EXCEEDED);
         }
     }
 

@@ -2,7 +2,6 @@ package com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.constant.HealthFacilityTypeErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeCreateRequest;
@@ -29,7 +28,6 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
 
     private final HealthFacilityTypeRepository repository;
     private final HealthFacilityTypeMapper mapper;
-    private final MessageService messageService;
 
     @Override
     public HealthFacilityTypeResponse get(UUID id) {
@@ -68,8 +66,7 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
     public HealthFacilityType getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                HealthFacilityTypeErrorMessageKeys.NOT_FOUND)));
+                        HealthFacilityTypeErrorMessageKeys.NOT_FOUND));
     }
 
     private void validateUniqueCode(String code) {
@@ -83,8 +80,7 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
                 : repository.existsByCodeAndIdNot(normalizedCode, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            HealthFacilityTypeErrorMessageKeys.ALREADY_EXISTS));
+                    HealthFacilityTypeErrorMessageKeys.ALREADY_EXISTS);
         }
     }
 

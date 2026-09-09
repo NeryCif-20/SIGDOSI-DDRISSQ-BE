@@ -1,6 +1,5 @@
 package com.ddrissq.sigdosi.iam.auth.service;
 
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthIdentifyRequest;
 import com.ddrissq.sigdosi.iam.auth.dto.AuthLoginRequest;
@@ -52,7 +51,6 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final PasswordTokenService passwordTokenService;
     private final AuthMailService mailService;
-    private final MessageService messageService;
 
     @Override
     public AuthIdentityResult identify(AuthIdentifyRequest request) {
@@ -76,8 +74,7 @@ public class AuthServiceImpl implements AuthService {
                 user.getPasswordHash());
         if (passwordInvalid) {
             throw new AuthenticationException(
-                    messageService.getMessage(
-                            IamErrorMessageKeys.BAD_CREDENTIALS));
+                    IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID);
         }
         flowToken.setRevokedAt(Instant.now());
         RefreshTokenResult result = refreshTokenService.create(user);
@@ -158,8 +155,7 @@ public class AuthServiceImpl implements AuthService {
             case ACTIVE -> FlowTokenStep.PASSWORD;
             case PENDING -> FlowTokenStep.SETUP_PASSWORD;
             default -> throw new AuthorizationException(
-                    messageService.getMessage(
-                            IamErrorMessageKeys.AUTHENTICATION_DISABLED));
+                    IamErrorMessageKeys.AUTHENTICATION_DISABLED);
         };
     }
 

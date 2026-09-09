@@ -49,7 +49,7 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
         }
         throw new AuthenticationException(
                 messageService.getMessage(
-                        IamErrorMessageKeys.BAD_CREDENTIALS));
+                        IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID));
     }
 
 }

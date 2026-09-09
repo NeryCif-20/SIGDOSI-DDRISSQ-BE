@@ -2,7 +2,6 @@ package com.ddrissq.sigdosi.healthcarenetwork.riss.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.model.Dms;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.service.DmsService;
@@ -33,7 +32,6 @@ public class RissServiceImpl implements RissService {
     private final RissRepository repository;
     private final RissMapper mapper;
     private final DmsService dmsService;
-    private final MessageService messageService;
 
     @Override
     public RissResponse get(UUID id) {
@@ -79,8 +77,7 @@ public class RissServiceImpl implements RissService {
     public Riss getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                RissErrorMessageKeys.NOT_FOUND)));
+                        RissErrorMessageKeys.NOT_FOUND));
     }
 
     private void validateUniqueDmsName(UUID dms, String name) {
@@ -94,8 +91,7 @@ public class RissServiceImpl implements RissService {
                 : repository.existsByDmsIdAndNameAndIdNot(dms, capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            RissErrorMessageKeys.ALREADY_EXISTS));
+                    RissErrorMessageKeys.ALREADY_EXISTS);
         }
     }
 

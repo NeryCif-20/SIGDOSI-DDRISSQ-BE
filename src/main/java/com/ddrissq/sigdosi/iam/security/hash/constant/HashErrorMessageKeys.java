@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HashErrorMessageKeys {
 
-    public static final String NO_SUCH_ALGORITHM = "digest.error.no.such.algorithm";
+    public static final String ALGORITHM_NOT_FOUND = "hash.algorithm.not-found";
 
 }

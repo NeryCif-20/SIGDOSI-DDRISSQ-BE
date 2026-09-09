@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Builder
 public record RoleUpdateRequest(
-        @Size(max = 30, message = "El tamaño maximo del nombre es de {max} caracteres")
+        @Size(max = 30)
         String name,
         String description,
         List<UUID> permissions

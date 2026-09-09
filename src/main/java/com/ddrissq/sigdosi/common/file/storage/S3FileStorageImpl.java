@@ -4,7 +4,6 @@ import com.ddrissq.sigdosi.common.file.configuration.S3StorageProperties;
 import com.ddrissq.sigdosi.common.file.constant.FileErrorMessageKeys;
 import com.ddrissq.sigdosi.common.file.exception.FileStorageException;
 import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.mime.MimeTypeException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,7 +24,6 @@ public class S3FileStorageImpl implements FileStorage {
 
     private final S3Client s3Client;
     private final S3StorageProperties props;
-    private final MessageService messageService;
 
     @Override
     public String save(MultipartFile file) {
@@ -42,8 +40,7 @@ public class S3FileStorageImpl implements FileStorage {
             return filename;
         } catch (IOException | MimeTypeException ex) {
             throw new FileStorageException(
-                    messageService.getMessage(
-                            FileErrorMessageKeys.STORAGE_FAILED));
+                    FileErrorMessageKeys.STORAGE_FAILED);
         }
     }
 

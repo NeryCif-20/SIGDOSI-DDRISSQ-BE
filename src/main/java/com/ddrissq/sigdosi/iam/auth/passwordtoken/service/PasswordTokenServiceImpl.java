@@ -1,6 +1,5 @@
 package com.ddrissq.sigdosi.iam.auth.passwordtoken.service;
 
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenPurpose;
@@ -26,7 +25,6 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
     private final SecureTokenService tokenService;
     private final AuthProperties props;
     private final HashService hashService;
-    private final MessageService messageService;
 
     @Override
     public PasswordTokenResult create(User user, PasswordTokenPurpose purpose) {
@@ -55,8 +53,7 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
         String tokenHash = hashService.digestHex(token, "SHA-256");
         return repository.findValidToken(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        messageService.getMessage(
-                                IamErrorMessageKeys.BAD_CREDENTIALS)));
+                        IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID));
     }
 
     @Override

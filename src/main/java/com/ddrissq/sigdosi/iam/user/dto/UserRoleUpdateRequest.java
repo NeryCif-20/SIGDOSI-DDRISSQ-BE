@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record UserRoleUpdateRequest(
-        @NotNull(message = "El rol es obligatorio")
+        @NotNull
         UUID role
 ) {
 }

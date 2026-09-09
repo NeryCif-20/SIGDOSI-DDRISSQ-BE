@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record PermissionUpdateRequest(
-        @Size(max = 20, message = "El tamaño maximo del modulo es de {max} caracteres")
+        @Size(max = 20)
         String module,
         PermissionAction action
 ) {

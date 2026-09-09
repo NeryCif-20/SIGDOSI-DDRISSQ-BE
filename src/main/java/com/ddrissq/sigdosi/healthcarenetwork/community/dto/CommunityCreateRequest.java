@@ -1,23 +1,24 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.dto;
 
+import com.ddrissq.sigdosi.healthcarenetwork.community.constant.CommunityErrorMessageKeys;
 import jakarta.validation.constraints.*;
 
 import java.util.UUID;
 
 public record CommunityCreateRequest(
-        @NotNull(message = "La riss es obligatoria")
+        @NotNull
         UUID riss,
-        @NotBlank(message = "El nombre es obligatorio")
-        @Size(max = 50, message = "El tamaño maximo del nombre es de {max} caracteres")
+        @NotBlank
+        @Size(max = 50)
         String name,
-        @NotNull(message = "El territorio es obligatorio")
-        @Positive(message = "El territorio debe ser un numero positivo")
+        @NotNull
+        @Positive
         Integer territory,
-        @NotBlank(message = "El sector es obligatorio")
-        @Pattern(regexp = "^[A-Za-z]$", message = "El sector solo puede ser una letra")
+        @NotBlank
+        @Pattern(regexp = "^[A-Za-z]$", message = CommunityErrorMessageKeys.SECTOR_PATTERN)
         String sector,
-        @NotNull(message = "La población es obligatoria")
-        @Positive(message = "La poblacion debe ser un numero positivo")
+        @NotNull
+        @Positive
         Long population
 ) {
 }

@@ -6,7 +6,6 @@ import com.ddrissq.sigdosi.common.file.exception.FileNotFoundException;
 import com.ddrissq.sigdosi.common.file.exception.FileStorageException;
 import com.ddrissq.sigdosi.common.file.exception.InvalidFileException;
 import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.apache.tika.mime.MimeTypeException;
@@ -28,7 +27,6 @@ import java.util.UUID;
 public class FileStorageImpl implements FileStorage {
 
     private final LocalStorageProperties props;
-    private final MessageService messageService;
 
     @PostConstruct
     public void init() {
@@ -36,8 +34,7 @@ public class FileStorageImpl implements FileStorage {
             Files.createDirectories(getPath());
         } catch (IOException ex) {
             throw new FileStorageException(
-                    messageService.getMessage(
-                            FileErrorMessageKeys.STORAGE_INITIALIZATION_FAILED));
+                    FileErrorMessageKeys.STORAGE_INITIALIZATION_FAILED);
         }
     }
 
@@ -55,8 +52,7 @@ public class FileStorageImpl implements FileStorage {
             return filename;
         } catch (IOException | MimeTypeException ex) {
             throw new FileStorageException(
-                    messageService.getMessage(
-                            FileErrorMessageKeys.STORAGE_FAILED));
+                    FileErrorMessageKeys.STORAGE_FAILED);
         }
     }
 
@@ -68,8 +64,7 @@ public class FileStorageImpl implements FileStorage {
             Files.deleteIfExists(file);
         } catch (IOException ex) {
             throw new FileStorageException(
-                    messageService.getMessage(
-                            FileErrorMessageKeys.DELETE_FAILED));
+                    FileErrorMessageKeys.DELETE_FAILED);
         }
     }
 
@@ -79,13 +74,11 @@ public class FileStorageImpl implements FileStorage {
         Resource resource = new FileSystemResource(file);
         if (!resource.exists()) {
             throw new FileNotFoundException(
-                    messageService.getMessage(
-                            FileErrorMessageKeys.NOT_FOUND));
+                    FileErrorMessageKeys.NOT_FOUND);
         }
         if (!resource.isReadable()) {
             throw new InvalidFileException(
-                    messageService.getMessage(
-                            FileErrorMessageKeys.LOAD_FAILED));
+                    FileErrorMessageKeys.LOAD_FAILED);
         }
         return resource;
     }

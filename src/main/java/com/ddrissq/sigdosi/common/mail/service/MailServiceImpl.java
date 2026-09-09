@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.common.mail.service;
 
 import com.ddrissq.sigdosi.common.mail.constant.MailErrorMessageKeys;
-import com.ddrissq.sigdosi.common.mail.exception.MailSendingException;
+import com.ddrissq.sigdosi.common.mail.exception.MailException;
 import com.ddrissq.sigdosi.common.mail.model.EmailData;
 import com.ddrissq.sigdosi.common.message.service.MessageService;
 import jakarta.mail.MessagingException;
@@ -39,7 +39,7 @@ public class MailServiceImpl implements MailService {
             helper.setText(html, true);
             mailSender.send(message);
         } catch (MessagingException ex) {
-            throw new MailSendingException(
+            throw new MailException(
                     messageService.getMessage(
                             MailErrorMessageKeys.SEND_FAILED));
         }

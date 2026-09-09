@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record AuthPasswordValidateRequest(
-        @NotNull(message = "El token es obligatorio")
+        @NotNull
         String token
 ) {
 }

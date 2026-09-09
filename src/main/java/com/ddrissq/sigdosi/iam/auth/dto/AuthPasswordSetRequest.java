@@ -1,18 +1,17 @@
 package com.ddrissq.sigdosi.iam.auth.dto;
 
-import com.ddrissq.sigdosi.common.validation.compare.annotation.Compare;
+import com.ddrissq.sigdosi.common.validation.comparison.annotation.Compare;
 import jakarta.validation.constraints.NotBlank;
 
 @Compare(
         firstField = "confirmNewPassword",
-        secondField = "newPassword",
-        message = "Debe coincidir con la nueva contraseña")
+        secondField = "newPassword")
 public record AuthPasswordSetRequest(
-        @NotBlank(message = "El token es obligatorio")
+        @NotBlank
         String token,
-        @NotBlank(message = "La nueva contraseña es obligatoria")
+        @NotBlank
         String newPassword,
-        @NotBlank(message = "Es obligatorio confirmar la nueva contraseña")
+        @NotBlank
         String confirmNewPassword
 ) {
 }

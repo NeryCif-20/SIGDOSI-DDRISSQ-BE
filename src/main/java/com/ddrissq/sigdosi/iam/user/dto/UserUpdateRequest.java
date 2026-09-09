@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
+import com.ddrissq.sigdosi.iam.user.constant.UserErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -8,17 +9,17 @@ import lombok.Builder;
 
 @Builder
 public record UserUpdateRequest(
-        @Email(message = "El email no tiene un formato valido")
-        @Size(max = 100, message = "El tamaño maximo del email es de {max} caracteres")
+        @Email
+        @Size(max = 100)
         String email,
         UserStatus status,
-        @Pattern(regexp = "^\\d{13}$", message = "El CUI debe ser de 13 dígitos")
+        @Pattern(regexp = "^\\d{13}$", message = UserErrorMessageKeys.CUI_PATTERN)
         String cui,
-        @Size(max = 50, message = "El nombre no debe exceder los {max} caracteres")
+        @Size(max = 50)
         String firstName,
-        @Size(max = 50, message = "El apellido no debe exceder los {max} caracteres")
+        @Size(max = 50)
         String lastName,
-        @Pattern(regexp = "^\\d{8}$", message = "El número de teléfono debe ser de 8 dígitos")
+        @Pattern(regexp = "^\\d{8}$", message = UserErrorMessageKeys.PHONE_NUMBER_PATTERN)
         String phoneNumber
 ) {
 }

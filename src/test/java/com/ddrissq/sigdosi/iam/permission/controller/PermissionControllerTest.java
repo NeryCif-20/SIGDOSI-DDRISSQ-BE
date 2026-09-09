@@ -168,7 +168,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(ErrorMessageKeys.VALIDATION_FAILED);
+                .isEqualTo(ErrorMessageKeys.REQUEST_VALIDATION_FAILED);
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.errors.module")

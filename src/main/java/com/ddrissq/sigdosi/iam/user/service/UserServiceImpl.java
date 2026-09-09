@@ -1,11 +1,9 @@
 package com.ddrissq.sigdosi.iam.user.service;
 
-import com.ddrissq.sigdosi.common.constant.ErrorMessageKeys;
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.exception.InvalidStateTransitionException;
+import com.ddrissq.sigdosi.common.exception.EntityValidationException;
 import com.ddrissq.sigdosi.common.file.storage.FileStorage;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
@@ -41,7 +39,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final CurrentUserProvider currentUserProvider;
     private final FileStorage storage;
-    private final MessageService messageService;
 
     @Override
     public UserResponse get(UUID id) {
@@ -101,11 +98,10 @@ public class UserServiceImpl implements UserService {
         boolean involvesPendingStatus = currentStatus == UserStatus.PENDING
                         || newStatus == UserStatus.PENDING;
         if (involvesPendingStatus) {
-            throw new InvalidStateTransitionException(
-                    messageService.getMessage(
-                            ErrorMessageKeys.STATE_TRANSITION_NOT_ALLOWED,
-                            currentStatus,
-                            newStatus));
+            throw new EntityValidationException(
+                    UserErrorMessageKeys.STATUS_NOT_ALLOWED,
+                    currentStatus,
+                    newStatus);
         }
         user.setStatus(newStatus);
         return mapper.toResponse(user);
@@ -149,8 +145,7 @@ public class UserServiceImpl implements UserService {
         User user = getByIdOrThrow(id);
         if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
             throw new AuthenticationException(
-                    messageService.getMessage(
-                            IamErrorMessageKeys.BAD_CREDENTIALS));
+                    IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID);
         }
         String newPasswordHash = passwordEncoder.encode(request.newPassword());
         user.setPasswordHash(newPasswordHash);
@@ -160,16 +155,14 @@ public class UserServiceImpl implements UserService {
     public User getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                UserErrorMessageKeys.NOT_FOUND)));
+                        UserErrorMessageKeys.NOT_FOUND));
     }
 
     @Override
     public User getByEmailOrThrow(String email) {
         return repository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                UserErrorMessageKeys.NOT_FOUND)));
+                        UserErrorMessageKeys.NOT_FOUND));
     }
 
     private void validateEmail(String email) {
@@ -182,8 +175,7 @@ public class UserServiceImpl implements UserService {
                 : repository.existsByEmailAndIdNot(email, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            UserErrorMessageKeys.EMAIL_ALREADY_EXISTS));
+                    UserErrorMessageKeys.EMAIL_ALREADY_EXISTS);
         }
     }
 
@@ -197,8 +189,7 @@ public class UserServiceImpl implements UserService {
                 : repository.existsByProfileCuiAndIdNot(cui, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            UserErrorMessageKeys.CUI_ALREADY_EXISTS));
+                    UserErrorMessageKeys.CUI_ALREADY_EXISTS);
         }
     }
 
@@ -212,8 +203,7 @@ public class UserServiceImpl implements UserService {
                 : repository.existsByProfilePhoneNumberAndIdNot(phoneNumber, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            UserErrorMessageKeys.PHONE_NUMBER_ALREADY_EXISTS));
+                    UserErrorMessageKeys.PHONE_NUMBER_ALREADY_EXISTS);
         }
     }
 

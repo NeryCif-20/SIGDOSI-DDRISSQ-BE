@@ -5,7 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record AuthLoginRequest(
-        @NotBlank(message = "La contraseña es obligatoria")
+        @NotBlank
         String password
 ) {
 }

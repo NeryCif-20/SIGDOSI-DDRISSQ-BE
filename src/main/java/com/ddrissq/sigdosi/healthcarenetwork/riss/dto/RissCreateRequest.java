@@ -7,10 +7,10 @@ import jakarta.validation.constraints.Size;
 import java.util.UUID;
 
 public record RissCreateRequest(
-        @NotNull(message = "El dms es obligatorio")
+        @NotNull
         UUID dms,
-        @NotBlank(message = "El nombre es obligatorio")
-        @Size(max = 50, message = "El tamaño maximo del nombre es de {max} caracteres")
+        @NotBlank
+        @Size(max = 50)
         String name
 ) {
 }

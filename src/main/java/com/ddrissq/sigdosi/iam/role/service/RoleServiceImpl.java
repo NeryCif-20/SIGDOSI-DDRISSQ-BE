@@ -2,7 +2,6 @@ package com.ddrissq.sigdosi.iam.role.service;
 
 import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.service.util.PatchHelper;
 import com.ddrissq.sigdosi.iam.permission.service.PermissionService;
 import com.ddrissq.sigdosi.iam.role.constant.RoleErrorMessageKeys;
@@ -33,7 +32,6 @@ public class RoleServiceImpl implements RoleService{
     private final RoleRepository repository;
     private final RoleMapper mapper;
     private final PermissionService permissionService;
-    private final MessageService messageService;
 
     @Override
     public RoleResponse get(UUID id) {
@@ -76,8 +74,7 @@ public class RoleServiceImpl implements RoleService{
     public Role getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        messageService.getMessage(
-                                RoleErrorMessageKeys.NOT_FOUND)));
+                        RoleErrorMessageKeys.NOT_FOUND));
     }
 
     private void validateUniqueName(String name) {
@@ -91,8 +88,7 @@ public class RoleServiceImpl implements RoleService{
                 : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
             throw new EntityAlreadyExistsException(
-                    messageService.getMessage(
-                            RoleErrorMessageKeys.ALREADY_EXISTS));
+                    RoleErrorMessageKeys.ALREADY_EXISTS);
         }
     }
 
