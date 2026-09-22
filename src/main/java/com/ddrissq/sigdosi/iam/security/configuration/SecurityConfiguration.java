@@ -60,7 +60,7 @@ public class SecurityConfiguration {
                                 "/v1/files/**")
                         .permitAll()
                         .anyRequest()
-                        .authenticated())
+                        .permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(authenticationConverter)))

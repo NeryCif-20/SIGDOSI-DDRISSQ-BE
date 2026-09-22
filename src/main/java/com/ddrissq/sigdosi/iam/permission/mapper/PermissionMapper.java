@@ -1,13 +1,14 @@
 package com.ddrissq.sigdosi.iam.permission.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
+import com.ddrissq.sigdosi.common.mapping.annotation.IgnoreBaseFields;
+import com.ddrissq.sigdosi.common.mapping.util.StringFunctions;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import org.mapstruct.*;
 
-@Mapper(uses = StringFormatter.class)
+@Mapper(uses = StringFunctions.class)
 public interface PermissionMapper {
 
     @Mapping(target = "module", source = "module", qualifiedByName = "toUpperCase")
@@ -16,9 +17,7 @@ public interface PermissionMapper {
     PermissionResponse toResponse(Permission permission);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @IgnoreBaseFields
     @Mapping(target = "module", source = "module", qualifiedByName = "toUpperCase")
     void updatePermission(PermissionUpdateRequest request, @MappingTarget Permission permission);
 

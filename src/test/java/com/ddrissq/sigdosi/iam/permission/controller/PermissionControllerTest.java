@@ -1,13 +1,15 @@
 package com.ddrissq.sigdosi.iam.permission.controller;
 
-import com.ddrissq.sigdosi.common.constant.ErrorMessageKeys;
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessageKeys;
+import com.ddrissq.sigdosi.common.error.ErrorDescriptor;
+import com.ddrissq.sigdosi.common.error.HttpErrorDescriptor;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
+import com.ddrissq.sigdosi.iam.permission.error.PermissionErrorDescriptor;
 import com.ddrissq.sigdosi.iam.permission.service.PermissionService;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionCreateRequestTestData;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionResponseTestData;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -46,6 +49,9 @@ class PermissionControllerTest {
 
     private final MockMvcTester mockMvcTester;
     private final ObjectMapper objectMapper;
+
+    @MockitoBean
+    private MessageService messageService;
 
     @MockitoBean
     private PermissionService service;
@@ -77,9 +83,11 @@ class PermissionControllerTest {
     @DisplayName(value = "Devuelve 404 NOT FOUND cuando el permiso buscado no existe")
     void givenNonExistingId_whenGet_thenReturns404NotFound() {
         // Given
-        EntityNotFoundException exception = new EntityNotFoundException(
-                PermissionErrorMessageKeys.NOT_FOUND);
+        ResourceNotFoundException exception = new ResourceNotFoundException(
+                PermissionErrorDescriptor.NOT_FOUND);
         given(service.get(ID)).willThrow(exception);
+        given(messageService.getMessage(exception.getMessage()))
+                .willReturn(PermissionErrorDescriptor.NOT_FOUND.messageKey());
         // When
         MvcTestResult result = mockMvcTester.get()
                 .uri(BASE_URL + "/{id}", ID)
@@ -92,7 +100,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionErrorMessageKeys.NOT_FOUND);
+                .isEqualTo(PermissionErrorDescriptor.NOT_FOUND.messageKey());
         verify(service).get(ID);
     }
 
@@ -101,6 +109,9 @@ class PermissionControllerTest {
     void givenInvalidUuidFormat_whenGet_thenReturns400BadRequest() {
         // Given
         String invalidId = "135135-315135";
+        ErrorDescriptor descriptor = HttpErrorDescriptor.REQUEST_METHOD_ARGUMENT_TYPE_MISMATCHED;
+        given(messageService.getMessage(descriptor.messageKey(), invalidId, "id"))
+                .willReturn(descriptor.messageKey());
         // When
         MvcTestResult result = mockMvcTester.get()
                 .uri(BASE_URL + "/{id}", invalidId)
@@ -112,11 +123,7 @@ class PermissionControllerTest {
                 .hasContentType(MediaType.APPLICATION_PROBLEM_JSON);
         assertThat(result)
                 .bodyJson().extractingPath("$.detail")
-                .isEqualTo(ErrorMessageKeys.REQUEST_PARAMETER_INVALID);
-        assertThat(result)
-                .bodyJson()
-                .extractingPath("$.parameter")
-                .isNotNull();
+                .isEqualTo(descriptor.messageKey());
         verifyNoInteractions(service);
     }
 
@@ -148,12 +155,15 @@ class PermissionControllerTest {
     }
 
     @Test
-    @DisplayName(value = "Devuelve 404 BAD REQUEST cuando la validación @Valid del DTO de creación falla")
+    @DisplayName(value = "Devuelve 404 BAD REQUEST cuando la validación del DTO de creación falla")
     void givenInvalidRequest_whenCreate_thenReturns400BadRequest() {
         // Given
+        ErrorDescriptor descriptor = HttpErrorDescriptor.REQUEST_VALIDATION_FAILED;
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
                 .module(null)
                 .build();
+        given(messageService.getMessage(descriptor.messageKey()))
+                .willReturn(descriptor.messageKey());
         // When
         MvcTestResult result = mockMvcTester.post()
                 .uri(BASE_URL)
@@ -168,7 +178,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(ErrorMessageKeys.REQUEST_VALIDATION_FAILED);
+                .isEqualTo(HttpErrorDescriptor.REQUEST_VALIDATION_FAILED.messageKey());
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.errors.module")
@@ -183,9 +193,11 @@ class PermissionControllerTest {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
                 .build();
-        EntityAlreadyExistsException exception = new EntityAlreadyExistsException(
-                PermissionErrorMessageKeys.ALREADY_EXISTS);
+        ResourceAlreadyExistsException exception = new ResourceAlreadyExistsException(
+                PermissionErrorDescriptor.ALREADY_EXISTS);
         given(service.create(request)).willThrow(exception);
+        given(messageService.getMessage(exception.getMessage()))
+                .willReturn(PermissionErrorDescriptor.ALREADY_EXISTS.messageKey());
         // When
         MvcTestResult result = mockMvcTester.post()
                 .uri(BASE_URL)
@@ -200,7 +212,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionErrorMessageKeys.ALREADY_EXISTS);
+                .isEqualTo(PermissionErrorDescriptor.ALREADY_EXISTS.messageKey());
         verify(service).create(request);
     }
 
@@ -208,7 +220,10 @@ class PermissionControllerTest {
     @DisplayName(value = "Devuelve 400 BAD REQUEST cuando el cuerpo de la solicitud contiene un JSON mal formado")
     void givenMalformedJson_whenCreate_thenReturns400BadRequest() {
         // Given
+        ErrorDescriptor descriptor = HttpErrorDescriptor.REQUEST_BODY_MALFORMED;
         String malformedJson = "{ invalid json ";
+        given(messageService.getMessage(descriptor.messageKey(), List.of().toArray()))
+                .willReturn(descriptor.messageKey());
         // When
         MvcTestResult result = mockMvcTester.post()
                 .uri(BASE_URL)
@@ -223,7 +238,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(ErrorMessageKeys.REQUEST_BODY_INVALID);
+                .isEqualTo(HttpErrorDescriptor.REQUEST_BODY_MALFORMED.messageKey());
         verifyNoInteractions(service);
     }
 
@@ -260,9 +275,11 @@ class PermissionControllerTest {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
                 .build();
-        EntityNotFoundException exception = new EntityNotFoundException(
-                PermissionErrorMessageKeys.NOT_FOUND);
+        ResourceNotFoundException exception = new ResourceNotFoundException(
+                PermissionErrorDescriptor.NOT_FOUND);
         given(service.update(ID, request)).willThrow(exception);
+        given(messageService.getMessage(exception.getMessage()))
+                .willReturn(PermissionErrorDescriptor.NOT_FOUND.messageKey());
         // When
         MvcTestResult result = mockMvcTester.patch()
                 .uri(BASE_URL + "/{id}", ID)
@@ -277,7 +294,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionErrorMessageKeys.NOT_FOUND);
+                .isEqualTo(PermissionErrorDescriptor.NOT_FOUND.messageKey());
         verify(service).update(ID, request);
     }
 
@@ -287,9 +304,11 @@ class PermissionControllerTest {
         // Given
         PermissionUpdateRequest request = PermissionUpdateRequestTestData.aRequest()
                 .build();
-        EntityAlreadyExistsException exception = new EntityAlreadyExistsException(
-                PermissionErrorMessageKeys.ALREADY_EXISTS);
+        ResourceAlreadyExistsException exception = new ResourceAlreadyExistsException(
+                PermissionErrorDescriptor.ALREADY_EXISTS);
         given(service.update(ID, request)).willThrow(exception);
+        given(messageService.getMessage(exception.getMessage()))
+                .willReturn(PermissionErrorDescriptor.ALREADY_EXISTS.messageKey());
         // When
         MvcTestResult result = mockMvcTester.patch()
                 .uri(BASE_URL + "/{id}", ID)
@@ -304,13 +323,18 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(PermissionErrorMessageKeys.ALREADY_EXISTS);
+                .isEqualTo(PermissionErrorDescriptor.ALREADY_EXISTS.messageKey());
         verify(service).update(ID, request);
     }
 
     @Test
     @DisplayName(value = "Devuelve 405 METHOD NOT ALLOWED cuando se intenta actualizar un permiso con el método PUT")
     void givenPutRequest_whenUpdate_thenReturns405MethodNotAllowed() {
+        // Given
+        String httpMethod = HttpMethod.PUT.name();
+        ErrorDescriptor descriptor = HttpErrorDescriptor.REQUEST_METHOD_NOT_ALLOWED;
+        given(messageService.getMessage(descriptor.messageKey(), httpMethod))
+                .willReturn(descriptor.messageKey());
         // When
         MvcTestResult result = mockMvcTester.put()
                 .uri(BASE_URL)
@@ -323,7 +347,7 @@ class PermissionControllerTest {
         assertThat(result)
                 .bodyJson()
                 .extractingPath("$.detail")
-                .isEqualTo(ErrorMessageKeys.REQUEST_METHOD_NOT_ALLOWED);
+                .isEqualTo(HttpErrorDescriptor.REQUEST_METHOD_NOT_ALLOWED.messageKey());
         verifyNoInteractions(service);
     }
 

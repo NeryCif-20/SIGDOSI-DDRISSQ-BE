@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
-import com.ddrissq.sigdosi.healthcarenetwork.community.constant.CommunityErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunitySearchRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityUpdateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.community.error.CommunityErrorDescriptor;
 import com.ddrissq.sigdosi.healthcarenetwork.community.mapper.CommunityMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.community.repository.CommunityRepository;
@@ -56,15 +56,16 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public CommunityResponse update(UUID id, CommunityUpdateRequest request) {
         Community community = getByIdOrThrow(id);
-        Riss riss = PatchHelper.resolveEntity(
+        Riss riss = ValueResolver.resolveByKey(
                 request.riss(),
                 community.getRiss(),
+                Riss::getId,
                 rissService::getByIdOrThrow);
-        String name = PatchHelper.resolveValue(
+        String name = ValueResolver.resolve(
                 request.name(), community.getName());
-        Integer territory = PatchHelper.resolveValue(
+        Integer territory = ValueResolver.resolve(
                 request.territory(), community.getTerritory());
-        String sector = PatchHelper.resolveValue(
+        String sector = ValueResolver.resolve(
                 request.sector(), community.getSector());
         validateUniqueRissNameTerritorySector(
                 riss.getId(), name, territory, sector, id);
@@ -91,8 +92,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public Community getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        CommunityErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        CommunityErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueRissNameTerritorySector(
@@ -110,8 +111,8 @@ public class CommunityServiceImpl implements CommunityService {
                 : repository.existsByRissIdAndNameAndTerritoryAndSectorAndIdNot(
                         riss, capitalizedName, territory, normalizedSector, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    CommunityErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    CommunityErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

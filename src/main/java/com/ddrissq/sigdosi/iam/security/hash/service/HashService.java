@@ -1,7 +1,6 @@
 package com.ddrissq.sigdosi.iam.security.hash.service;
 
-import com.ddrissq.sigdosi.common.message.service.MessageService;
-import com.ddrissq.sigdosi.iam.security.hash.constant.HashErrorMessageKeys;
+import com.ddrissq.sigdosi.iam.security.hash.error.HashErrorDescriptor;
 import com.ddrissq.sigdosi.iam.security.hash.exception.HashGenerationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,8 +14,6 @@ import java.util.HexFormat;
 @Service
 public final class HashService {
 
-    private final MessageService messageService;
-
     public String digestHex(String value, String algorithm) {
         try {
             MessageDigest digest = MessageDigest.getInstance(algorithm);
@@ -24,9 +21,8 @@ public final class HashService {
             return HexFormat.of().formatHex(hash);
         } catch (NoSuchAlgorithmException ex) {
             throw new HashGenerationException(
-                    messageService.getMessage(
-                            HashErrorMessageKeys.ALGORITHM_NOT_FOUND,
-                            algorithm));
+                    HashErrorDescriptor.ALGORITHM_UNSUPPORTED,
+                    algorithm);
         }
     }
 

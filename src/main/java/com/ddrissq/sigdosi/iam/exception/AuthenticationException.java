@@ -1,9 +1,12 @@
 package com.ddrissq.sigdosi.iam.exception;
 
-public class AuthenticationException extends RuntimeException {
+import com.ddrissq.sigdosi.common.error.ErrorDescriptor;
+import com.ddrissq.sigdosi.common.exception.BaseException;
 
-    public AuthenticationException(String message) {
-        super(message);
+public class AuthenticationException extends BaseException {
+
+    public AuthenticationException(ErrorDescriptor descriptor) {
+        super(descriptor);
     }
 
 }

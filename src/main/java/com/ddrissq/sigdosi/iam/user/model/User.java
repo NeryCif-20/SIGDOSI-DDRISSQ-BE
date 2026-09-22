@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.user.model;
 
 import com.ddrissq.sigdosi.iam.role.model.Role;
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class User extends AbstractEntity {
+public class User extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "role_id")

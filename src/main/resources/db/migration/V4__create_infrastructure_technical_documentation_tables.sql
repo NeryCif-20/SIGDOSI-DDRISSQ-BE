@@ -3,7 +3,7 @@
 -- CREATE TABLE plan_type
 -- (
 --     id          UUID        NOT NULL,
---     code        VARCHAR(10) NOT NULL UNIQUE,
+--     message        VARCHAR(10) NOT NULL UNIQUE,
 --     name        VARCHAR(35) NOT NULL,
 --     description TEXT,
 --     created_at  TIMESTAMPTZ NOT NULL,

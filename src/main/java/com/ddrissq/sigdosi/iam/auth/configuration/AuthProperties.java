@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
 
-@ConfigurationProperties(prefix = "iam.auth")
+@ConfigurationProperties(prefix = "auth")
 public record AuthProperties(
     PersistentTokenProperties flowToken,
     PersistentTokenProperties passwordToken,

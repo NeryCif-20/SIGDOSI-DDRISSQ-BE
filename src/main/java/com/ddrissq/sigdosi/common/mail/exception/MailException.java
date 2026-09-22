@@ -1,7 +1,10 @@
 package com.ddrissq.sigdosi.common.mail.exception;
 
-public class MailException extends RuntimeException {
-    public MailException(String message) {
-        super(message);
+import com.ddrissq.sigdosi.common.error.ErrorDescriptor;
+import com.ddrissq.sigdosi.common.exception.BaseException;
+
+public class MailException extends BaseException {
+    public MailException(ErrorDescriptor descriptor) {
+        super(descriptor);
     }
 }

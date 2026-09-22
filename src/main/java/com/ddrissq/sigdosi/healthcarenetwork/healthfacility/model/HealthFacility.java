@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model;
 
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.model.HealthFacilityType;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class HealthFacility extends AbstractEntity {
+public class HealthFacility extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "community_id")

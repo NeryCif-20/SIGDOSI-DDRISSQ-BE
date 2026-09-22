@@ -1,6 +1,6 @@
 CREATE TABLE role
 (
-    id          UUID        NOT NULL,
+    id          UUID        NOT NULL DEFAULT uuidv7(),
     name        VARCHAR(30) NOT NULL UNIQUE,
     description TEXT,
     created_at  TIMESTAMPTZ NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE role
 
 CREATE TABLE permission
 (
-    id     UUID        NOT NULL,
+    id     UUID        NOT NULL DEFAULT uuidv7(),
     module VARCHAR(20) NOT NULL,
     action VARCHAR(10) NOT NULL CHECK (action IN ('CREATE', 'READ', 'UPDATE', 'DELETE')),
     created_at TIMESTAMPTZ NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE role_permission
 
 CREATE TABLE user_account
 (
-    id            UUID         NOT NULL,
+    id            UUID         NOT NULL DEFAULT uuidv7(),
     role_id       UUID         NOT NULL,
     email         VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(75)  NOT NULL,
@@ -49,13 +49,13 @@ CREATE TABLE user_account
 
 CREATE TABLE user_profile
 (
-    id              UUID        NOT NULL,
+    id              UUID        NOT NULL DEFAULT uuidv7(),
     user_account_id UUID        NOT NULL UNIQUE,
     cui             VARCHAR(13) NOT NULL UNIQUE,
     first_name      VARCHAR(50) NOT NULL,
     last_name       VARCHAR(50) NOT NULL,
     avatar          VARCHAR(45) UNIQUE,
-    phone_number    VARCHAR(8)  UNIQUE,
+    phone_number    VARCHAR(8) UNIQUE,
     created_at      TIMESTAMPTZ NOT NULL,
     updated_at      TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id),
@@ -65,7 +65,7 @@ CREATE TABLE user_profile
 
 CREATE TABLE flow_token
 (
-    id              UUID        NOT NULL,
+    id              UUID        NOT NULL DEFAULT uuidv7(),
     user_account_id UUID        NOT NULL,
     token_hash      VARCHAR(64) NOT NULL UNIQUE,
     step            VARCHAR(20) NOT NULL CHECK (step IN ('PASSWORD', 'SETUP_PASSWORD')),
@@ -83,10 +83,10 @@ CREATE INDEX IDX_flow_token_expires_at ON flow_token (expires_at);
 
 CREATE TABLE password_token
 (
-    id              UUID        NOT NULL,
+    id              UUID        NOT NULL DEFAULT uuidv7(),
     user_account_id UUID        NOT NULL,
     token_hash      VARCHAR(64) NOT NULL UNIQUE,
-    purpose         VARCHAR(20) NOT NULL CHECK (purpose IN ('SETUP_PASSWORD', 'RESET_PASSWORD')),
+    purpose         VARCHAR(20) NOT NULL CHECK (purpose IN ('SETUP', 'RESET')),
     revoked_at      TIMESTAMPTZ,
     expires_at      TIMESTAMPTZ NOT NULL,
     created_at      TIMESTAMPTZ NOT NULL,
@@ -101,7 +101,7 @@ CREATE INDEX IDX_password_token_expires_at ON password_token (expires_at);
 
 CREATE TABLE refresh_token
 (
-    id              UUID        NOT NULL,
+    id              UUID        NOT NULL DEFAULT uuidv7(),
     user_account_id UUID        NOT NULL,
     token_hash      VARCHAR(64) NOT NULL UNIQUE,
     family_id       UUID        NOT NULL,

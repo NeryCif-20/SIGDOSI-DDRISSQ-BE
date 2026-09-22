@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.security.provider;
 
 import com.ddrissq.sigdosi.common.message.service.MessageService;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
+import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -24,8 +24,7 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
         String userId = getJwt().getSubject();
         if (userId == null) {
             throw new AuthenticationException(
-                    messageService.getMessage(
-                            IamErrorMessageKeys.TOKEN_INVALID));
+                    IamErrorDescriptor.AUTHENTICATION_TOKEN_INVALID);
         }
         return UUID.fromString(userId);
     }
@@ -35,8 +34,7 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
         List<String> authorities = getJwt().getClaimAsStringList("authorities");
         if (authorities == null) {
             throw new AuthenticationException(
-                    messageService.getMessage(
-                            IamErrorMessageKeys.TOKEN_INVALID));
+                    IamErrorDescriptor.AUTHENTICATION_TOKEN_INVALID);
         }
         return authorities;
     }
@@ -48,8 +46,7 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
             return jwtAuth.getToken();
         }
         throw new AuthenticationException(
-                messageService.getMessage(
-                        IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID));
+                IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
     }
 
 }

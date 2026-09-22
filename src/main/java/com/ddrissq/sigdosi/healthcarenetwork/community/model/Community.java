@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.model;
 
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.model.Riss;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Community extends AbstractEntity {
+public class Community extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "riss_id")

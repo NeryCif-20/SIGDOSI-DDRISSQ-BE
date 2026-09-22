@@ -5,7 +5,7 @@ import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacility
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyTenure;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeResponse;
-import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -22,6 +22,6 @@ public record HealthFacilityResponse(
         PropertyTenure propertyTenure,
         PropertyStatus propertyStatus,
         String notes,
-        Geometry location
+        Point location
 ) {
 }

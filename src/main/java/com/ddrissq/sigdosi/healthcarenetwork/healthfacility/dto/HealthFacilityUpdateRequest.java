@@ -1,12 +1,11 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto;
 
-import com.ddrissq.sigdosi.common.validation.geometry.annotation.GeometryType;
-import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.constant.HealthFacilityErrorMessageKeys;
+import com.ddrissq.sigdosi.common.validation.annotation.NullableNotBlank;
+import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacilityStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyTenure;
 import jakarta.validation.constraints.PositiveOrZero;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 
 import java.math.BigDecimal;
@@ -17,18 +16,16 @@ public record HealthFacilityUpdateRequest(
         UUID healthFacilityType,
         Boolean isHeadquarters,
         HealthFacilityStatus status,
-        @PositiveOrZero
+        @PositiveOrZero(message = ValidationError.POSITIVE_OR_ZERO)
         BigDecimal totalLandArea,
-        @PositiveOrZero
+        @PositiveOrZero(message = ValidationError.POSITIVE_OR_ZERO)
         BigDecimal buildingFootprint,
-        @PositiveOrZero
+        @PositiveOrZero(message = ValidationError.POSITIVE_OR_ZERO)
         BigDecimal availableExpansionArea,
         PropertyTenure propertyTenure,
         PropertyStatus propertyStatus,
+        @NullableNotBlank
         String notes,
-        @GeometryType(
-                expectedType = Point.class,
-                message = HealthFacilityErrorMessageKeys.LOCATION_INVALID)
-        Geometry location
+        Point location
 ) {
 }

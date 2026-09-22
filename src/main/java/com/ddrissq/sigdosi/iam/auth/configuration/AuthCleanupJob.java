@@ -15,17 +15,17 @@ public class AuthCleanupJob {
     private final PasswordTokenService passwordTokenService;
     private final RefreshTokenService refreshTokenService;
 
-    @Scheduled(cron = "${iam.auth.flow-token.cleanup}")
+    @Scheduled(cron = "${auth.flow-token.cleanup}")
     public void cleanupFlowTokens() {
         flowTokenService.deleteAllExpiredTokens();
     }
 
-    @Scheduled(cron = "${iam.auth.password-token.cleanup}")
+    @Scheduled(cron = "${auth.password-token.cleanup}")
     public void cleanupPasswordTokens() {
         passwordTokenService.deleteAllExpiredTokens();
     }
 
-    @Scheduled(cron = "${iam.auth.refresh-token.cleanup}")
+    @Scheduled(cron = "${auth.refresh-token.cleanup}")
     public void cleanupRefreshTokens() {
         refreshTokenService.deleteAllExpiredTokens();
     }

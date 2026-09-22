@@ -1,14 +1,14 @@
 package com.ddrissq.sigdosi.iam.role.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.iam.permission.service.PermissionService;
-import com.ddrissq.sigdosi.iam.role.constant.RoleErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.role.dto.RoleCreateRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleResponse;
 import com.ddrissq.sigdosi.iam.role.dto.RoleSearchRequest;
 import com.ddrissq.sigdosi.iam.role.dto.RoleUpdateRequest;
+import com.ddrissq.sigdosi.iam.role.error.RoleErrorDescriptor;
 import com.ddrissq.sigdosi.iam.role.mapper.RoleMapper;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import com.ddrissq.sigdosi.iam.role.repository.RoleRepository;
@@ -51,7 +51,7 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public RoleResponse update(UUID id, RoleUpdateRequest request) {
         Role role = getByIdOrThrow(id);
-        String name = PatchHelper.resolveValue(
+        String name = ValueResolver.resolve(
                 request.name(), role.getName());
         validateUniqueName(name, id);
         mapper.updateRole(request, role);
@@ -73,8 +73,8 @@ public class RoleServiceImpl implements RoleService{
     @Override
     public Role getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        RoleErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        RoleErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueName(String name) {
@@ -87,8 +87,8 @@ public class RoleServiceImpl implements RoleService{
                 ? repository.existsByName(capitalizedName)
                 : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    RoleErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    RoleErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

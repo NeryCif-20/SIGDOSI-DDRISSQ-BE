@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.model;
 
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class BuildingElement extends AbstractEntity {
+public class BuildingElement extends BaseEntity {
 
     private String name;
     private Boolean hasBuildingMaterial;

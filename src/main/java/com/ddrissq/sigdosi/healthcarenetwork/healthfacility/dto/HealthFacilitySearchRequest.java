@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto;
 
-import com.ddrissq.sigdosi.common.validation.comparison.annotation.Compare;
-import com.ddrissq.sigdosi.common.validation.comparison.annotation.ComparisonOperator;
+import com.ddrissq.sigdosi.common.validation.annotation.CompareFields;
+import com.ddrissq.sigdosi.common.validation.annotation.ComparisonOperator;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacilityStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyStatus;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyTenure;
@@ -9,17 +9,17 @@ import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyTenure
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@Compare(
-        firstField = "minTotalLandArea",
-        secondField = "maxTotalLandArea",
+@CompareFields(
+        first = "minTotalLandArea",
+        second = "maxTotalLandArea",
         operator = ComparisonOperator.LESS_THAN_OR_EQUAL)
-@Compare(
-        firstField = "minBuildingFootprint",
-        secondField = "maxBuildingFootprint",
+@CompareFields(
+        first = "minBuildingFootprint",
+        second = "maxBuildingFootprint",
         operator = ComparisonOperator.LESS_THAN_OR_EQUAL)
-@Compare(
-        firstField = "minAvailableExpansionArea",
-        secondField = "maxAvailableExpansionArea",
+@CompareFields(
+        first = "minAvailableExpansionArea",
+        second = "maxAvailableExpansionArea",
         operator = ComparisonOperator.LESS_THAN_OR_EQUAL)
 public record HealthFacilitySearchRequest(
         UUID community,

@@ -1,17 +1,17 @@
 package com.ddrissq.sigdosi.iam.user.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.exception.EntityValidationException;
-import com.ddrissq.sigdosi.common.file.storage.FileStorage;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.BusinessRuleException;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.file.storage.service.StorageService;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
+import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.role.model.Role;
 import com.ddrissq.sigdosi.iam.role.service.RoleService;
 import com.ddrissq.sigdosi.iam.security.provider.CurrentUserProvider;
-import com.ddrissq.sigdosi.iam.user.constant.UserErrorMessageKeys;
 import com.ddrissq.sigdosi.iam.user.dto.*;
+import com.ddrissq.sigdosi.iam.user.error.UserErrorDescriptor;
 import com.ddrissq.sigdosi.iam.user.mapper.UserMapper;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import com.ddrissq.sigdosi.iam.user.model.UserProfile;
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
     private final CurrentUserProvider currentUserProvider;
-    private final FileStorage storage;
+    private final StorageService storage;
 
     @Override
     public UserResponse get(UUID id) {
@@ -66,13 +66,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(UUID id, UserUpdateRequest request) {
         User user = getByIdOrThrow(id);
-        String email = PatchHelper.resolveValue(
+        String email = ValueResolver.resolve(
                 request.email(), user.getEmail());
         validateEmail(email, id);
-        String cui = PatchHelper.resolveValue(
+        String cui = ValueResolver.resolve(
                 request.cui(), user.getProfile().getCui());
         validateCui(cui, id);
-        String phoneNumber = PatchHelper.resolveValue(
+        String phoneNumber = ValueResolver.resolve(
                 request.phoneNumber(), user.getProfile().getPhoneNumber());
         validatePhoneNumber(phoneNumber, id);
         mapper.updateUser(request, user);
@@ -82,9 +82,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateRole(UUID id, UserRoleUpdateRequest request) {
         User user = getByIdOrThrow(id);
-        Role role = PatchHelper.resolveEntity(
+        Role role = ValueResolver.resolveByKey(
                 request.role(),
                 user.getRole(),
+                Role::getId,
                 roleService::getByIdOrThrow);
         user.setRole(role);
         return mapper.toResponse(user);
@@ -98,8 +99,8 @@ public class UserServiceImpl implements UserService {
         boolean involvesPendingStatus = currentStatus == UserStatus.PENDING
                         || newStatus == UserStatus.PENDING;
         if (involvesPendingStatus) {
-            throw new EntityValidationException(
-                    UserErrorMessageKeys.STATUS_NOT_ALLOWED,
+            throw new BusinessRuleException(
+                    UserErrorDescriptor.STATUS_NOT_ALLOWED,
                     currentStatus,
                     newStatus);
         }
@@ -145,7 +146,7 @@ public class UserServiceImpl implements UserService {
         User user = getByIdOrThrow(id);
         if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
             throw new AuthenticationException(
-                    IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID);
+                    IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
         }
         String newPasswordHash = passwordEncoder.encode(request.newPassword());
         user.setPasswordHash(newPasswordHash);
@@ -154,15 +155,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        UserErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        UserErrorDescriptor.NOT_FOUND));
     }
 
     @Override
     public User getByEmailOrThrow(String email) {
         return repository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        UserErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        UserErrorDescriptor.NOT_FOUND));
     }
 
     private void validateEmail(String email) {
@@ -170,12 +171,13 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateEmail(String email, UUID id) {
+        String normalizedEmail = email.trim().toLowerCase();
         boolean exists = id == null
-                ? repository.existsByEmail(email)
-                : repository.existsByEmailAndIdNot(email, id);
+                ? repository.existsByEmail(normalizedEmail)
+                : repository.existsByEmailAndIdNot(normalizedEmail, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    UserErrorMessageKeys.EMAIL_ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    UserErrorDescriptor.EMAIL_ALREADY_EXISTS);
         }
     }
 
@@ -188,8 +190,8 @@ public class UserServiceImpl implements UserService {
                 ? repository.existsByProfileCui(cui)
                 : repository.existsByProfileCuiAndIdNot(cui, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    UserErrorMessageKeys.CUI_ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    UserErrorDescriptor.CUI_ALREADY_EXISTS);
         }
     }
 
@@ -202,8 +204,8 @@ public class UserServiceImpl implements UserService {
                 ? repository.existsByProfilePhoneNumber(phoneNumber)
                 : repository.existsByProfilePhoneNumberAndIdNot(phoneNumber, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    UserErrorMessageKeys.PHONE_NUMBER_ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    UserErrorDescriptor.PHONE_NUMBER_ALREADY_EXISTS);
         }
     }
 

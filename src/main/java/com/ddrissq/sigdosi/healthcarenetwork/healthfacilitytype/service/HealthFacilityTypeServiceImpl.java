@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
-import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.constant.HealthFacilityTypeErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeSearchRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.dto.HealthFacilityTypeUpdateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.error.HealthFacilityTypeErrorDescriptor;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.mapper.HealthFacilityTypeMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.model.HealthFacilityType;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.repository.HealthFacilityTypeRepository;
@@ -46,7 +46,7 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
     @Override
     public HealthFacilityTypeResponse update(UUID id, HealthFacilityTypeUpdateRequest request) {
         HealthFacilityType healthFacilityType = getByIdOrThrow(id);
-        String code = PatchHelper.resolveValue(
+        String code = ValueResolver.resolve(
                 request.code(), healthFacilityType.getCode());
         validateUniqueCode(code, id);
         mapper.updateHealthFacilityType(request, healthFacilityType);
@@ -65,8 +65,8 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
     @Override
     public HealthFacilityType getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        HealthFacilityTypeErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        HealthFacilityTypeErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueCode(String code) {
@@ -79,8 +79,8 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
                 ? repository.existsByCode(normalizedCode)
                 : repository.existsByCodeAndIdNot(normalizedCode, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    HealthFacilityTypeErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    HealthFacilityTypeErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

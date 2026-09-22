@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.role.model;
 
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Role extends AbstractEntity {
+public class Role extends BaseEntity {
 
     private String name;
     private String description;

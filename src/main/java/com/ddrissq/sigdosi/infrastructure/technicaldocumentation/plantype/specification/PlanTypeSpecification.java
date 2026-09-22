@@ -15,7 +15,7 @@ public final class PlanTypeSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("code")),
+                    builder.upper(root.get("message")),
                     "%" + code.trim().toUpperCase() + "%");
         };
     }

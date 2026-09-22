@@ -1,6 +1,7 @@
 package com.ddrissq.sigdosi.iam.user.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
+import com.ddrissq.sigdosi.common.mapping.annotation.IgnoreBaseFields;
+import com.ddrissq.sigdosi.common.mapping.util.StringFunctions;
 import com.ddrissq.sigdosi.iam.role.controller.RoleController;
 import com.ddrissq.sigdosi.iam.user.dto.UserCreateRequest;
 import com.ddrissq.sigdosi.iam.user.dto.UserResponse;
@@ -9,13 +10,14 @@ import com.ddrissq.sigdosi.iam.user.model.User;
 import com.ddrissq.sigdosi.iam.user.model.UserProfile;
 import org.mapstruct.*;
 
-@Mapper(uses = {RoleController.class, StringFormatter.class})
+@Mapper(uses = {RoleController.class, StringFunctions.class})
 public interface UserMapper {
 
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "profile", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
     @Mapping(target = "status", ignore = true)
+    @Mapping(target = "email", source = "email", qualifiedByName = "toLowerCase")
     User toUser(UserCreateRequest request);
 
     @Mapping(target = "user", ignore = true)
@@ -30,11 +32,10 @@ public interface UserMapper {
     UserResponse toResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @IgnoreBaseFields
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "passwordHash", ignore = true)
+    @Mapping(target = "email", source = "email", qualifiedByName = "toLowerCase")
     @Mapping(target = "profile.cui", source = "cui")
     @Mapping(target = "profile.firstName", source = "firstName", qualifiedByName = "capitalize")
     @Mapping(target = "profile.lastName", source = "lastName", qualifiedByName = "capitalize")

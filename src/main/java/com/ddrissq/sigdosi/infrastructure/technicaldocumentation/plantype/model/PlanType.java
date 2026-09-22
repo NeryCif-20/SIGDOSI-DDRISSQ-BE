@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.model;
 
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class PlanType extends AbstractEntity {
+public class PlanType extends BaseEntity {
 
     private String code;
     private String name;

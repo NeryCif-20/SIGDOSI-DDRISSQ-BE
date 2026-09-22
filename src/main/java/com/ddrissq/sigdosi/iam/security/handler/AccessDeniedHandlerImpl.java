@@ -1,7 +1,8 @@
 package com.ddrissq.sigdosi.iam.security.handler;
 
+import com.ddrissq.sigdosi.common.error.ErrorDescriptor;
 import com.ddrissq.sigdosi.common.message.service.MessageService;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
+import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,13 +36,13 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     }
 
     private String buildResponse(String path) {
+        ErrorDescriptor descriptor = IamErrorDescriptor.AUTHORIZATION_FORBIDDEN;
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.FORBIDDEN,
-                messageService.getMessage(
-                        IamErrorMessageKeys.ACCESS_DENIED));
+                messageService.getMessage(descriptor.messageKey()));
         detail.setInstance(URI.create(path));
-        detail.setTitle("Authorization Error");
-        detail.setProperty("error_category", "Auth");
+        detail.setTitle(messageService.getMessage(descriptor.titleKey()));
+        detail.setProperty("code", descriptor.code());
         detail.setProperty("timestamp", Instant.now());
         return mapper
                 .writerWithDefaultPrettyPrinter()

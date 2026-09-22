@@ -15,7 +15,7 @@ public final class BuildingMaterialSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("code")),
+                    builder.upper(root.get("message")),
                     "%" + code.trim().toUpperCase() + "%");
         };
     }

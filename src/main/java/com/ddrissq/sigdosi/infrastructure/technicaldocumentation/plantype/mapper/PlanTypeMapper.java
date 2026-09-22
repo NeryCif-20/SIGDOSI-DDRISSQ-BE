@@ -1,13 +1,14 @@
 package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
+import com.ddrissq.sigdosi.common.mapping.annotation.IgnoreBaseFields;
+import com.ddrissq.sigdosi.common.mapping.util.StringFunctions;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeResponse;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeUpdateRequest;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.model.PlanType;
 import org.mapstruct.*;
 
-@Mapper(uses = StringFormatter.class)
+@Mapper(uses = StringFunctions.class)
 public interface PlanTypeMapper {
 
     @Mapping(target = "code", source = "code", qualifiedByName = "toUpperCase")
@@ -17,9 +18,7 @@ public interface PlanTypeMapper {
     PlanTypeResponse toResponse(PlanType planType);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @IgnoreBaseFields
     @Mapping(target = "code", source = "code", qualifiedByName = "toUpperCase")
     @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     void updatePlanType(PlanTypeUpdateRequest request, @MappingTarget PlanType planType);

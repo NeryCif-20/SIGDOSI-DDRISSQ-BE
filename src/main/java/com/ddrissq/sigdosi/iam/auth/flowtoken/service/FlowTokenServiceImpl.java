@@ -5,7 +5,7 @@ import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenResult;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.repository.FlowTokenRepository;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
+import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
@@ -52,7 +52,7 @@ public class FlowTokenServiceImpl implements FlowTokenService {
         return repository
                 .findValidToken(tokenHash, expectedStep)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID));
+                        IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID));
     }
 
     @Override

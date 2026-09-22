@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
-import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.constant.BuildingElementErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementSearchRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementUpdateRequest;
+import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.error.BuildingElementErrorDescriptor;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.mapper.BuildingElementMapper;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.model.BuildingElement;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.repository.BuildingElementRepository;
@@ -47,7 +47,7 @@ public class BuildingElementServiceImpl implements BuildingElementService {
     @Override
     public BuildingElementResponse update(UUID id, BuildingElementUpdateRequest request) {
         BuildingElement buildingElement = getByIdOrThrow(id);
-        String name = PatchHelper.resolveValue(
+        String name = ValueResolver.resolve(
                 request.name(), buildingElement.getName());
         validateUniqueName(name, id);
         mapper.updateBuildingElement(request, buildingElement);
@@ -66,8 +66,8 @@ public class BuildingElementServiceImpl implements BuildingElementService {
     @Override
     public BuildingElement getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        BuildingElementErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        BuildingElementErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueName(String name) {
@@ -80,8 +80,8 @@ public class BuildingElementServiceImpl implements BuildingElementService {
                 ? repository.existsByName(capitalizedName)
                 : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    BuildingElementErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    BuildingElementErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

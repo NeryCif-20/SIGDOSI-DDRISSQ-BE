@@ -4,7 +4,7 @@ import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.repository.RefreshTokenRepository;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
+import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
@@ -44,15 +44,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String tokenHash = hashService.digestHex(token, "SHA-256");
         RefreshToken refreshToken =  repository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID));
+                        IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID));
         if (refreshToken.isRevoked()) {
             repository.revokeAllByFamilyId(refreshToken.getFamilyId());
             throw new AuthenticationException(
-                    IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID);
+                    IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
         }
         if (refreshToken.isExpired()) {
             throw new AuthenticationException(
-                    IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID);
+                    IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
         }
         return refreshToken;
     }

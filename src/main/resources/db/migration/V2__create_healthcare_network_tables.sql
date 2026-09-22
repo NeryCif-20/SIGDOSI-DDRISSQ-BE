@@ -1,6 +1,6 @@
 CREATE TABLE dms
 (
-    id         UUID        NOT NULL,
+    id         UUID        NOT NULL DEFAULT uuidv7(),
     name       VARCHAR(50) NOT NULL UNIQUE,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE dms
 
 CREATE TABLE riss
 (
-    id         UUID        NOT NULL,
+    id         UUID        NOT NULL DEFAULT uuidv7(),
     dms_id     UUID        NOT NULL,
     name       VARCHAR(50) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE riss
 
 CREATE TABLE community
 (
-    id         UUID        NOT NULL,
+    id         UUID        NOT NULL DEFAULT uuidv7(),
     riss_id    UUID        NOT NULL,
     name       VARCHAR(50) NOT NULL,
     territory  SMALLINT    NOT NULL CHECK (territory >= 0),
@@ -40,7 +40,7 @@ CREATE TABLE community
 
 CREATE TABLE health_facility_type
 (
-    id         UUID        NOT NULL,
+    id         UUID        NOT NULL DEFAULT uuidv7(),
     code       VARCHAR(10) NOT NULL UNIQUE,
     name       VARCHAR(25) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
@@ -48,16 +48,19 @@ CREATE TABLE health_facility_type
     PRIMARY KEY (id)
 );
 
-CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE
+EXTENSION IF NOT EXISTS postgis;
 
 CREATE TABLE health_facility
 (
-    id                       UUID           NOT NULL,
+    id                       UUID           NOT NULL DEFAULT uuidv7(),
     community_id             UUID           NOT NULL,
     health_facility_type_id  UUID           NOT NULL,
     is_headquarters          BOOLEAN        NOT NULL,
     status                   VARCHAR(20)    NOT NULL CHECK (status IN ('ACTIVE', 'UNDER_MAINTENANCE', 'INACTIVE')),
-    total_land_area          NUMERIC(10, 2) NOT NULL CHECK (total_land_area >= 0 AND building_footprint + available_expansion_area <= total_land_area),
+    total_land_area          NUMERIC(10, 2) NOT NULL CHECK (total_land_area >= 0 AND
+                                                            building_footprint + available_expansion_area <=
+                                                            total_land_area),
     building_footprint       NUMERIC(10, 2) NOT NULL CHECK (building_footprint >= 0),
     available_expansion_area NUMERIC(10, 2) NOT NULL CHECK (available_expansion_area >= 0),
     property_tenure          VARCHAR(25)    NOT NULL CHECK (property_tenure IN ('OWN', 'MUNICIPAL', 'COMMUNITY', 'PRIVATE')),

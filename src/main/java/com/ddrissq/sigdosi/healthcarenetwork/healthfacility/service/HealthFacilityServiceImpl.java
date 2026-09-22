@@ -1,15 +1,15 @@
 package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.exception.EntityValidationException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
+import com.ddrissq.sigdosi.common.exception.BusinessRuleException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.community.service.CommunityService;
-import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.constant.HealthFacilityErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilitySearchRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.dto.HealthFacilityUpdateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.error.HealthFacilityErrorDescriptor;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.mapper.HealthFacilityMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacility;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.repository.HealthFacilityRepository;
@@ -60,21 +60,23 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
     @Override
     public HealthFacilityResponse update(UUID id, HealthFacilityUpdateRequest request) {
         HealthFacility healthFacility = getByIdOrThrow(id);
-        Community community = PatchHelper.resolveEntity(
+        Community community = ValueResolver.resolveByKey(
                 request.community(),
                 healthFacility.getCommunity(),
+                Community::getId,
                 communityService::getByIdOrThrow);
-        HealthFacilityType healthFacilityType = PatchHelper.resolveEntity(
+        HealthFacilityType healthFacilityType = ValueResolver.resolveByKey(
                 request.healthFacilityType(),
                 healthFacility.getHealthFacilityType(),
+                HealthFacilityType::getId,
                 healthFacilityTypeService::getByIdOrThrow);
-        BigDecimal totalLandArea = PatchHelper.resolveValue(
+        BigDecimal totalLandArea = ValueResolver.resolve(
                 request.totalLandArea(),
                 healthFacility.getTotalLandArea());
-        BigDecimal buildingFootprint = PatchHelper.resolveValue(
+        BigDecimal buildingFootprint = ValueResolver.resolve(
                 request.buildingFootprint(),
                 healthFacility.getBuildingFootprint());
-        BigDecimal availableExpansionArea = PatchHelper.resolveValue(
+        BigDecimal availableExpansionArea = ValueResolver.resolve(
                 request.availableExpansionArea(),
                 healthFacility.getAvailableExpansionArea());
         validateTotalLandArea(totalLandArea, buildingFootprint, availableExpansionArea);
@@ -92,8 +94,8 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
     @Override
     public HealthFacility getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        HealthFacilityErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        HealthFacilityErrorDescriptor.NOT_FOUND));
     }
 
     private void validateTotalLandArea(
@@ -103,8 +105,8 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
         BigDecimal estimatedTotalLandArea = buildingFootprint.add(
                 availableExpansionArea);
         if (estimatedTotalLandArea.compareTo(totalLandArea) > 0) {
-            throw new EntityValidationException(
-                    HealthFacilityErrorMessageKeys.TOTAL_LAND_AREA_EXCEEDED);
+            throw new BusinessRuleException(
+                    HealthFacilityErrorDescriptor.TOTAL_LAND_AREA_EXCEEDED);
         }
     }
 

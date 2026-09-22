@@ -1,13 +1,14 @@
 package com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
+import com.ddrissq.sigdosi.common.mapping.annotation.IgnoreBaseFields;
+import com.ddrissq.sigdosi.common.mapping.util.StringFunctions;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialUpdateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.model.BuildingMaterial;
 import org.mapstruct.*;
 
-@Mapper(uses = StringFormatter.class)
+@Mapper(uses = StringFunctions.class)
 public interface BuildingMaterialMapper {
 
     @Mapping(target = "code", source = "code", qualifiedByName = "toUpperCase")
@@ -17,9 +18,7 @@ public interface BuildingMaterialMapper {
     BuildingMaterialResponse toResponse(BuildingMaterial buildingMaterial);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id",  ignore = true)
-    @Mapping(target = "createdAt",  ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @IgnoreBaseFields
     @Mapping(target = "code", source = "code", qualifiedByName = "toUpperCase")
     @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     void updateBuildingMaterial(BuildingMaterialUpdateRequest request, @MappingTarget BuildingMaterial buildingMaterial);

@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
-import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.constant.BuildingMaterialErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialSearchRequest;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialUpdateRequest;
+import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.error.BuildingMaterialErrorDescriptor;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.mapper.BuildingMaterialMapper;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.model.BuildingMaterial;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.repository.BuildingMaterialRepository;
@@ -45,7 +45,7 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
     @Override
     public BuildingMaterialResponse update(UUID id, BuildingMaterialUpdateRequest request) {
         BuildingMaterial buildingMaterial = getByIdOrThrow(id);
-        String code = PatchHelper.resolveValue(
+        String code = ValueResolver.resolve(
                 request.code(), buildingMaterial.getCode());
         validateUniqueCode(code, id);
         mapper.updateBuildingMaterial(request, buildingMaterial);
@@ -65,8 +65,8 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
     @Override
     public BuildingMaterial getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        BuildingMaterialErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        BuildingMaterialErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueCode(String code) {
@@ -79,8 +79,8 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
                 ? repository.existsByCode(normalizedCode)
                 : repository.existsByCodeAndIdNot(normalizedCode, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    BuildingMaterialErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    BuildingMaterialErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

@@ -1,16 +1,12 @@
 package com.ddrissq.sigdosi.iam.auth.mail.configuration;
 
+import com.ddrissq.sigdosi.iam.auth.mail.model.PasswordSetAction;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "iam.auth.mail")
+import java.util.Map;
+
+@ConfigurationProperties(prefix = "auth.mail")
 public record AuthMailProperties(
-        Paths paths
+        Map<PasswordSetAction, String> setPasswordPaths
 ) {
-
-    public record Paths(
-            String setupPassword,
-            String resetPassword
-    ) {
-    }
-
 }

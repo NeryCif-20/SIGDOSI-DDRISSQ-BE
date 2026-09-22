@@ -1,15 +1,15 @@
 package com.ddrissq.sigdosi.healthcarenetwork.riss.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.model.Dms;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.service.DmsService;
-import com.ddrissq.sigdosi.healthcarenetwork.riss.constant.RissErrorMessageKeys;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissSearchRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.dto.RissUpdateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.riss.error.RissErrorDescriptor;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.mapper.RissMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.model.Riss;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.repository.RissRepository;
@@ -51,11 +51,12 @@ public class RissServiceImpl implements RissService {
     @Override
     public RissResponse update(UUID id, RissUpdateRequest request) {
         Riss riss = getByIdOrThrow(id);
-        Dms dms = PatchHelper.resolveEntity(
+        Dms dms = ValueResolver.resolveByKey(
                 request.dms(),
                 riss.getDms(),
+                Dms::getId,
                 dmsService::getByIdOrThrow);
-        String name = PatchHelper.resolveValue(
+        String name = ValueResolver.resolve(
                 request.name(), riss.getName());
         validateUniqueDmsName(dms.getId(), name, id);
         mapper.updateRiss(request, riss);
@@ -76,8 +77,8 @@ public class RissServiceImpl implements RissService {
     @Override
     public Riss getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        RissErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        RissErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueDmsName(UUID dms, String name) {
@@ -90,8 +91,8 @@ public class RissServiceImpl implements RissService {
                 ? repository.existsByDmsIdAndName(dms, capitalizedName)
                 : repository.existsByDmsIdAndNameAndIdNot(dms, capitalizedName, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    RissErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    RissErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

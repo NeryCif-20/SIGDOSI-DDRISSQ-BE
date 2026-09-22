@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.iam.permission.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
-import com.ddrissq.sigdosi.iam.permission.constant.PermissionErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionCreateRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionResponse;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionSearchRequest;
 import com.ddrissq.sigdosi.iam.permission.dto.PermissionUpdateRequest;
+import com.ddrissq.sigdosi.iam.permission.error.PermissionErrorDescriptor;
 import com.ddrissq.sigdosi.iam.permission.mapper.PermissionMapper;
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
 import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
@@ -48,9 +48,9 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public PermissionResponse update(UUID id, PermissionUpdateRequest request) {
         Permission permission = getByIdOrThrow(id);
-        String module = PatchHelper.resolveValue(
+        String module = ValueResolver.resolve(
                 request.module(), permission.getModule());
-        PermissionAction action = PatchHelper.resolveValue(
+        PermissionAction action = ValueResolver.resolve(
                 request.action(), permission.getAction());
         validateUniqueModuleAction(module, action, id);
         mapper.updatePermission(request, permission);
@@ -69,8 +69,8 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public Permission getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        PermissionErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        PermissionErrorDescriptor.NOT_FOUND));
     }
 
     @Override
@@ -89,8 +89,8 @@ public class PermissionServiceImpl implements PermissionService {
                 ? repository.existsByModuleAndAction(normalizedModule, action)
                 : repository.existsByModuleAndActionAndIdNot(normalizedModule, action, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    PermissionErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    PermissionErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

@@ -1,14 +1,14 @@
 package com.ddrissq.sigdosi.healthcarenetwork.dms.service;
 
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.common.service.util.PatchHelper;
-import com.ddrissq.sigdosi.healthcarenetwork.dms.constant.DmsErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsSearchRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.dto.DmsUpdateRequest;
+import com.ddrissq.sigdosi.healthcarenetwork.dms.error.DmsErrorDescriptor;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.mapper.DmsMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.model.Dms;
 import com.ddrissq.sigdosi.healthcarenetwork.dms.repository.DmsRepository;
@@ -48,7 +48,7 @@ public class DmsServiceImpl implements DmsService {
     @Override
     public DmsResponse update(UUID id, DmsUpdateRequest request) {
         Dms dms =  getByIdOrThrow(id);
-        String name = PatchHelper.resolveValue(
+        String name = ValueResolver.resolve(
                 request.name(), dms.getName());
         validateUniqueName(name, id);
         mapper.updateDms(request, dms);
@@ -66,8 +66,8 @@ public class DmsServiceImpl implements DmsService {
     @Override
     public Dms getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        DmsErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        DmsErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueName(String name) {
@@ -80,8 +80,8 @@ public class DmsServiceImpl implements DmsService {
                 ? repository.existsByName(capitalizedName)
                 : repository.existsByNameAndIdNot(capitalizedName, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    DmsErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    DmsErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

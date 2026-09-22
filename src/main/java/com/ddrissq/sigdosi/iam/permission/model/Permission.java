@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.permission.model;
 
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Permission extends AbstractEntity {
+public class Permission extends BaseEntity {
 
     private String module;
     @Enumerated(value = EnumType.STRING)

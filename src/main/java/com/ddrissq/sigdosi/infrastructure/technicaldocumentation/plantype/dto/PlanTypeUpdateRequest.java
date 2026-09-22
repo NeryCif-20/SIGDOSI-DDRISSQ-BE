@@ -1,12 +1,17 @@
 package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto;
 
+import com.ddrissq.sigdosi.common.validation.annotation.NullableNotBlank;
+import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import jakarta.validation.constraints.Size;
 
 public record PlanTypeUpdateRequest(
-        @Size(max = 10)
+        @NullableNotBlank
+        @Size(min = 5, max = 10, message = ValidationError.SIZE)
         String code,
-        @Size(max = 35)
+        @NullableNotBlank
+        @Size(min = 1, max = 35, message = ValidationError.SIZE)
         String name,
+        @NullableNotBlank
         String description
 ) {
 }

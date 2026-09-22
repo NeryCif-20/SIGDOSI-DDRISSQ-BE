@@ -1,6 +1,7 @@
 package com.ddrissq.sigdosi.healthcarenetwork.community.mapper;
 
-import com.ddrissq.sigdosi.common.mapper.util.StringFormatter;
+import com.ddrissq.sigdosi.common.mapping.annotation.IgnoreBaseFields;
+import com.ddrissq.sigdosi.common.mapping.util.StringFunctions;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityCreateRequest;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityResponse;
 import com.ddrissq.sigdosi.healthcarenetwork.community.dto.CommunityUpdateRequest;
@@ -8,7 +9,7 @@ import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.riss.mapper.RissMapper;
 import org.mapstruct.*;
 
-@Mapper(uses = {RissMapper.class, StringFormatter.class})
+@Mapper(uses = {RissMapper.class, StringFunctions.class})
 public interface CommunityMapper {
 
     @Mapping(target = "riss", ignore = true)
@@ -19,9 +20,7 @@ public interface CommunityMapper {
     CommunityResponse toResponse(Community community);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
+    @IgnoreBaseFields
     @Mapping(target = "riss", ignore = true)
     @Mapping(target = "name", source = "name", qualifiedByName = "capitalize")
     @Mapping(target = "sector", source = "sector", qualifiedByName = "toUpperCase")

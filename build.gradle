@@ -16,12 +16,13 @@ java {
 }
 
 ext {
-    springCloudAwsVersion = '4.1.0'
+    awspringCloudVersion = '4.1.0'
     springdocVersion = '3.0.3'
     mapstructVersion = '1.6.3'
     bindingVersion = '0.2.0'
     apacheTikaVersion = '3.3.2'
-    jacksonJtsVersion = '3.0.4'
+    n52JacksonVersion = '3.0.4'
+    fasterxmlUuidVersion = '5.2.0'
 }
 
 repositories {
@@ -35,7 +36,7 @@ configurations {
 }
 
 dependencies {
-    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}")
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${awspringCloudVersion}")
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-flyway'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -50,7 +51,8 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
     implementation "org.apache.tika:tika-core:$apacheTikaVersion"
-    implementation "org.n52.jackson:jackson-datatype-jts:$jacksonJtsVersion"
+    implementation "org.n52.jackson:jackson-datatype-jts:$n52JacksonVersion"
+    implementation "com.fasterxml.uuid:java-uuid-generator:$fasterxmlUuidVersion"
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     mockitoAgent 'org.mockito:mockito-core'
     compileOnly 'org.projectlombok:lombok'
@@ -80,6 +82,8 @@ dependencies {
 
 tasks.named('compileJava', JavaCompile) {
     options.compilerArgs.add('-Amapstruct.defaultComponentModel=spring')
+    options.compilerArgs.add('-Amapstruct.defaultInjectionStrategy=constructor')
+    options.compilerArgs.add('-Amapstruct.unmappedTargetPolicy=ERROR')
 }
 
 tasks.named('test', Test) {

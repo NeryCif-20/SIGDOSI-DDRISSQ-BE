@@ -1,17 +1,18 @@
 package com.ddrissq.sigdosi.iam.user.dto;
 
-import com.ddrissq.sigdosi.common.validation.comparison.annotation.Compare;
+import com.ddrissq.sigdosi.common.validation.annotation.CompareFields;
+import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import jakarta.validation.constraints.NotBlank;
 
-@Compare(
-        firstField = "confirmNewPassword",
-        secondField = "newPassword")
+@CompareFields(
+        first = "confirmNewPassword",
+        second = "newPassword")
 public record UserPasswordUpdateRequest(
-        @NotBlank
+        @NotBlank(message = ValidationError.REQUIRED)
         String currentPassword,
-        @NotBlank
+        @NotBlank(message = ValidationError.REQUIRED)
         String newPassword,
-        @NotBlank
+        @NotBlank(message = ValidationError.REQUIRED)
         String confirmNewPassword
 ) {
 }

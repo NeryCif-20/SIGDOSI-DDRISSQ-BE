@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.auth.flowtoken.model;
 
 import com.ddrissq.sigdosi.iam.user.model.User;
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +13,7 @@ import java.time.Instant;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class FlowToken extends AbstractEntity {
+public class FlowToken extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_account_id")

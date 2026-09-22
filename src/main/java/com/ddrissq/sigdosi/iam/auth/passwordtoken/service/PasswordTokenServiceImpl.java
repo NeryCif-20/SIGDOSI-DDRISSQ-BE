@@ -5,7 +5,7 @@ import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenPurpose;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenResult;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.repository.PasswordTokenRepository;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
+import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
@@ -53,7 +53,7 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
         String tokenHash = hashService.digestHex(token, "SHA-256");
         return repository.findValidToken(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorMessageKeys.AUTHENTICATION_CREDENTIALS_INVALID));
+                        IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID));
     }
 
     @Override

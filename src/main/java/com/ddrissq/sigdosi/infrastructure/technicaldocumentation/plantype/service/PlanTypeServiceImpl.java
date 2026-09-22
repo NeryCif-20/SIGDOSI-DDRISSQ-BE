@@ -1,13 +1,12 @@
 package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.service;
 
-import com.ddrissq.sigdosi.common.exception.EntityAlreadyExistsException;
-import com.ddrissq.sigdosi.common.exception.EntityNotFoundException;
-import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.constant.BuildingElementErrorMessageKeys;
-import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.constant.PlanTypeErrorMessageKeys;
+import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
+import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeCreateRequest;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeResponse;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeSearchRequest;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto.PlanTypeUpdateRequest;
+import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.error.PlanTypeErrorDescriptor;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.mapper.PlanTypeMapper;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.model.PlanType;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.repository.PlanTypeRepository;
@@ -68,8 +67,8 @@ public class PlanTypeServiceImpl implements PlanTypeService {
     @Override
     public PlanType getByIdOrThrow(UUID id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        PlanTypeErrorMessageKeys.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        PlanTypeErrorDescriptor.NOT_FOUND));
     }
 
     private void validateUniqueCode(String name) {
@@ -82,8 +81,8 @@ public class PlanTypeServiceImpl implements PlanTypeService {
                 ? repository.existsByCode(capitalizedName)
                 : repository.existsByCodeAndIdNot(capitalizedName, id);
         if (exists) {
-            throw new EntityAlreadyExistsException(
-                    BuildingElementErrorMessageKeys.ALREADY_EXISTS);
+            throw new ResourceAlreadyExistsException(
+                    PlanTypeErrorDescriptor.ALREADY_EXISTS);
         }
     }
 

@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.healthcarenetwork.dms.model;
 
-import com.ddrissq.sigdosi.common.model.AbstractEntity;
+import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.*;
 
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class Dms extends AbstractEntity {
+public class Dms extends BaseEntity {
 
     private String name;
 

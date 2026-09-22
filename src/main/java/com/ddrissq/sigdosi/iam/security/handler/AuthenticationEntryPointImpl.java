@@ -1,7 +1,8 @@
 package com.ddrissq.sigdosi.iam.security.handler;
 
+import com.ddrissq.sigdosi.common.error.ErrorDescriptor;
 import com.ddrissq.sigdosi.common.message.service.MessageService;
-import com.ddrissq.sigdosi.iam.constants.IamErrorMessageKeys;
+import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,25 +34,25 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
             AuthenticationException exception) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON.toString());
-        String detail = resolveDetail(exception.getCause());
-        response.getWriter().write(buildResponse(detail, request.getRequestURI()));
+        ErrorDescriptor descriptor = resolveDescriptor(exception.getCause());
+        response.getWriter().write(buildResponse(descriptor, request.getRequestURI()));
     }
 
-    private String resolveDetail(Throwable cause) {
+    private ErrorDescriptor resolveDescriptor(Throwable cause) {
         return switch (cause) {
-            case JwtValidationException ex -> IamErrorMessageKeys.TOKEN_EXPIRED;
-            case BadJwtException ex -> IamErrorMessageKeys.TOKEN_INVALID;
-            default -> IamErrorMessageKeys.AUTHENTICATION_REQUIRED;
+            case JwtValidationException ex -> IamErrorDescriptor.AUTHENTICATION_TOKEN_EXPIRED;
+            case BadJwtException ex -> IamErrorDescriptor.AUTHENTICATION_TOKEN_INVALID;
+            default -> IamErrorDescriptor.AUTHENTICATION_REQUIRED;
         };
     }
 
-    private String buildResponse(String key, String path) {
+    private String buildResponse(ErrorDescriptor descriptor, String path) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.UNAUTHORIZED,
-                messageService.getMessage(key));
+                messageService.getMessage(descriptor.messageKey()));
         detail.setInstance(URI.create(path));
-        detail.setTitle("Authentication Error");
-        detail.setProperty("error_category", "Auth");
+        detail.setTitle(messageService.getMessage(descriptor.titleKey()));
+        detail.setProperty("code", descriptor.code());
         detail.setProperty("timestamp", Instant.now());
         return mapper
                 .writerWithDefaultPrettyPrinter()
