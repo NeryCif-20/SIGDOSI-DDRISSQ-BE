@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 public final class ValidationError {
 
     public static final String REQUIRED = "{error.validation.required}";
-    public static final String COLLECTION_NOT_EMPTY = "{error.validation.collection.not-empty}";
     public static final String SIZE = "{error.validation.size}";
     public static final String EMAIL = "{error.validation.email}";
     public static final String POSITIVE = "{error.validation.positive}";
