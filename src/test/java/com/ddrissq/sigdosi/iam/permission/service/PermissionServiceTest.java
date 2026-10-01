@@ -97,7 +97,7 @@ class PermissionServiceTest {
         savedPermission.setId(ID);
         PermissionResponse expectedResponse = PermissionResponseTestData.aResponse()
                 .build();
-        given(repository.existsByModuleAndAction(
+        given(repository.existsByModuleIgnoreCaseAndAction(
                 request.module(), request.action())).willReturn(false);
         given(mapper.toPermission(request)).willReturn(permission);
         given(repository.save(permission)).willReturn(savedPermission);
@@ -106,7 +106,7 @@ class PermissionServiceTest {
         PermissionResponse response = service.create(request);
         // Then
         assertThat(response).isEqualTo(expectedResponse);
-        verify(repository).existsByModuleAndAction(request.module(), request.action());
+        verify(repository).existsByModuleIgnoreCaseAndAction(request.module(), request.action());
         verify(mapper).toPermission(request);
         verify(repository).save(permission);
         verify(mapper).toResponse(savedPermission);
@@ -118,7 +118,7 @@ class PermissionServiceTest {
         // Given
         PermissionCreateRequest request = PermissionCreateRequestTestData.aRequest()
                 .build();
-        given(repository.existsByModuleAndAction(
+        given(repository.existsByModuleIgnoreCaseAndAction(
                 request.module(), request.action())).willReturn(true);
         // When + Then
         assertThatThrownBy(() -> service.create(request))
@@ -130,7 +130,7 @@ class PermissionServiceTest {
                 .hasFieldOrPropertyWithValue(
                         "code",
                         PermissionErrorDescriptor.ALREADY_EXISTS.code());
-        verify(repository).existsByModuleAndAction(request.module(), request.action());
+        verify(repository).existsByModuleIgnoreCaseAndAction(request.module(), request.action());
         verifyNoMoreInteractions(repository);
         verifyNoInteractions(mapper);
     }
@@ -151,7 +151,7 @@ class PermissionServiceTest {
         PermissionResponse expectedResponse = PermissionResponseTestData.aResponse()
                 .build();
         given(repository.findById(ID)).willReturn(Optional.of(permission));
-        given(repository.existsByModuleAndActionAndIdNot(
+        given(repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 request.module(), request.action(), ID)).willReturn(false);
         given(mapper.toResponse(permission)).willReturn(expectedResponse);
         // When
@@ -159,7 +159,7 @@ class PermissionServiceTest {
         // Then
         assertThat(response).isEqualTo(expectedResponse);
         verify(repository).findById(ID);
-        verify(repository).existsByModuleAndActionAndIdNot(
+        verify(repository).existsByModuleIgnoreCaseAndActionAndIdNot(
                 request.module(), request.action(), ID);
         verify(mapper).updatePermission(request, permission);
         verify(mapper).toResponse(permission);
@@ -177,7 +177,7 @@ class PermissionServiceTest {
         PermissionResponse expectedResponse = PermissionResponseTestData.aResponse()
                 .build();
         given(repository.findById(ID)).willReturn(Optional.of(permission));
-        given(repository.existsByModuleAndActionAndIdNot(
+        given(repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 permission.getModule(), permission.getAction(), ID)).willReturn(false);
         given(mapper.toResponse(permission)).willReturn(expectedResponse);
         // When
@@ -185,7 +185,7 @@ class PermissionServiceTest {
         // Then
         assertThat(response).isEqualTo(expectedResponse);
         verify(repository).findById(ID);
-        verify(repository).existsByModuleAndActionAndIdNot(
+        verify(repository).existsByModuleIgnoreCaseAndActionAndIdNot(
                 permission.getModule(), permission.getAction(), ID);
         verify(mapper).updatePermission(request, permission);
         verify(mapper).toResponse(permission);
@@ -227,7 +227,7 @@ class PermissionServiceTest {
         PermissionResponse expectedResponse = PermissionResponseTestData.aResponse()
                 .build();
         given(repository.findById(ID)).willReturn(Optional.of(permission));
-        given(repository.existsByModuleAndActionAndIdNot(
+        given(repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 permission.getModule(),request.action(), ID)).willReturn(false);
         given(mapper.toResponse(permission)).willReturn(expectedResponse);
         // When
@@ -235,7 +235,7 @@ class PermissionServiceTest {
         // Then
         assertThat(response).isEqualTo(expectedResponse);
         verify(repository).findById(ID);
-        verify(repository).existsByModuleAndActionAndIdNot(
+        verify(repository).existsByModuleIgnoreCaseAndActionAndIdNot(
                 permission.getModule(), request.action(), ID);
         verify(mapper).updatePermission(request, permission);
         verify(mapper).toResponse(permission);
@@ -255,7 +255,7 @@ class PermissionServiceTest {
         PermissionResponse expectedResponse = PermissionResponseTestData.aResponse()
                 .build();
         given(repository.findById(ID)).willReturn(Optional.of(permission));
-        given(repository.existsByModuleAndActionAndIdNot(
+        given(repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 request.module(), permission.getAction(), ID)).willReturn(false);
         given(mapper.toResponse(permission)).willReturn(expectedResponse);
         // When
@@ -263,7 +263,7 @@ class PermissionServiceTest {
         // Then
         assertThat(response).isEqualTo(expectedResponse);
         verify(repository).findById(ID);
-        verify(repository).existsByModuleAndActionAndIdNot(
+        verify(repository).existsByModuleIgnoreCaseAndActionAndIdNot(
                 request.module(), permission.getAction(), ID);
         verify(mapper).updatePermission(request, permission);
         verify(mapper).toResponse(permission);
@@ -283,7 +283,7 @@ class PermissionServiceTest {
                 .build();
         permission.setId(ID);
         given(repository.findById(ID)).willReturn(Optional.of(permission));
-        given(repository.existsByModuleAndActionAndIdNot(
+        given(repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 request.module(), request.action(), ID)).willReturn(true);
         // When + Then
         assertThatThrownBy(() -> service.update(ID, request))
@@ -297,7 +297,7 @@ class PermissionServiceTest {
                         PermissionErrorDescriptor.ALREADY_EXISTS.code());
         verify(repository).findById(ID);
         verify(repository)
-                .existsByModuleAndActionAndIdNot(request.module(), request.action(), ID);
+                .existsByModuleIgnoreCaseAndActionAndIdNot(request.module(), request.action(), ID);
         verifyNoInteractions(mapper);
     }
 
