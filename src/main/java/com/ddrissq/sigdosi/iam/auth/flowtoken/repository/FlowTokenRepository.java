@@ -19,7 +19,7 @@ public interface FlowTokenRepository extends JpaRepository<FlowToken, UUID> {
             AND ft.step = :step
             AND ft.revokedAt IS NULL
     """)
-    Optional<FlowToken> findValidToken(String tokenHash, FlowTokenStep step);
+    Optional<FlowToken> findValidByTokenHashAndStep(String tokenHash, FlowTokenStep step);
 
     @Modifying
     @Query(value = """

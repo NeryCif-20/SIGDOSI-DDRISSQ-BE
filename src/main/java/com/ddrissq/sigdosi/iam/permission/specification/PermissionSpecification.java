@@ -16,8 +16,8 @@ public final class PermissionSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("module")),
-                    "%" + module.trim().toUpperCase() + "%");
+                    builder.lower(root.get("module")),
+                    "%" + module.trim().toLowerCase() + "%");
         };
     }
 

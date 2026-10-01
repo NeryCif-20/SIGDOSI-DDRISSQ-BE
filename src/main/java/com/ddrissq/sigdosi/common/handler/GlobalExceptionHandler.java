@@ -5,12 +5,11 @@ import com.ddrissq.sigdosi.common.error.HttpErrorDescriptor;
 import com.ddrissq.sigdosi.common.exception.BusinessRuleException;
 import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
-import com.ddrissq.sigdosi.common.file.storage.exception.StorageException;
-import com.ddrissq.sigdosi.common.mail.exception.MailException;
+import com.ddrissq.sigdosi.common.file.storage.exception.StorageOperationException;
+import com.ddrissq.sigdosi.common.hash.exception.HashGenerationException;
 import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
 import com.ddrissq.sigdosi.iam.exception.AuthorizationException;
-import com.ddrissq.sigdosi.iam.security.hash.exception.HashGenerationException;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.TypeMismatchException;
@@ -29,6 +28,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.exc.InvalidFormatException;
 import tools.jackson.databind.exc.MismatchedInputException;
 
@@ -99,19 +99,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return detail;
     }
 
-    @ExceptionHandler(exception = StorageException.class)
-    public ProblemDetail handleFileStorageException(StorageException ex) {
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                messageService.getMessage(ex.getMessage()));
-        detail.setTitle(messageService.getMessage(ex.getTitle()));
-        detail.setProperty("code", ex.getCode());
-        detail.setProperty("timestamp", Instant.now());
-        return detail;
-    }
-
-    @ExceptionHandler(exception = MailException.class)
-    public ProblemDetail handleMailException(MailException ex) {
+    @ExceptionHandler(exception = StorageOperationException.class)
+    public ProblemDetail handleFileStorageException(StorageOperationException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 messageService.getMessage(ex.getMessage()));
@@ -213,6 +202,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             case MismatchedInputException exception -> {
                 arguments.add(exception.getPath().getLast().getPropertyName());
                 yield HttpErrorDescriptor.REQUEST_BODY_STRUCTURE_MISMATCHED;
+            }
+            case DatabindException exception -> {
+                arguments.add(exception.getPath().getLast().getPropertyName());
+                yield HttpErrorDescriptor.REQUEST_BODY_DATA_BINDING_FAILED;
             }
             default -> HttpErrorDescriptor.REQUEST_BODY_MALFORMED;
         };

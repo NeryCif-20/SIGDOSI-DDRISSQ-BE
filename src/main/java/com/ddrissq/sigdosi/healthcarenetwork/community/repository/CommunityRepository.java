@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface CommunityRepository extends JpaRepository<Community, UUID>, JpaSpecificationExecutor<Community> {
 
-    boolean existsByRissIdAndNameAndTerritoryAndSector(UUID riss, String name, Integer territory, String sector);
-    boolean existsByRissIdAndNameAndTerritoryAndSectorAndIdNot(UUID riss, String name, Integer territory, String sector, UUID id);
+    boolean existsByRissIdAndNameIgnoreCaseAndTerritoryAndSectorIgnoreCase(UUID riss, String name, Short territory, String sector);
+    boolean existsByRissIdAndNameIgnoreCaseAndTerritoryAndSectorIgnoreCaseAndIdNot(UUID riss, String name, Short territory, String sector, UUID id);
 
 }

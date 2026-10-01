@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public record HealthFacilityTypeCreateRequest(
         @NotBlank(message = ValidationError.REQUIRED)
-        @Size(min = 5, max = 10, message = ValidationError.SIZE)
+        @Size(min = 1, max = 10, message = ValidationError.SIZE)
         String code,
         @NotBlank(message = ValidationError.REQUIRED)
         @Size(min = 1, max = 25, message = ValidationError.SIZE)

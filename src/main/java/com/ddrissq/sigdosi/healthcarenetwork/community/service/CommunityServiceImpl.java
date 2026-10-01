@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
@@ -63,7 +62,7 @@ public class CommunityServiceImpl implements CommunityService {
                 rissService::getByIdOrThrow);
         String name = ValueResolver.resolve(
                 request.name(), community.getName());
-        Integer territory = ValueResolver.resolve(
+        Short territory = ValueResolver.resolve(
                 request.territory(), community.getTerritory());
         String sector = ValueResolver.resolve(
                 request.sector(), community.getSector());
@@ -97,19 +96,17 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     private void validateUniqueRissNameTerritorySector(
-            UUID riss, String name, Integer territory, String sector) {
+            UUID riss, String name, Short territory, String sector) {
         validateUniqueRissNameTerritorySector(riss, name, territory, sector, null);
     }
 
     private void validateUniqueRissNameTerritorySector(
-            UUID riss, String name, Integer territory, String sector, UUID id) {
-        String capitalizedName = StringUtils.capitalize(name.trim());
-        String normalizedSector = sector.trim().toUpperCase();
+            UUID riss, String name, Short territory, String sector, UUID id) {
         boolean exists = id == null
-                ? repository.existsByRissIdAndNameAndTerritoryAndSector(
-                        riss, capitalizedName, territory, normalizedSector)
-                : repository.existsByRissIdAndNameAndTerritoryAndSectorAndIdNot(
-                        riss, capitalizedName, territory, normalizedSector, id);
+                ? repository.existsByRissIdAndNameIgnoreCaseAndTerritoryAndSectorIgnoreCase(
+                        riss, name.trim(), territory, sector)
+                : repository.existsByRissIdAndNameIgnoreCaseAndTerritoryAndSectorIgnoreCaseAndIdNot(
+                        riss, name.trim(), territory, sector, id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     CommunityErrorDescriptor.ALREADY_EXISTS);

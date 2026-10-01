@@ -23,7 +23,7 @@ import java.util.UUID;
         operator = ComparisonOperator.LESS_THAN_OR_EQUAL)
 public record HealthFacilitySearchRequest(
         UUID community,
-        UUID healthFacilityType,
+        UUID type,
         Boolean isHeadquarters,
         HealthFacilityStatus status,
         BigDecimal minTotalLandArea,

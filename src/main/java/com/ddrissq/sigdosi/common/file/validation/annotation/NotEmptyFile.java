@@ -7,7 +7,7 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.RECORD_COMPONENT })
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.RECORD_COMPONENT, ElementType.TYPE_USE })
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = NotEmptyFileValidator.class)

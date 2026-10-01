@@ -15,8 +15,8 @@ public final class RissSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("name")),
-                    "%" + name.trim().toUpperCase() + "%");
+                    builder.lower(root.get("name")),
+                    "%" + name.trim().toLowerCase() + "%");
         };
     }
 
@@ -26,8 +26,8 @@ public final class RissSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("dms").get("name")),
-                    "%" + dmsName.trim().toUpperCase() + "%");
+                    builder.lower(root.get("dms").get("name")),
+                    "%" + dmsName.trim().toLowerCase() + "%");
         };
     }
 

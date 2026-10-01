@@ -50,7 +50,7 @@ public class CommunityControler {
 
     @GetMapping
     public ResponseEntity<Page<CommunityResponse>> getAll(
-            CommunitySearchRequest request,
+            @Valid CommunitySearchRequest request,
             @PageableDefault Pageable pageable) {
         Page<CommunityResponse> response = service.getAll(request, pageable);
         return ResponseEntity.status(HttpStatus.OK)

@@ -15,8 +15,8 @@ public final class HealthFacilityTypeSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("message")),
-                    "%" + code.trim().toUpperCase() + "%");
+                    builder.lower(root.get("code")),
+                    "%" + code.trim().toLowerCase() + "%");
         };
     }
 
@@ -26,8 +26,8 @@ public final class HealthFacilityTypeSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("name")),
-                    "%" + name.trim().toUpperCase() + "%");
+                    builder.lower(root.get("name")),
+                    "%" + name.trim().toLowerCase() + "%");
         };
     }
 

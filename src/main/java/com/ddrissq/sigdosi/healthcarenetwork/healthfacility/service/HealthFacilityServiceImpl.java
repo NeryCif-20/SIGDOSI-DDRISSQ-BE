@@ -13,11 +13,13 @@ import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.error.HealthFacility
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.mapper.HealthFacilityMapper;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacility;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.repository.HealthFacilityRepository;
+import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.specification.HealthFacilitySpecification;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.model.HealthFacilityType;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.service.HealthFacilityTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,7 +90,24 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
 
     @Override
     public Page<HealthFacilityResponse> getAll(HealthFacilitySearchRequest request, Pageable pageable) {
-        return null;
+        Specification<HealthFacility> spec = Specification.allOf(
+                HealthFacilitySpecification.hasCommunity(request.community()),
+                HealthFacilitySpecification.hasHealthFacilityType(request.healthFacilityType()),
+                HealthFacilitySpecification.hasStatus(request.status()),
+                HealthFacilitySpecification.isHeadquarters(request.isHeadquarters()),
+                HealthFacilitySpecification.hasPropertyStatus(request.propertyStatus()),
+                HealthFacilitySpecification.hasPropertyTenure(request.propertyTenure()),
+                HealthFacilitySpecification.hasTotalLandAreaBetween(
+                        request.minTotalLandArea(),
+                        request.maxTotalLandArea()),
+                HealthFacilitySpecification.hasBuildingFootprintBetween(
+                        request.minBuildingFootprint(),
+                        request.maxBuildingFootprint()),
+                HealthFacilitySpecification.hasAvailableExpansionAreaBetween(
+                        request.minAvailableExpansionArea(),
+                        request.maxAvailableExpansionArea()));
+        return repository.findAll(spec, pageable)
+                .map(mapper::toResponse);
     }
 
     @Override

@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -82,10 +81,9 @@ public class RoleServiceImpl implements RoleService{
     }
 
     private void validateUniqueName(String name, UUID id) {
-        String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByName(capitalizedName)
-                : repository.existsByNameAndIdNot(capitalizedName, id);
+                ? repository.existsByNameIgnoreCase(name.trim())
+                : repository.existsByNameIgnoreCaseAndIdNot(name.trim(), id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     RoleErrorDescriptor.ALREADY_EXISTS);

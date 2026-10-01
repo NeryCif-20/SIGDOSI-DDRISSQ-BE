@@ -2,11 +2,11 @@ package com.ddrissq.sigdosi.iam.auth.refreshtoken.service;
 
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshToken;
-import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenResult;
+import com.ddrissq.sigdosi.iam.auth.refreshtoken.model.RefreshTokenIssueResult;
 import com.ddrissq.sigdosi.iam.auth.refreshtoken.repository.RefreshTokenRepository;
 import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
+import com.ddrissq.sigdosi.common.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +27,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final HashService hashService;
 
     @Override
-    public RefreshTokenResult create(User user) {
-        return issueRefreshToken(user, null);
+    public RefreshTokenIssueResult create(User user) {
+        return issue(user);
     }
 
     @Override
-    public RefreshTokenResult rotate(RefreshToken refreshToken) {
+    public RefreshTokenIssueResult rotate(RefreshToken refreshToken) {
         refreshToken.setRevokedAt(Instant.now());
-        return issueRefreshToken(
+        return issue(
                 refreshToken.getUser(),
                 refreshToken.getFamilyId());
     }
@@ -44,15 +44,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         String tokenHash = hashService.digestHex(token, "SHA-256");
         RefreshToken refreshToken =  repository.findByTokenHash(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID));
+                        IamErrorDescriptor.CREDENTIALS_INVALID));
         if (refreshToken.isRevoked()) {
             repository.revokeAllByFamilyId(refreshToken.getFamilyId());
             throw new AuthenticationException(
-                    IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
+                    IamErrorDescriptor.CREDENTIALS_INVALID);
         }
         if (refreshToken.isExpired()) {
             throw new AuthenticationException(
-                    IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
+                    IamErrorDescriptor.CREDENTIALS_INVALID);
         }
         return refreshToken;
     }
@@ -62,7 +62,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         repository.deleteAllExpired();
     }
 
-    private RefreshTokenResult issueRefreshToken(User user, UUID familyId) {
+    private RefreshTokenIssueResult issue(User user) {
+        return issue(user, null);
+    }
+
+    private RefreshTokenIssueResult issue(User user, UUID familyId) {
         String token = tokenService.generate();
         String tokenHash = hashService.digestHex(token, "SHA-256");;
         Instant expiresAt = Instant.now().plus(
@@ -76,7 +80,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                         : UUID.randomUUID())
                 .build();
         repository.save(refreshToken);
-        return RefreshTokenResult.builder()
+        return RefreshTokenIssueResult.builder()
                 .token(token)
                 .expiresAt(expiresAt)
                 .build();

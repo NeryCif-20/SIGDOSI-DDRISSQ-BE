@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public interface BuildingElementRepository extends JpaRepository<BuildingElement, UUID>, JpaSpecificationExecutor<BuildingElement> {
 
-    boolean existsByName(String name);
+    boolean existsByNameIgnoreCase(String name);
 
-    boolean existsByNameAndIdNot(String name, UUID id);
+    boolean existsByNameIgnoreCaseAndIdNot(String name, UUID id);
 
 }

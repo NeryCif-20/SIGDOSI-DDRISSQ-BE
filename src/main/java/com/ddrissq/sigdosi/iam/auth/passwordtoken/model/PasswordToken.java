@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.iam.auth.passwordtoken.model;
 
+import com.ddrissq.sigdosi.iam.auth.model.PasswordSetupAction;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import com.ddrissq.sigdosi.common.persistence.model.BaseEntity;
 import jakarta.persistence.*;
@@ -20,7 +21,7 @@ public class PasswordToken extends BaseEntity {
     private User user;
     private String tokenHash;
     @Enumerated(value = EnumType.STRING)
-    private PasswordTokenPurpose purpose;
+    private PasswordSetupAction purpose;
     private Instant revokedAt;
     private Instant expiresAt;
 

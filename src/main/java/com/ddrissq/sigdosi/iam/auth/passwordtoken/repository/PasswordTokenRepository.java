@@ -17,7 +17,7 @@ public interface PasswordTokenRepository extends JpaRepository<PasswordToken, UU
             AND pt.expiresAt > CURRENT_TIMESTAMP
             AND pt.revokedAt IS NULL
     """)
-    Optional<PasswordToken> findValidToken(String tokenHash);
+    Optional<PasswordToken> findValidByTokenHash(String tokenHash);
 
     @Modifying
     @Query("""
@@ -27,7 +27,7 @@ public interface PasswordTokenRepository extends JpaRepository<PasswordToken, UU
             AND pt.revokedAt IS NULL
             AND pt.expiresAt > CURRENT_TIMESTAMP
     """)
-    void revokeAllActiveTokensByUserId(UUID userId);
+    void revokeAllActiveByUserId(UUID userId);
 
     @Modifying
     @Query(value = """

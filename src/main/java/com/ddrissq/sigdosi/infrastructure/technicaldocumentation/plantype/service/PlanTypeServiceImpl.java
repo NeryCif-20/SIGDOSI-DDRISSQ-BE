@@ -78,8 +78,8 @@ public class PlanTypeServiceImpl implements PlanTypeService {
     private void validateUniqueCode(String name, UUID id) {
         String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByCode(capitalizedName)
-                : repository.existsByCodeAndIdNot(capitalizedName, id);
+                ? repository.existsByCodeIgnoreCase(capitalizedName)
+                : repository.existsByCodeIgnoreCaseAndIdNot(capitalizedName, id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     PlanTypeErrorDescriptor.ALREADY_EXISTS);

@@ -77,8 +77,8 @@ public class DmsServiceImpl implements DmsService {
     private void validateUniqueName(String name, UUID id) {
         String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByName(capitalizedName)
-                : repository.existsByNameAndIdNot(capitalizedName, id);
+                ? repository.existsByNameIgnoreCase(capitalizedName)
+                : repository.existsByNameIgnoreCaseAndIdNot(capitalizedName, id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     DmsErrorDescriptor.ALREADY_EXISTS);

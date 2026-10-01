@@ -13,7 +13,7 @@ public record CommunityUpdateRequest(
         @NullableNotBlank
         @Size(min = 1, max = 50, message = ValidationError.SIZE)
         String name,
-        Integer territory,
+        Short territory,
         @Pattern(regexp = "^[A-Za-z]$", message = CommunityValidationError.SECTOR_PATTERN)
         String sector,
         Long population

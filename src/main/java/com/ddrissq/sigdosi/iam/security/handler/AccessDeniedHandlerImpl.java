@@ -36,7 +36,7 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     }
 
     private String buildResponse(String path) {
-        ErrorDescriptor descriptor = IamErrorDescriptor.AUTHORIZATION_FORBIDDEN;
+        ErrorDescriptor descriptor = IamErrorDescriptor.ACCESS_DENIED;
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(
                 HttpStatus.FORBIDDEN,
                 messageService.getMessage(descriptor.messageKey()));

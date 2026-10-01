@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 public final class ValidationError {
 
     public static final String REQUIRED = "{error.validation.required}";
+    public static final String COLLECTION_NOT_EMPTY = "{error.validation.collection.not-empty}";
     public static final String SIZE = "{error.validation.size}";
     public static final String EMAIL = "{error.validation.email}";
     public static final String POSITIVE = "{error.validation.positive}";
@@ -18,5 +19,6 @@ public final class ValidationError {
     public static final String LESS_THAN = "{error.validation.less-than}";
     public static final String LESS_THAN_OR_EQUAL = "{error.validation.less-than-or-equal}";
     public static final String NULLABLE_NOT_BLANK = "{error.validation.nullable-not-blank}";
+    public static final String ALLOWED_GEOMETRY_TYPES = "{error.validation.allowed-geometry-types}";
 
 }

@@ -9,10 +9,10 @@ public enum IamErrorDescriptor implements ErrorDescriptor {
 
     AUTHENTICATION_DISABLED("error.authentication.disabled", ErrorTitle.AUTHENTICATION),
     AUTHENTICATION_REQUIRED("error.authentication.required", ErrorTitle.AUTHENTICATION),
-    AUTHENTICATION_CREDENTIALS_INVALID("error.authentication.credentials.invalid", ErrorTitle.AUTHENTICATION),
-    AUTHENTICATION_TOKEN_EXPIRED("error.authentication.token.expired", ErrorTitle.AUTHENTICATION),
-    AUTHENTICATION_TOKEN_INVALID("error.authentication.token.invalid", ErrorTitle.AUTHENTICATION),
-    AUTHORIZATION_FORBIDDEN("error.authorization.forbidden", ErrorTitle.AUTHORIZATION);
+    CREDENTIALS_INVALID("error.authentication.credentials.invalid", ErrorTitle.AUTHENTICATION),
+    TOKEN_EXPIRED("error.authentication.token.expired", ErrorTitle.AUTHENTICATION),
+    TOKEN_INVALID("error.authentication.token.invalid", ErrorTitle.AUTHENTICATION),
+    ACCESS_DENIED("error.authorization.access.denied", ErrorTitle.AUTHORIZATION);
 
     private final String messageKey;
     private final ErrorTitle errorTitle;

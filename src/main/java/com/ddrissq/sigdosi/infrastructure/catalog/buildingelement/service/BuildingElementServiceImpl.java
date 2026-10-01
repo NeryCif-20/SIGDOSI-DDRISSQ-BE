@@ -77,8 +77,8 @@ public class BuildingElementServiceImpl implements BuildingElementService {
     private void validateUniqueName(String name, UUID id) {
         String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByName(capitalizedName)
-                : repository.existsByNameAndIdNot(capitalizedName, id);
+                ? repository.existsByNameIgnoreCase(capitalizedName)
+                : repository.existsByNameIgnoreCaseAndIdNot(capitalizedName, id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     BuildingElementErrorDescriptor.ALREADY_EXISTS);

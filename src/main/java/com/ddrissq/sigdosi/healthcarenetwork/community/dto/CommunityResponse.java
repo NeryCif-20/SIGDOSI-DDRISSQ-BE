@@ -10,7 +10,7 @@ public record CommunityResponse(
         UUID id,
         RissResponse riss,
         String name,
-        Integer territory,
+        Short territory,
         String sector,
         Long population
 ) {

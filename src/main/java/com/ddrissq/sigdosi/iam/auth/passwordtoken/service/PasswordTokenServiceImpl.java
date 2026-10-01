@@ -1,13 +1,13 @@
 package com.ddrissq.sigdosi.iam.auth.passwordtoken.service;
 
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
+import com.ddrissq.sigdosi.iam.auth.model.PasswordSetupAction;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordToken;
-import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenPurpose;
-import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenResult;
+import com.ddrissq.sigdosi.iam.auth.passwordtoken.model.PasswordTokenCreateResult;
 import com.ddrissq.sigdosi.iam.auth.passwordtoken.repository.PasswordTokenRepository;
 import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
+import com.ddrissq.sigdosi.common.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +27,8 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
     private final HashService hashService;
 
     @Override
-    public PasswordTokenResult create(User user, PasswordTokenPurpose purpose) {
-        repository.revokeAllActiveTokensByUserId(user.getId());
+    public PasswordTokenCreateResult create(User user, PasswordSetupAction purpose) {
+        repository.revokeAllActiveByUserId(user.getId());
         String token = tokenService.generate(32);
         String tokenHash = hashService.digestHex(token, "SHA-256");
         Instant expiresAt = Instant.now().plus(
@@ -40,7 +40,7 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
                 .expiresAt(expiresAt)
                 .build();
         repository.save(passwordToken);
-        return PasswordTokenResult.builder()
+        return PasswordTokenCreateResult.builder()
                 .user(user)
                 .token(token)
                 .purpose(purpose)
@@ -51,9 +51,9 @@ public class PasswordTokenServiceImpl implements PasswordTokenService {
     @Override
     public PasswordToken getByTokenOrThrow(String token) {
         String tokenHash = hashService.digestHex(token, "SHA-256");
-        return repository.findValidToken(tokenHash)
+        return repository.findValidByTokenHash(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID));
+                        IamErrorDescriptor.CREDENTIALS_INVALID));
     }
 
     @Override

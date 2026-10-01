@@ -1,7 +1,7 @@
 package com.ddrissq.sigdosi.iam.auth.cookie.service;
 
 import com.ddrissq.sigdosi.common.cookie.service.CookieService;
-import com.ddrissq.sigdosi.iam.auth.cookie.constant.AuthCookieNames;
+import com.ddrissq.sigdosi.iam.auth.cookie.model.AuthCookieNames;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;

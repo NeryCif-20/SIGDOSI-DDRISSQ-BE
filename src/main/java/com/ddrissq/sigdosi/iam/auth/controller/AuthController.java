@@ -1,6 +1,6 @@
 package com.ddrissq.sigdosi.iam.auth.controller;
 
-import com.ddrissq.sigdosi.iam.auth.cookie.constant.AuthCookieNames;
+import com.ddrissq.sigdosi.iam.auth.cookie.model.AuthCookieNames;
 import com.ddrissq.sigdosi.iam.auth.cookie.service.AuthCookieService;
 import com.ddrissq.sigdosi.iam.auth.dto.*;
 import com.ddrissq.sigdosi.iam.auth.model.AuthIdentityResult;
@@ -53,10 +53,10 @@ public class AuthController {
                 .body(response);
     }
 
-    @PostMapping(path = "/password/setup")
-    public ResponseEntity<Void> setUpPassword(
+    @PostMapping(path = "/password/set")
+    public ResponseEntity<Void> setPassword(
             @CookieValue(value = AuthCookieNames.FLOW_TOKEN) String token) {
-        service.sendSetupPasswordEmail(token);
+        service.sendSetPasswordMail(token);
         ResponseCookie flowTokenCookie = cookieService.deleteFlowTokenCookie();
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .header(HttpHeaders.SET_COOKIE, flowTokenCookie.toString())
@@ -66,7 +66,7 @@ public class AuthController {
     @PostMapping(path = "/password/reset")
     public ResponseEntity<Void> resetPassword(
             @CookieValue(value = AuthCookieNames.FLOW_TOKEN) String token) {
-        service.sendResetPasswordEmail(token);
+        service.sendResetPasswordMail(token);
         ResponseCookie flowTokenCookie = cookieService.deleteFlowTokenCookie();
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .header(HttpHeaders.SET_COOKIE, flowTokenCookie.toString())
@@ -95,10 +95,10 @@ public class AuthController {
                 .build();
     }
 
-    @PostMapping(path = "/password/set")
-    public ResponseEntity<AuthResponse> setPassword(
-            @RequestBody @Valid AuthPasswordSetRequest request) {
-        AuthResult result = service.setPassword(request);
+    @PostMapping(path = "/password/setup")
+    public ResponseEntity<AuthResponse> setupPassword(
+            @RequestBody @Valid AuthPasswordSetupRequest request) {
+        AuthResult result = service.setupPassword(request);
         ResponseCookie refreshTokenCookie = cookieService.createRefreshTokenCookie(
                 result.refreshToken(), result.expiresAt());
         AuthResponse response = AuthResponse.builder()

@@ -2,12 +2,12 @@ package com.ddrissq.sigdosi.iam.auth.flowtoken.service;
 
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
-import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenResult;
+import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenCreateResult;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.repository.FlowTokenRepository;
 import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
-import com.ddrissq.sigdosi.iam.security.hash.service.HashService;
+import com.ddrissq.sigdosi.common.hash.service.HashService;
 import com.ddrissq.sigdosi.iam.security.securetoken.service.SecureTokenService;
 import com.ddrissq.sigdosi.iam.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class FlowTokenServiceImpl implements FlowTokenService {
     private final HashService hashService;
 
     @Override
-    public FlowTokenResult create(User user, FlowTokenStep step) {
+    public FlowTokenCreateResult create(User user, FlowTokenStep step) {
         String token = tokenService.generate(32);
         String tokenHash = hashService.digestHex(token,  "SHA-256");
         Instant expiresAt = Instant.now().plus(
@@ -39,7 +39,7 @@ public class FlowTokenServiceImpl implements FlowTokenService {
                 .expiresAt(expiresAt)
                 .build();
         repository.save(flowToken);
-        return FlowTokenResult.builder()
+        return FlowTokenCreateResult.builder()
                 .token(token)
                 .step(step)
                 .expiresAt(expiresAt)
@@ -50,9 +50,9 @@ public class FlowTokenServiceImpl implements FlowTokenService {
     public FlowToken getByTokenOrThrow(String token, FlowTokenStep expectedStep) {
         String tokenHash = hashService.digestHex(token,  "SHA-256");
         return repository
-                .findValidToken(tokenHash, expectedStep)
+                .findValidByTokenHashAndStep(tokenHash, expectedStep)
                 .orElseThrow(() -> new AuthenticationException(
-                        IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID));
+                        IamErrorDescriptor.CREDENTIALS_INVALID));
     }
 
     @Override

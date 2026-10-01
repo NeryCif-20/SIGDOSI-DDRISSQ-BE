@@ -14,7 +14,7 @@ public record CommunityCreateRequest(
         String name,
         @NotNull(message = ValidationError.REQUIRED)
         @Positive(message = ValidationError.POSITIVE)
-        Integer territory,
+        Short territory,
         @NotNull(message = ValidationError.REQUIRED)
         @Pattern(regexp = "^[A-Za-z]$", message = CommunityValidationError.SECTOR_PATTERN)
         String sector,

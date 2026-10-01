@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 
@@ -35,7 +34,8 @@ public class RissServiceImpl implements RissService {
 
     @Override
     public RissResponse get(UUID id) {
-        return null;
+        Riss riss = getByIdOrThrow(id);
+        return mapper.toResponse(riss);
     }
 
     @Override
@@ -86,10 +86,9 @@ public class RissServiceImpl implements RissService {
     }
 
     private void validateUniqueDmsName(UUID dms, String name, UUID id) {
-        String capitalizedName = StringUtils.capitalize(name.trim());
         boolean exists = id == null
-                ? repository.existsByDmsIdAndName(dms, capitalizedName)
-                : repository.existsByDmsIdAndNameAndIdNot(dms, capitalizedName, id);
+                ? repository.existsByDmsIdAndNameIgnoreCase(dms, name.trim())
+                : repository.existsByDmsIdAndNameIgnoreCaseAndIdNot(dms, name.trim(), id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     RissErrorDescriptor.ALREADY_EXISTS);

@@ -16,8 +16,8 @@ public final class UserSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("email")),
-                    "%" + email.trim().toUpperCase() + "%");
+                    builder.lower(root.get("email")),
+                    "%" + email.trim().toLowerCase() + "%");
         };
     }
 
@@ -46,13 +46,13 @@ public final class UserSpecification {
             if (!StringUtils.hasText(name)) {
                 return null;
             }
-            String pattern = "%" + name.trim().toUpperCase() + "%";
+            String pattern = "%" + name.trim().toLowerCase() + "%";
             return builder.or(
                     builder.like(
-                            builder.upper(root.get("userProfile").get("firstName")),
+                            builder.lower(root.get("userProfile").get("firstName")),
                             pattern),
                     builder.like(
-                            builder.upper(root.get("userProfile").get("lastName")),
+                            builder.lower(root.get("userProfile").get("lastName")),
                             pattern));
         };
     }

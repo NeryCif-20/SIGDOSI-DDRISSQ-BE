@@ -4,7 +4,6 @@ import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.validation.annotation.CompareFields;
 import com.ddrissq.sigdosi.common.validation.annotation.ComparisonOperator;
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
-import com.ddrissq.sigdosi.common.validation.error.ValidationErrorDescriptor;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.UnexpectedTypeException;
@@ -125,10 +124,8 @@ public class CompareFieldsValidator implements ConstraintValidator<CompareFields
         String types = Arrays.stream(values)
                 .map(value -> value.getClass().getSimpleName())
                 .collect(Collectors.joining(", ", "{", "}"));
-        throw new UnexpectedTypeException(
-                messageService.getMessage(
-                        ValidationErrorDescriptor.UNSUPPORTED_TYPES.messageKey(),
-                        types));
+        String message = "Types %s are not supported for this validation".formatted(types);
+        throw new UnexpectedTypeException(message);
     }
 
 }

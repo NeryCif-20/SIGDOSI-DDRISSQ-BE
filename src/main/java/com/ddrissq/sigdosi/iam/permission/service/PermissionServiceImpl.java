@@ -84,10 +84,9 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     private void validateUniqueModuleAction(String module, PermissionAction action, UUID id) {
-        String normalizedModule = module.trim().toUpperCase();
         boolean exists = id == null
-                ? repository.existsByModuleAndAction(normalizedModule, action)
-                : repository.existsByModuleAndActionAndIdNot(normalizedModule, action, id);
+                ? repository.existsByModuleIgnoreCaseAndAction(module.trim(), action)
+                : repository.existsByModuleIgnoreCaseAndActionAndIdNot(module.trim(), action, id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     PermissionErrorDescriptor.ALREADY_EXISTS);

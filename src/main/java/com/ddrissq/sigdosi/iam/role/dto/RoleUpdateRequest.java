@@ -2,6 +2,7 @@ package com.ddrissq.sigdosi.iam.role.dto;
 
 import com.ddrissq.sigdosi.common.validation.annotation.NullableNotBlank;
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -15,6 +16,6 @@ public record RoleUpdateRequest(
         String name,
         @NullableNotBlank
         String description,
-        List<UUID> permissions
+        List<@NotNull(message = ValidationError.REQUIRED) UUID> permissions
 ) {
 }

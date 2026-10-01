@@ -40,8 +40,8 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
     private ErrorDescriptor resolveDescriptor(Throwable cause) {
         return switch (cause) {
-            case JwtValidationException ex -> IamErrorDescriptor.AUTHENTICATION_TOKEN_EXPIRED;
-            case BadJwtException ex -> IamErrorDescriptor.AUTHENTICATION_TOKEN_INVALID;
+            case JwtValidationException ex -> IamErrorDescriptor.TOKEN_EXPIRED;
+            case BadJwtException ex -> IamErrorDescriptor.TOKEN_INVALID;
             default -> IamErrorDescriptor.AUTHENTICATION_REQUIRED;
         };
     }

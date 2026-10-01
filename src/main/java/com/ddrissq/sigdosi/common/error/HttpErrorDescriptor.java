@@ -23,6 +23,9 @@ public enum HttpErrorDescriptor implements ErrorDescriptor {
     REQUEST_BODY_STRUCTURE_MISMATCHED(
             "error.http.request.body.structure.mismatched",
             ErrorTitle.HTTP_REQUEST_BODY),
+    REQUEST_BODY_DATA_BINDING_FAILED(
+            "error.http.request.body.data.binding.failed",
+            ErrorTitle.HTTP_REQUEST_BODY),
     REQUEST_PATH_VARIABLE_REQUIRED(
             "error.http.request.path-variable.required",
             ErrorTitle.HTTP_REQUEST_PATH_VARIABLE),

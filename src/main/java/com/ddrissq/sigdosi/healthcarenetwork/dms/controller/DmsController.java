@@ -32,7 +32,7 @@ public class DmsController {
 
     @PostMapping
     public ResponseEntity<DmsResponse> create(
-            @RequestBody DmsCreateRequest request) {
+            @RequestBody @Valid DmsCreateRequest request) {
         DmsResponse response = service.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);

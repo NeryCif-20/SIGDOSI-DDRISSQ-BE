@@ -76,8 +76,8 @@ public class BuildingMaterialServiceImpl implements BuildingMaterialService {
     private void validateUniqueCode(String code, UUID id) {
         String normalizedCode = code.trim().toUpperCase();
         boolean exists = id == null
-                ? repository.existsByCode(normalizedCode)
-                : repository.existsByCodeAndIdNot(normalizedCode, id);
+                ? repository.existsByCodeIgnoreCase(normalizedCode)
+                : repository.existsByCodeIgnoreCaseAndIdNot(normalizedCode, id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     BuildingMaterialErrorDescriptor.ALREADY_EXISTS);

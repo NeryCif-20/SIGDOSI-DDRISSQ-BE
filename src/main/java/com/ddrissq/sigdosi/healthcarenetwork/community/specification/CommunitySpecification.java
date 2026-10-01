@@ -15,8 +15,8 @@ public final class CommunitySpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("name")),
-                    "%" + name.trim().toUpperCase() + "%");
+                    builder.lower(root.get("name")),
+                    "%" + name.trim().toLowerCase() + "%");
         };
     }
 
@@ -26,8 +26,8 @@ public final class CommunitySpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("riss").get("name")),
-                    "%" + name.trim().toUpperCase() + "%");
+                    builder.lower(root.get("riss").get("name")),
+                    "%" + name.trim().toLowerCase() + "%");
         };
     }
 
@@ -37,12 +37,12 @@ public final class CommunitySpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("riss").get("dms").get("name")),
-                    "%" + name.trim().toUpperCase() + "%");
+                    builder.lower(root.get("riss").get("dms").get("name")),
+                    "%" + name.trim().toLowerCase() + "%");
         };
     }
 
-    public static Specification<Community> hasTerritory(Integer territory) {
+    public static Specification<Community> hasTerritory(Short territory) {
         return (root, query, builder) -> {
             if (territory == null) {
                 return null;
@@ -54,30 +54,32 @@ public final class CommunitySpecification {
 
     public static Specification<Community> hasSector(String sector) {
         return (root, query, builder) -> {
-            if (StringUtils.hasText(sector)) {
+            if (!StringUtils.hasText(sector)) {
                 return null;
             }
             return builder.equal(
-                    builder.upper(root.get("sector")),
-                    sector.trim().toUpperCase());
+                    builder.lower(root.get("sector")),
+                    sector.trim().toLowerCase());
         };
     }
 
-    public static Specification<Community> populationBetween(Long min, Long max) {
-        return (root, query, criteriaBuilder) -> {
-            if (min != null && max != null) {
-                return criteriaBuilder.between(
-                        root.get("population"), min, max);
+    public static Specification<Community> populationBetween(Long minPopulation, Long maxPopulation) {
+        return (root, query, builder) -> {
+            if (minPopulation == null && maxPopulation == null) {
+                return null;
             }
-            if (max != null) {
-                return criteriaBuilder.lessThanOrEqualTo(
-                        root.get("population"), max);
+            if (minPopulation != null && maxPopulation != null) {
+                return builder.between(
+                        root.get("population"),
+                        minPopulation,
+                        maxPopulation);
             }
-            if (min != null) {
-                return criteriaBuilder.greaterThanOrEqualTo(
-                        root.get("population"), min);
+            if (minPopulation != null) {
+                return builder.greaterThanOrEqualTo(
+                        root.get("population"), minPopulation);
             }
-            return null;
+            return builder.lessThanOrEqualTo(
+                    root.get("population"), maxPopulation);
         };
     }
 

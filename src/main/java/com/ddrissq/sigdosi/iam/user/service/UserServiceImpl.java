@@ -3,6 +3,7 @@ package com.ddrissq.sigdosi.iam.user.service;
 import com.ddrissq.sigdosi.common.exception.BusinessRuleException;
 import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageFolder;
 import com.ddrissq.sigdosi.common.file.storage.service.StorageService;
 import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
@@ -132,11 +133,12 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateAvatar(UserAvatarUpdateRequest request) {
         UUID id = currentUserProvider.getUserId();
         User user = getByIdOrThrow(id);
-        String avatar = storage.save(request.avatar());
-        if  (user.getProfile().getAvatar() != null) {
-            storage.delete(user.getProfile().getAvatar());
-        }
+        String avatar = storage.save(request.avatar(), StorageFolder.AVATARS);
+        String oldAvatar = user.getProfile().getAvatar();
         user.getProfile().setAvatar(avatar);
+        if (oldAvatar != null) {
+            storage.delete(oldAvatar);
+        }
         return mapper.toResponse(user);
     }
 
@@ -146,7 +148,7 @@ public class UserServiceImpl implements UserService {
         User user = getByIdOrThrow(id);
         if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
             throw new AuthenticationException(
-                    IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
+                    IamErrorDescriptor.CREDENTIALS_INVALID);
         }
         String newPasswordHash = passwordEncoder.encode(request.newPassword());
         user.setPasswordHash(newPasswordHash);
@@ -171,10 +173,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateEmail(String email, UUID id) {
-        String normalizedEmail = email.trim().toLowerCase();
         boolean exists = id == null
-                ? repository.existsByEmail(normalizedEmail)
-                : repository.existsByEmailAndIdNot(normalizedEmail, id);
+                ? repository.existsByEmailIgnoreCase(email)
+                : repository.existsByEmailIgnoreCaseAndIdNot(email, id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     UserErrorDescriptor.EMAIL_ALREADY_EXISTS);

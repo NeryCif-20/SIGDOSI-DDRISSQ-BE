@@ -13,7 +13,7 @@ public record UserAvatarUpdateRequest(
         @NotNull(message = ValidationError.REQUIRED)
         @NotEmptyFile
         @AllowedFileMimeTypes(value = {"image/jpeg", "image/png", "image/webp"})
-        @MaxFileSize(value = "2MB")
+        @MaxFileSize(value = "3MB")
         MultipartFile avatar
 ) {
 }

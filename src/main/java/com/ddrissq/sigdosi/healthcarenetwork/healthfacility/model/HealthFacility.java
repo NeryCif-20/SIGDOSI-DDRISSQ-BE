@@ -22,7 +22,7 @@ public class HealthFacility extends BaseEntity {
     private Community community;
     @ManyToOne
     @JoinColumn(name = "health_facility_type_id")
-    private HealthFacilityType healthFacilityType;
+    private HealthFacilityType type;
     private Boolean isHeadquarters;
     @Enumerated(value = EnumType.STRING)
     private HealthFacilityStatus status;

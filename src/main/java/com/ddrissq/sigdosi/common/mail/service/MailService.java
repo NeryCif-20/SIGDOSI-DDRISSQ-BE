@@ -1,9 +1,9 @@
 package com.ddrissq.sigdosi.common.mail.service;
 
-import com.ddrissq.sigdosi.common.mail.model.MailData;
+import com.ddrissq.sigdosi.common.mail.model.SendMailCommand;
 
 public interface MailService {
 
-    void sendMail(MailData data);
+    void sendMail(SendMailCommand data);
 
 }

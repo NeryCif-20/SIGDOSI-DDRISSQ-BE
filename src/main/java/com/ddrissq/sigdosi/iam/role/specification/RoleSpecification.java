@@ -18,8 +18,8 @@ public final class RoleSpecification {
                 return null;
             }
             return builder.like(
-                    builder.upper(root.get("name")),
-                    "%" + name.trim().toUpperCase() + "%");
+                    builder.lower(root.get("name")),
+                    "%" + name.trim().toLowerCase() + "%");
         };
     }
 
@@ -31,8 +31,8 @@ public final class RoleSpecification {
             query.distinct(true);
             Join<Role, Permission> permissionJoin = root.join("permissions");
             return builder.like(
-                    builder.upper(permissionJoin.get("module")),
-                    "%" + module.trim().toUpperCase() + "%");
+                    builder.lower(permissionJoin.get("module")),
+                    "%" + module.trim().toLowerCase() + "%");
         };
     }
 

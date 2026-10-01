@@ -19,7 +19,7 @@ public class Community extends BaseEntity {
     @JoinColumn(name = "riss_id")
     private Riss riss;
     private String name;
-    private Integer territory;
+    private Short territory;
     private String sector;
     private Long population;
 

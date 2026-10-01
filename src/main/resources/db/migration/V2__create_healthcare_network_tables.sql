@@ -67,7 +67,7 @@ CREATE TABLE health_facility
     property_status          VARCHAR(15)    NOT NULL CHECK (property_status IN
                                                             ('REGISTERED', 'DONATED', 'ASSIGNED', 'ON_LOAN', 'LEASED')),
     location                 GEOGRAPHY(point, 4326),
-    property_notes           TEXT,
+    notes           TEXT,
     created_at               TIMESTAMPTZ    NOT NULL,
     updated_at               TIMESTAMPTZ    NOT NULL,
     PRIMARY KEY (id),
@@ -75,4 +75,16 @@ CREATE TABLE health_facility
         FOREIGN KEY (community_id) REFERENCES community (id),
     CONSTRAINT FK_health_facility_type_TO_health_facility
         FOREIGN KEY (health_facility_type_id) REFERENCES health_facility_type (id)
+);
+
+CREATE TABLE health_facility_image
+(
+    id                 UUID        NOT NULL DEFAULT uuidv7(),
+    health_facility_id UUID        NOT NULL,
+    path           VARCHAR(100) NOT NULL UNIQUE,
+    created_at         TIMESTAMPTZ NOT NULL,
+    updated_at         TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT FK_health_facility_TO_health_facility_image
+        FOREIGN KEY (health_facility_id) REFERENCES health_facility (id)
 );

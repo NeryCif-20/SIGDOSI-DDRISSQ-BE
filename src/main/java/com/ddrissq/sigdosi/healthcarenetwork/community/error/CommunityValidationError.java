@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommunityValidationError {
 
-    public static final String SECTOR_PATTERN = "error.community.sector.pattern";
+    public static final String SECTOR_PATTERN = "{error.community.sector.pattern}";
 
 }

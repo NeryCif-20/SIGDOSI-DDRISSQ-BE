@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface BuildingMaterialRepository extends JpaRepository<BuildingMaterial, UUID>, JpaSpecificationExecutor<BuildingMaterial> {
 
-    boolean existsByCode(String code);
-    boolean existsByCodeAndIdNot(String code, UUID id);
+    boolean existsByCodeIgnoreCase(String code);
+    boolean existsByCodeIgnoreCaseAndIdNot(String code, UUID id);
 
 }

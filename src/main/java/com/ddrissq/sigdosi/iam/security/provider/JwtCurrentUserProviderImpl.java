@@ -24,7 +24,7 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
         String userId = getJwt().getSubject();
         if (userId == null) {
             throw new AuthenticationException(
-                    IamErrorDescriptor.AUTHENTICATION_TOKEN_INVALID);
+                    IamErrorDescriptor.TOKEN_INVALID);
         }
         return UUID.fromString(userId);
     }
@@ -34,7 +34,7 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
         List<String> authorities = getJwt().getClaimAsStringList("authorities");
         if (authorities == null) {
             throw new AuthenticationException(
-                    IamErrorDescriptor.AUTHENTICATION_TOKEN_INVALID);
+                    IamErrorDescriptor.TOKEN_INVALID);
         }
         return authorities;
     }
@@ -46,7 +46,7 @@ public class JwtCurrentUserProviderImpl implements CurrentUserProvider {
             return jwtAuth.getToken();
         }
         throw new AuthenticationException(
-                IamErrorDescriptor.AUTHENTICATION_CREDENTIALS_INVALID);
+                IamErrorDescriptor.CREDENTIALS_INVALID);
     }
 
 }

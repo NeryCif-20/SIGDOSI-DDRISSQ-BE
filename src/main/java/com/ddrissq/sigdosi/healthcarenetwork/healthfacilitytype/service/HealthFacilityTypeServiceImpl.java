@@ -74,10 +74,9 @@ public class HealthFacilityTypeServiceImpl implements HealthFacilityTypeService 
     }
 
     private void validateUniqueCode(String code, UUID id) {
-        String normalizedCode = code.trim().toUpperCase();
         boolean exists = id == null
-                ? repository.existsByCode(normalizedCode)
-                : repository.existsByCodeAndIdNot(normalizedCode, id);
+                ? repository.existsByCodeIgnoreCase(code.trim())
+                : repository.existsByCodeIgnoreCaseAndIdNot(code.trim(), id);
         if (exists) {
             throw new ResourceAlreadyExistsException(
                     HealthFacilityTypeErrorDescriptor.ALREADY_EXISTS);

@@ -16,7 +16,6 @@ public enum ErrorTitle {
     RESOURCE_ALREADY_EXISTS("error.title.resource.already-exists"),
     BUSINESS_RULE("error.title.business-rule"),
     FILE_STORAGE("error.title.file.storage"),
-    MAIL("error.title.mail"),
     INTERNAL_SERVER("error.title.internal-server"),
     AUTHENTICATION("error.title.authentication"),
     AUTHORIZATION("error.title.authorization");
