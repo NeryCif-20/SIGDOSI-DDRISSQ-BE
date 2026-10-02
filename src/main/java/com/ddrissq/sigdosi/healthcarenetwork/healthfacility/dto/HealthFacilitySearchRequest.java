@@ -22,7 +22,7 @@ import java.util.UUID;
         second = "maxAvailableExpansionArea",
         operator = ComparisonOperator.LESS_THAN_OR_EQUAL)
 public record HealthFacilitySearchRequest(
-        UUID community,
+        String q,
         UUID type,
         Boolean isHeadquarters,
         HealthFacilityStatus status,

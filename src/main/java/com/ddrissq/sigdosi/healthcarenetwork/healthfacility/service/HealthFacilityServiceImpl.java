@@ -47,14 +47,14 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
         Community community = communityService.getByIdOrThrow(
                 request.community());
         HealthFacilityType healthFacilityType = healthFacilityTypeService.getByIdOrThrow(
-                request.healthFacilityType());
+                request.type());
         validateTotalLandArea(
                 request.totalLandArea(),
                 request.buildingFootprint(),
                 request.availableExpansionArea());
         HealthFacility healthFacility = mapper.toHealthFacility(request);
         healthFacility.setCommunity(community);
-        healthFacility.setHealthFacilityType(healthFacilityType);
+        healthFacility.setType(healthFacilityType);
         HealthFacility savedHealthFacility = repository.save(healthFacility);
         return mapper.toResponse(savedHealthFacility);
     }
@@ -68,8 +68,8 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
                 Community::getId,
                 communityService::getByIdOrThrow);
         HealthFacilityType healthFacilityType = ValueResolver.resolveByKey(
-                request.healthFacilityType(),
-                healthFacility.getHealthFacilityType(),
+                request.type(),
+                healthFacility.getType(),
                 HealthFacilityType::getId,
                 healthFacilityTypeService::getByIdOrThrow);
         BigDecimal totalLandArea = ValueResolver.resolve(
@@ -84,15 +84,17 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
         validateTotalLandArea(totalLandArea, buildingFootprint, availableExpansionArea);
         mapper.updateHealthFacility(request, healthFacility);
         healthFacility.setCommunity(community);
-        healthFacility.setHealthFacilityType(healthFacilityType);
+        healthFacility.setType(healthFacilityType);
         return mapper.toResponse(healthFacility);
     }
 
     @Override
     public Page<HealthFacilityResponse> getAll(HealthFacilitySearchRequest request, Pageable pageable) {
         Specification<HealthFacility> spec = Specification.allOf(
-                HealthFacilitySpecification.hasCommunity(request.community()),
-                HealthFacilitySpecification.hasHealthFacilityType(request.healthFacilityType()),
+                Specification.anyOf(
+                        HealthFacilitySpecification.hasCommunityName(request.q()),
+                        HealthFacilitySpecification.hasRissName(request.q())),
+                HealthFacilitySpecification.hasType(request.type()),
                 HealthFacilitySpecification.hasStatus(request.status()),
                 HealthFacilitySpecification.isHeadquarters(request.isHeadquarters()),
                 HealthFacilitySpecification.hasPropertyStatus(request.propertyStatus()),

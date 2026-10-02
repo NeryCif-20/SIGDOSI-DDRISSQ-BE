@@ -7,6 +7,7 @@ import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.PropertyTenure
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -14,12 +15,25 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HealthFacilitySpecification {
 
-    public static Specification<HealthFacility> hasCommunity(UUID community) {
+    public static Specification<HealthFacility> hasCommunityName(String communityName) {
         return (root, query, builder) -> {
-            if (community == null) {
+            if (!StringUtils.hasText(communityName)) {
                 return null;
             }
-            return builder.equal(root.get("community").get("id"), community);
+            return builder.like(
+                    builder.lower(root.get("community").get("name")),
+                    "%" + communityName.trim().toLowerCase() + "%");
+        };
+    }
+
+    public static Specification<HealthFacility> hasRissName(String rissName) {
+        return (root, query, builder) -> {
+            if (!StringUtils.hasText(rissName)) {
+                return null;
+            }
+            return builder.like(
+                    builder.lower(root.get("community").get("riss").get("name")),
+                    "%" + rissName.trim().toLowerCase() + "%");
         };
     }
 
