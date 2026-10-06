@@ -50,10 +50,10 @@ public class HealthFacilityImageServiceImpl implements HealthFacilityImageServic
             throw new BusinessRuleException(
                     HealthFacilityImageErrorDescriptor.LIMIT_EXCEEDED);
         }
-        String filename = storageService.save(request.image(), StorageFolder.HEALTH_FACILITIES);
+        String path = storageService.save(request.image(), StorageFolder.HEALTH_FACILITIES);
         HealthFacilityImage healthFacilityImage = HealthFacilityImage.builder()
                 .healthFacility(healthFacility)
-                .filename(filename)
+                .path(path)
                 .build();
         HealthFacilityImage savedHealthFacilityImage = repository.save(healthFacilityImage);
         return mapper.toResponse(savedHealthFacilityImage);

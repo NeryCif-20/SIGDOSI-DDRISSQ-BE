@@ -117,8 +117,8 @@ public class StorageServiceImpl implements StorageService {
                 ex);
     }
 
-    public FileLoadResult load(String filePath) {
-        Path file = getPath().resolve(filePath)
+    public FileLoadResult load(String path) {
+        Path file = getPath().resolve(path)
                 .normalize();
         Resource resource = new FileSystemResource(file);
         if (!resource.exists()) {

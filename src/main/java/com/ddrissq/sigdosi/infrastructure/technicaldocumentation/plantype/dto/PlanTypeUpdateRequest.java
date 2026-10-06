@@ -3,7 +3,9 @@ package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plantype.dto;
 import com.ddrissq.sigdosi.common.validation.annotation.NullableNotBlank;
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public record PlanTypeUpdateRequest(
         @NullableNotBlank
         @Size(min = 5, max = 10, message = ValidationError.SIZE)

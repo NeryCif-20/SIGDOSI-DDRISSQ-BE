@@ -1,9 +1,9 @@
 package com.ddrissq.sigdosi.common.validation.validator;
 
-import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.common.validation.annotation.CompareFields;
 import com.ddrissq.sigdosi.common.validation.annotation.ComparisonOperator;
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
+import com.ddrissq.sigdosi.configuration.ApplicationProperties;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.UnexpectedTypeException;
@@ -13,13 +13,17 @@ import org.springframework.beans.BeanWrapperImpl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAccessor;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class CompareFieldsValidator implements ConstraintValidator<CompareFields, Object> {
 
-    private final MessageService messageService;
+    private final ApplicationProperties applicationProps;
 
     private String first;
     private String second;
@@ -91,6 +95,9 @@ public class CompareFieldsValidator implements ConstraintValidator<CompareFields
         if (areNumbers(firstValue, secondValue)) {
             return compareNumbers(firstValue, secondValue);
         }
+        if (areDates(firstValue, secondValue)) {
+            return compareDates(firstValue, secondValue);
+        }
         return throwUnsupportedType(firstValue, secondValue);
     }
 
@@ -102,10 +109,21 @@ public class CompareFieldsValidator implements ConstraintValidator<CompareFields
         return first instanceof Number && second instanceof Number;
     }
 
+    private boolean areDates(Object first, Object second) {
+        return (first instanceof Date || first instanceof TemporalAccessor)
+                && (second instanceof Date || second instanceof TemporalAccessor);
+    }
+
     private int compareNumbers(Object firstValue, Object secondValue) {
         BigDecimal firstNumber = toBigDecimal(firstValue);
         BigDecimal secondNumber = toBigDecimal(secondValue);
         return firstNumber.compareTo(secondNumber);
+    }
+
+    private int compareDates(Object firstValue, Object secondValue) {
+        Instant firstDate = toInstant(firstValue);
+        Instant secondDate = toInstant(secondValue);
+        return firstDate.compareTo(secondDate);
     }
 
     private BigDecimal toBigDecimal(Object value) {
@@ -116,6 +134,14 @@ public class CompareFieldsValidator implements ConstraintValidator<CompareFields
             case Long number -> BigDecimal.valueOf(number);
             case BigInteger number -> new BigDecimal(number);
             case BigDecimal number -> number;
+            case null, default -> throwUnsupportedType(value);
+        };
+    }
+
+    private Instant toInstant(Object value) {
+        return switch(value) {
+            case LocalDate date -> date.atStartOfDay(applicationProps.zone()).toInstant();
+            case Instant date -> date;
             case null, default -> throwUnsupportedType(value);
         };
     }

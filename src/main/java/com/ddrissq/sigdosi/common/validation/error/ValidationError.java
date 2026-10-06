@@ -11,6 +11,7 @@ public final class ValidationError {
     public static final String EMAIL = "{error.validation.email}";
     public static final String POSITIVE = "{error.validation.positive}";
     public static final String POSITIVE_OR_ZERO = "{error.validation.positive-or-zero}";
+    public static final String PAST_OR_PRESENT = "{error.validation.past-or-present}";
     public static final String EQUAL = "{error.validation.equal}";
     public static final String NOT_EQUAL = "{error.validation.not-equal}";
     public static final String GREATER_THAN = "{error.validation.greater-than}";
@@ -19,5 +20,7 @@ public final class ValidationError {
     public static final String LESS_THAN_OR_EQUAL = "{error.validation.less-than-or-equal}";
     public static final String NULLABLE_NOT_BLANK = "{error.validation.nullable-not-blank}";
     public static final String ALLOWED_GEOMETRY_TYPES = "{error.validation.allowed-geometry-types}";
+    public static final String PHONE_NUMBER_PATTERN = "{error.validation.phone-number.pattern}";
+    public static final String CUI_PATTERN = "{error.validation.cui.pattern}";
 
 }

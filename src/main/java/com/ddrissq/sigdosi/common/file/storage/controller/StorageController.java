@@ -22,13 +22,13 @@ public class StorageController {
 
     private final StorageServiceImpl storage;
 
-    @GetMapping(path = "/{filename}")
+    @GetMapping(path = "/{path}")
     public ResponseEntity<Resource> load(
-            @PathVariable String filename) {
-        FileLoadResult result = storage.load(filename);
+            @PathVariable String path) {
+        FileLoadResult result = storage.load(path);
         String content = ContentDisposition
                 .inline()
-                .filename(filename)
+                .filename(path)
                 .build().toString();
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(result.contentType())

@@ -6,10 +6,12 @@ import com.ddrissq.sigdosi.common.file.validation.annotation.NotEmptyFile;
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
+@Builder
 public record PlanCreateRequest(
         @NotNull(message = ValidationError.REQUIRED)
         UUID type,

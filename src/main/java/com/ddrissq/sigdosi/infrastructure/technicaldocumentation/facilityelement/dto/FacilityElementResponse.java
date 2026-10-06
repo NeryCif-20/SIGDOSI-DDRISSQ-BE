@@ -2,7 +2,9 @@ package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.facilityelemen
 
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingelement.dto.BuildingElementResponse;
 import com.ddrissq.sigdosi.infrastructure.catalog.buildingmaterial.dto.BuildingMaterialResponse;
+import lombok.Builder;
 
+@Builder
 public record FacilityElementResponse(
         BuildingElementResponse buildingElement,
         BuildingMaterialResponse buildingMaterial

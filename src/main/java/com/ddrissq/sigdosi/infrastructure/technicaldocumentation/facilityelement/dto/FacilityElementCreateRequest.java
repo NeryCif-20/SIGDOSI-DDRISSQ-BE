@@ -2,9 +2,11 @@ package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.facilityelemen
 
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.util.UUID;
 
+@Builder
 public record FacilityElementCreateRequest(
         @NotNull(message = ValidationError.REQUIRED)
         UUID healthFacility,
