@@ -2,6 +2,10 @@ package com.ddrissq.sigdosi.healthcarenetwork.healthfacility.service;
 
 import com.ddrissq.sigdosi.common.exception.BusinessRuleException;
 import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDirectoryDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StoragePath;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageResource;
+import com.ddrissq.sigdosi.common.file.storage.service.StorageService;
 import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.healthcarenetwork.community.model.Community;
 import com.ddrissq.sigdosi.healthcarenetwork.community.service.CommunityService;
@@ -17,6 +21,7 @@ import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.specification.Health
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.model.HealthFacilityType;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacilitytype.service.HealthFacilityTypeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +40,7 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
     private final HealthFacilityMapper mapper;
     private final CommunityService communityService;
     private final HealthFacilityTypeService healthFacilityTypeService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public HealthFacilityResponse get(UUID id) {
@@ -86,6 +92,16 @@ public class HealthFacilityServiceImpl implements HealthFacilityService {
         healthFacility.setCommunity(community);
         healthFacility.setType(healthFacilityType);
         return mapper.toResponse(healthFacility);
+    }
+
+    @Override
+    public void delete(UUID id) {
+        HealthFacility healthFacility = getByIdOrThrow(id);
+        repository.delete(healthFacility);
+        eventPublisher.publishEvent(StorageDirectoryDeletedEvent.builder()
+                .path(StoragePath.forResource(
+                        StorageResource.HEALTH_FACILITIES, id))
+                .build());
     }
 
     @Override

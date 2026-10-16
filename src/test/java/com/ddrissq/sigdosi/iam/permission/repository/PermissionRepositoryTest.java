@@ -29,7 +29,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve true cuando existe un permiso por módulo y acción")
     void givenExistingPermission_whenExistsByModuleAndAction_thenReturnsTrue() {
         // When
-        boolean exists = repository.existsByModuleAndAction(
+        boolean exists = repository.existsByModuleIgnoreCaseAndAction(
                 MODULE,
                 ACTION);
         // Then
@@ -40,7 +40,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve false cuando el módulo no coincide")
     void givenDifferentModule_whenExistsByModuleAndAction_thenReturnsFalse() {
         // When
-        boolean exists = repository.existsByModuleAndAction(
+        boolean exists = repository.existsByModuleIgnoreCaseAndAction(
                 DIFFERENT_MODULE,
                 ACTION);
         // Then
@@ -51,7 +51,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve false cuando la acción no coincide")
     void givenDifferentAction_whenExistsByModuleAndAction_thenReturnsFalse() {
         // When
-        boolean exists = repository.existsByModuleAndAction(
+        boolean exists = repository.existsByModuleIgnoreCaseAndAction(
                 MODULE,
                 DIFFERENT_ACTION);
         // Then
@@ -62,7 +62,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve false cuando ni el módulo ni la acción coinciden")
     void givenDifferentModuleAndAction_whenExistsByModuleAndAction_thenReturnsFalse() {
         // When
-        boolean exists = repository.existsByModuleAndAction(
+        boolean exists = repository.existsByModuleIgnoreCaseAndAction(
                 DIFFERENT_MODULE,
                 DIFFERENT_ACTION);
         // Then
@@ -73,7 +73,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve true cuando existe otro permiso con igual módulo y acción pero ID distinto")
     void givenPermissionExistsAndDifferentExcludedId_whenExistsByModuleAndActionAndIdNot_thenReturnsTrue() {
         // When
-        boolean exists = repository.existsByModuleAndActionAndIdNot(
+        boolean exists = repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 MODULE,
                 ACTION,
                 ID);
@@ -85,7 +85,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve false cuando el único permiso coincidente coincide con el ID excluido")
     void givenSameExcludedId_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
-        boolean exists = repository.existsByModuleAndActionAndIdNot(
+        boolean exists = repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 MODULE,
                 ACTION,
                 existingPermission.getId());
@@ -97,7 +97,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve false al buscar excluyendo un ID si el módulo no coincide")
     void givenDifferentModule_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
-        boolean exists = repository.existsByModuleAndActionAndIdNot(
+        boolean exists = repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 DIFFERENT_MODULE,
                 ACTION,
                 ID);
@@ -109,7 +109,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve false al buscar excluyendo un ID si la acción no coincide")
     void givenDifferentAction_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
-        boolean exists = repository.existsByModuleAndActionAndIdNot(
+        boolean exists = repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 MODULE,
                 DIFFERENT_ACTION,
                 ID);
@@ -121,7 +121,7 @@ class PermissionRepositoryTest {
     @DisplayName(value = "Devuelve false al buscar excluyendo un ID si ni el módulo ni la acción coinciden")
     void givenDifferentModuleAndAction_whenExistsByModuleAndActionAndIdNot_thenReturnsFalse() {
         // When
-        boolean exists = repository.existsByModuleAndActionAndIdNot(
+        boolean exists = repository.existsByModuleIgnoreCaseAndActionAndIdNot(
                 DIFFERENT_MODULE,
                 DIFFERENT_ACTION,
                 ID);

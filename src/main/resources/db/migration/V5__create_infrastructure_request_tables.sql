@@ -22,21 +22,6 @@ CREATE TABLE request
         FOREIGN KEY (health_facility_id) REFERENCES health_facility (id)
 );
 
-CREATE TABLE request_log
-(
-    id              UUID      NOT NULL DEFAULT uuidv7(),
-    user_account_id UUID      NOT NULL,
-    request_id      UUID      NOT NULL,
-    description     TEXT      NOT NULL,
-    created_at      TIMESTAMPTZ NOT NULL,
-    updated_at      TIMESTAMPTZ NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT FK_user_account_TO_request_log
-        FOREIGN KEY (user_account_id) REFERENCES user_account (id),
-    CONSTRAINT FK_request_TO_request_log
-        FOREIGN KEY (request_id) REFERENCES request (id)
-);
-
 CREATE TABLE request_element
 (
     id                   UUID        NOT NULL DEFAULT uuidv7(),
@@ -55,14 +40,14 @@ CREATE TABLE request_element
         FOREIGN KEY (building_material_id) REFERENCES building_material (id)
 );
 
-CREATE TABLE request_element_image
+CREATE TABLE request_attachment
 (
     id                 UUID        NOT NULL DEFAULT uuidv7(),
-    request_element_id UUID        NOT NULL,
-    path               VARCHAR(45) NOT NULL UNIQUE,
+    request_id UUID        NOT NULL,
+    path               VARCHAR NOT NULL UNIQUE,
     PRIMARY KEY (id),
-    CONSTRAINT FK_request_element_TO_request_element_image
-        FOREIGN KEY (request_element_id) REFERENCES request_element (id)
+    CONSTRAINT FK_request_TO_request_image
+        FOREIGN KEY (request_id) REFERENCES request (id)
 );
 
 CREATE TABLE request_comment

@@ -54,7 +54,7 @@ CREATE TABLE user_profile
     cui             VARCHAR(13) NOT NULL UNIQUE,
     first_name      VARCHAR(50) NOT NULL,
     last_name       VARCHAR(50) NOT NULL,
-    avatar          VARCHAR(100) UNIQUE,
+    avatar          VARCHAR UNIQUE,
     phone_number    VARCHAR(8) UNIQUE,
     created_at      TIMESTAMPTZ NOT NULL,
     updated_at      TIMESTAMPTZ NOT NULL,

@@ -4,16 +4,16 @@ import com.ddrissq.sigdosi.common.file.storage.configuration.S3StorageProperties
 import com.ddrissq.sigdosi.common.file.storage.error.StorageErrorDescriptor;
 import com.ddrissq.sigdosi.common.file.storage.exception.InternalStorageException;
 import com.ddrissq.sigdosi.common.file.storage.exception.StorageOperationException;
-import com.ddrissq.sigdosi.common.file.storage.model.StorageFolder;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDirectoryDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StoragePath;
 import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
 import com.ddrissq.sigdosi.common.util.UuidGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.mime.MimeTypeException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -24,7 +24,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -37,19 +36,12 @@ public class S3StorageServiceImpl implements StorageService {
     private final S3StorageProperties props;
 
     @Override
-    public String save(MultipartFile file) {
-        return save(file, null);
-    }
-
-    @Override
-    public String save(MultipartFile file, StorageFolder folder) {
+    public String save(MultipartFile file, StoragePath path) {
         try {
             String extension = FileAnalyzer.getExtension(file);
-            String filename = UuidGenerator.generateV7() + extension;
             String contentType = FileAnalyzer.getMimeType(file);
-            String key = (folder == null || folder.getPath().isEmpty())
-                    ? filename
-                    : folder.getPath() + "/" + filename;
+            String filename = UuidGenerator.generateV7() + extension;
+            String key = String.join("/", path.buildPath(), filename);
             PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(getBucket())
                     .key(key)
@@ -64,29 +56,21 @@ public class S3StorageServiceImpl implements StorageService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Async(value = "imageAsyncExecutor")
+    @Async(value = "fileAsyncExecutor")
     @Retryable(
-            retryFor = InternalStorageException.class,
-            maxAttempts = 4,
-            backoff = @Backoff(delay = 60_000, multiplier = 2))
+            includes = InternalStorageException.class,
+            maxRetries = 4,
+            delay = 60_000,
+            multiplier = 2)
     @Override
-    public void delete(String... paths) {
-        List<ObjectIdentifier> keys = Arrays.stream(paths)
-                .map(path -> {
-                    return ObjectIdentifier.builder()
+    public void delete(StorageDeletedEvent event) {
+        List<ObjectIdentifier> keys = event.paths().stream()
+                .map(path ->
+                    ObjectIdentifier.builder()
                             .key(path)
-                            .build();
-                })
+                            .build())
                 .toList();
-        Delete delete = Delete.builder()
-                .objects(keys)
-                .quiet(true)
-                .build();
-        DeleteObjectsRequest request = DeleteObjectsRequest.builder()
-                .bucket(getBucket())
-                .delete(delete)
-                .build();
-        DeleteObjectsResponse response = s3Client.deleteObjects(request);
+        DeleteObjectsResponse response = deleteObjects(keys);
         if (response.hasErrors()) {
             List<String> undeletedFiles = response.errors().stream()
                     .map(S3Error::key)
@@ -95,20 +79,54 @@ public class S3StorageServiceImpl implements StorageService {
                 log.error("Failed to delete file '{}'.", filename);
             });
             throw new InternalStorageException(
-                    "Failed to delete " + undeletedFiles.size() + " file(s).",
-                    undeletedFiles);
+                    "Failed to delete file(s): {%s}".formatted(
+                            String.join(", ", undeletedFiles)));
         }
     }
 
-    @Recover
-    public void recoverDelete(InternalStorageException ex, String... paths) {
-        for (String filename : ex.getUndeletedFiles()) {
-            log.error("Failed to delete file '{}' after all retry attempts.", filename);
-        }
-        log.error(
-                "Failed to delete {} files after all retry attempts.",
-                ex.getUndeletedFiles().size(),
-                ex);
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async(value = "fileAsyncExecutor")
+    @Retryable(
+            includes = InternalStorageException.class,
+            maxRetries = 4,
+            delay = 60_000,
+            multiplier = 2)
+    @Override
+    public void deleteDirectory(StorageDirectoryDeletedEvent event) {
+        String basePath = event.path().buildPath();
+        String prefix = basePath.endsWith("/") ? basePath : basePath + "/";
+        ListObjectsV2Request request = ListObjectsV2Request.builder()
+                .bucket(getBucket())
+                .prefix(prefix)
+                .build();
+        s3Client.listObjectsV2Paginator(request).forEach(page -> {
+            List<S3Object> objects = page.contents();
+            if (!objects.isEmpty()) {
+                List<ObjectIdentifier> keys = objects.stream()
+                        .map(object -> ObjectIdentifier.builder()
+                                .key(object.key())
+                                .build())
+                        .toList();
+                DeleteObjectsResponse response = deleteObjects(keys);
+                if (response.hasErrors()) {
+                    log.error("Failed to delete directory '{}'.", prefix);
+                    throw new InternalStorageException(
+                            "Failed to delete directory '%s'.".formatted(prefix));
+                }
+            }
+        });
+    }
+
+    private DeleteObjectsResponse deleteObjects(List<ObjectIdentifier> keys) {
+        Delete delete = Delete.builder()
+                .objects(keys)
+                .quiet(true)
+                .build();
+        DeleteObjectsRequest request = DeleteObjectsRequest.builder()
+                .bucket(getBucket())
+                .delete(delete)
+                .build();
+        return s3Client.deleteObjects(request);
     }
 
     private String getBucket() {

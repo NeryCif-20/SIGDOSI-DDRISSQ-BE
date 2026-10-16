@@ -15,6 +15,7 @@ public interface HealthFacilityService {
     HealthFacilityResponse get(UUID id);
     HealthFacilityResponse create(HealthFacilityCreateRequest request);
     HealthFacilityResponse update(UUID id, HealthFacilityUpdateRequest request);
+    void delete(UUID id);
     Page<HealthFacilityResponse> getAll(HealthFacilitySearchRequest request, Pageable pageable);
     HealthFacility getByIdOrThrow(UUID id);
 

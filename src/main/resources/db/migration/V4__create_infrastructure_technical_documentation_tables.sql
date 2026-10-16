@@ -14,7 +14,7 @@ CREATE TABLE plan
     id           UUID        NOT NULL,
     plan_type_id UUID        NOT NULL,
     health_facility_id  UUID        NOT NULL,
-    path     VARCHAR(45) NOT NULL UNIQUE,
+    path     VARCHAR UNIQUE,
     version      SMALLINT NOT NULL,
     notes       TEXT,
     created_at   TIMESTAMPTZ NOT NULL,

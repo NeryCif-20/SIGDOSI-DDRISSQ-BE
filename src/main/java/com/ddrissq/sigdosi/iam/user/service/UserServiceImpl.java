@@ -3,7 +3,9 @@ package com.ddrissq.sigdosi.iam.user.service;
 import com.ddrissq.sigdosi.common.exception.BusinessRuleException;
 import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
-import com.ddrissq.sigdosi.common.file.storage.model.StorageFolder;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StoragePath;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageResource;
 import com.ddrissq.sigdosi.common.file.storage.service.StorageService;
 import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
@@ -20,6 +22,7 @@ import com.ddrissq.sigdosi.iam.user.model.UserStatus;
 import com.ddrissq.sigdosi.iam.user.repository.UserRepository;
 import com.ddrissq.sigdosi.iam.user.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final CurrentUserProvider currentUserProvider;
     private final StorageService storage;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public UserResponse get(UUID id) {
@@ -133,11 +137,17 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateAvatar(UserAvatarUpdateRequest request) {
         UUID id = currentUserProvider.getUserId();
         User user = getByIdOrThrow(id);
-        String avatar = storage.save(request.avatar(), StorageFolder.AVATARS);
+        String avatar = storage.save(
+                request.avatar(),
+                StoragePath.forResource(
+                        StorageResource.USERS,
+                        id));
         String oldAvatar = user.getProfile().getAvatar();
         user.getProfile().setAvatar(avatar);
         if (oldAvatar != null) {
-            storage.delete(oldAvatar);
+            eventPublisher.publishEvent(StorageDeletedEvent.builder()
+                    .path(oldAvatar)
+                    .build());
         }
         return mapper.toResponse(user);
     }

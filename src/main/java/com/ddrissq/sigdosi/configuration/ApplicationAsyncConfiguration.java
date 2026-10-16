@@ -23,7 +23,7 @@ public class ApplicationAsyncConfiguration {
     }
 
     @Bean
-    public Executor imageAsyncExecutor() {
+    public Executor fileAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2);
         executor.setMaxPoolSize(5);

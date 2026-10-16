@@ -6,7 +6,9 @@ import com.ddrissq.sigdosi.common.file.storage.error.StorageErrorDescriptor;
 import com.ddrissq.sigdosi.common.file.storage.exception.InternalStorageException;
 import com.ddrissq.sigdosi.common.file.storage.exception.StorageOperationException;
 import com.ddrissq.sigdosi.common.file.storage.model.FileLoadResult;
-import com.ddrissq.sigdosi.common.file.storage.model.StorageFolder;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDirectoryDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StoragePath;
 import com.ddrissq.sigdosi.common.file.util.FileAnalyzer;
 import com.ddrissq.sigdosi.common.util.UuidGenerator;
 import jakarta.annotation.PostConstruct;
@@ -17,13 +19,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -52,18 +53,11 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String save(MultipartFile file) {
-        return save(file, null);
-    }
-
-    @Override
-    public String save(MultipartFile file, StorageFolder folder) {
+    public String save(MultipartFile file, StoragePath path) {
         try {
             String extension = FileAnalyzer.getExtension(file);
             String filename = UuidGenerator.generateV7() + extension;
-            Path targetDirectory = (folder == null || folder.getPath().isEmpty())
-                    ? getPath()
-                    : getPath().resolve(folder.getPath()).normalize();
+            Path targetDirectory = getPath().resolve(path.buildPath()).normalize();
             Files.createDirectories(targetDirectory);
             Path targetLocation = targetDirectory
                     .resolve(filename).normalize();
@@ -81,40 +75,52 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Async(value = "imageAsyncExecutor")
+    @Async(value = "fileAsyncExecutor")
     @Retryable(
-            retryFor = InternalStorageException.class,
-            maxAttempts = 4,
-            backoff = @Backoff(delay = 60_000, multiplier = 2))
+            includes = InternalStorageException.class,
+            maxRetries = 4,
+            delay = 60_000,
+            multiplier = 2)
     @Override
-    public void delete(String... paths) {
+    public void delete(StorageDeletedEvent event) {
         List<String> undeletedFiles = new ArrayList<>();
-        for (String path : paths) {
+        for (String path : event.paths()) {
             Path file = getPath().resolve(path)
                     .normalize();
             try {
                 Files.deleteIfExists(file);
             } catch (IOException ex) {
-                log.error("Failed to delete file '{}'.", path);
+                log.error("Failed to delete file '{}'.", path, ex);
                 undeletedFiles.add(path);
             }
         }
         if (!undeletedFiles.isEmpty()) {
             throw new InternalStorageException(
-                    "Failed to delete " + undeletedFiles.size() + " file(s).",
-                    undeletedFiles);
+                    "Failed to delete file(s): {%s}".formatted(
+                            String.join(", ", undeletedFiles)));
         }
     }
 
-    @Recover
-    public void recoverDelete(InternalStorageException ex, String... paths) {
-        for (String filename : ex.getUndeletedFiles()) {
-            log.error("Failed to delete file '{}' after all retry attempts.", filename);
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async(value = "fileAsyncExecutor")
+    @Retryable(
+            includes = InternalStorageException.class,
+            maxRetries = 4,
+            delay = 60_000,
+            multiplier = 2)
+    @Override
+    public void deleteDirectory(StorageDirectoryDeletedEvent event) {
+        Path directory = getPath().resolve(event.path().buildPath()).normalize();
+        if (Files.notExists(directory)) {
+            return;
         }
-        log.error(
-                "Failed to delete {} files after all retry attempts.",
-                ex.getUndeletedFiles().size(),
-                ex);
+        try {
+            FileSystemUtils.deleteRecursively(directory);
+        } catch (IOException ex) {
+            log.error("Failed to delete directory '{}'.", directory);
+            throw new InternalStorageException(
+                    "Failed to delete directory '%s'.".formatted(directory.toString()), ex);
+        }
     }
 
     public FileLoadResult load(String path) {

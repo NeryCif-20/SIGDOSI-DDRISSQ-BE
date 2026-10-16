@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
@@ -28,8 +26,9 @@ public class MailServiceImpl implements MailService {
 
     @Async(value = "mailAsyncExecutor")
     @Retryable(
-            retryFor = InternalMailException.class,
-            backoff = @Backoff(delay = 30_000, multiplier = 4))
+            includes = InternalMailException.class,
+            delay = 30_000,
+            multiplier = 4)
     @Override
     public void sendMail(SendMailCommand command) {
         try {
@@ -50,14 +49,6 @@ public class MailServiceImpl implements MailService {
                     ex);
             throw new InternalMailException(ex.getMessage(), ex);
         }
-    }
-
-    @Recover
-    public void recoverSendMail(InternalMailException ex, SendMailCommand command) {
-        log.error("Failed to send the email to '{}' with the subject '{}' after all retry attempts.",
-                command.to(),
-                command.subject(),
-                ex);
     }
 
 }

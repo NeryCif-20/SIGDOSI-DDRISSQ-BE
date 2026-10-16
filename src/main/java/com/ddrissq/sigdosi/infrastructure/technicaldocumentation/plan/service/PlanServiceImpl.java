@@ -2,7 +2,10 @@ package com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plan.service;
 
 import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
-import com.ddrissq.sigdosi.common.file.storage.model.StorageFolder;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDirectoryDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StoragePath;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageResource;
 import com.ddrissq.sigdosi.common.file.storage.service.StorageService;
 import com.ddrissq.sigdosi.common.util.ValueResolver;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacility;
@@ -19,6 +22,7 @@ import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plan.model.Plan
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plan.repository.PlanRepository;
 import com.ddrissq.sigdosi.infrastructure.technicaldocumentation.plan.specifcation.PlanSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,6 +41,7 @@ public class PlanServiceImpl implements PlanService {
     private final PlanTypeService planTypeService;
     private final HealthFacilityService healthFacilityService;
     private final StorageService storageService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public PlanResponse get(UUID id) {
@@ -51,12 +56,14 @@ public class PlanServiceImpl implements PlanService {
                 request.healthFacility());
         validateUniqueHealthFacilityTypeVersion(
                 healthFacility.getId(), type.getId(), request.version());
-        String path = storageService.save(request.file(), StorageFolder.PLANS);
         Plan plan = mapper.toPlan(request);
         plan.setHealthFacility(healthFacility);
         plan.setType(type);
-        plan.setPath(path);
         Plan savedPlan = repository.save(plan);
+        String path = storageService.save(request.file(), StoragePath.forResource(
+                StorageResource.HEALTH_FACILITIES, healthFacility.getId())
+                .subResource(StorageResource.PLANS, savedPlan.getId()));
+        savedPlan.setPath(path);
         return mapper.toResponse(savedPlan);
     }
 
@@ -77,9 +84,13 @@ public class PlanServiceImpl implements PlanService {
         mapper.updatePlan(request, plan);
         if (request.file() != null) {
             String oldPath = plan.getPath();
-            String path = storageService.save(request.file(), StorageFolder.PLANS);
+            String path = storageService.save(request.file(), StoragePath.forResource(
+                    StorageResource.HEALTH_FACILITIES, plan.getHealthFacility().getId())
+                    .subResource(StorageResource.PLANS, plan.getId()));
             plan.setPath(path);
-            storageService.delete(oldPath);
+            eventPublisher.publishEvent(StorageDeletedEvent.builder()
+                    .path(oldPath)
+                    .build());
         }
         return mapper.toResponse(plan);
     }
@@ -87,9 +98,12 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public void delete(UUID id) {
         Plan plan = getByIdOrThrow(id);
-        String path = plan.getPath();
         repository.delete(plan);
-        storageService.delete(path);
+        eventPublisher.publishEvent(StorageDirectoryDeletedEvent.builder()
+                .path(StoragePath.forResource(
+                        StorageResource.HEALTH_FACILITIES, plan.getHealthFacility().getId())
+                        .subResource(StorageResource.PLANS, plan.getId()))
+                .build());
     }
 
     @Override
