@@ -17,6 +17,7 @@ public interface RequestMapper {
     @Mapping(target = "requesterEmail", source = "requesterEmail", qualifiedByName = "toLowerCase")
     @Mapping(target = "requesterOfficialPosition", source = "requesterOfficialPosition", qualifiedByName = "toUpperCase")
     @Mapping(target = "requesterFunctionalPosition", source = "requesterFunctionalPosition", qualifiedByName = "toUpperCase")
+    @Mapping(target = "notes", source = "notes", qualifiedByName = "sanitizePlainText")
     Request toRequest(RequestCreateRequest request);
 
     RequestResponse toResponse(Request request);
@@ -29,6 +30,7 @@ public interface RequestMapper {
     @Mapping(target = "requesterEmail", source = "requesterEmail", qualifiedByName = "toLowerCase")
     @Mapping(target = "requesterOfficialPosition", source = "requesterOfficialPosition", qualifiedByName = "toUpperCase")
     @Mapping(target = "requesterFunctionalPosition", source = "requesterFunctionalPosition", qualifiedByName = "toUpperCase")
+    @Mapping(target = "notes", source = "notes", qualifiedByName = "sanitizePlainText")
     void updateRequest(RequestUpdateRequest request, @MappingTarget Request updateRequest);
 
 

@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.infrastructure.request.dto;
 
+import com.ddrissq.sigdosi.common.validation.annotation.NullableNotBlank;
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import com.ddrissq.sigdosi.infrastructure.request.model.RequestStatus;
 import jakarta.validation.constraints.*;
@@ -34,6 +35,7 @@ public record RequestCreateRequest(
         @NotNull(message = ValidationError.REQUIRED)
         @PositiveOrZero(message = ValidationError.POSITIVE_OR_ZERO)
         BigDecimal aproximateCost,
+        @NullableNotBlank
         String notes,
         @NotNull(message = ValidationError.REQUIRED)
         RequestStatus status,

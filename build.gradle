@@ -23,6 +23,7 @@ ext {
     apacheTikaVersion = '3.3.2'
     n52JacksonVersion = '3.0.4'
     fasterxmlUuidVersion = '5.2.0'
+    googlecodeVersion = '20261011.1'
 }
 
 repositories {
@@ -53,6 +54,7 @@ dependencies {
     implementation "org.apache.tika:tika-core:$apacheTikaVersion"
     implementation "org.n52.jackson:jackson-datatype-jts:$n52JacksonVersion"
     implementation "com.fasterxml.uuid:java-uuid-generator:$fasterxmlUuidVersion"
+    implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:$googlecodeVersion"
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
     mockitoAgent 'org.mockito:mockito-core'
     compileOnly 'org.projectlombok:lombok'

@@ -55,12 +55,16 @@ CREATE TABLE request_comment
     id              UUID      NOT NULL DEFAULT uuidv7(),
     user_account_id UUID      NOT NULL,
     request_id      UUID      NOT NULL,
+    request_comment_id       UUID      ,
     content         TEXT      NOT NULL,
+    deleted         BOOLEAN   NOT NULL,
     created_at      TIMESTAMPTZ NOT NULL,
     updated_at      TIMESTAMPTZ NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT FK_user_account_TO_request_comment
         FOREIGN KEY (user_account_id) REFERENCES user_account (id),
     CONSTRAINT FK_request_TO_request_comment
-        FOREIGN KEY (request_id) REFERENCES request (id)
+        FOREIGN KEY (request_id) REFERENCES request (id),
+    CONSTRAINT FK_request_comment_TO_request_comment
+            FOREIGN KEY (request_comment_id) REFERENCES request_comment (id)
 );

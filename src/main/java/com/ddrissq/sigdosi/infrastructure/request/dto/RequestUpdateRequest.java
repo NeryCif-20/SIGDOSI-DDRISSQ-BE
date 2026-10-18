@@ -3,7 +3,10 @@ package com.ddrissq.sigdosi.infrastructure.request.dto;
 import com.ddrissq.sigdosi.common.validation.annotation.NullableNotBlank;
 import com.ddrissq.sigdosi.common.validation.error.ValidationError;
 import com.ddrissq.sigdosi.infrastructure.request.model.RequestStatus;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import java.math.BigDecimal;
@@ -29,6 +32,7 @@ public record RequestUpdateRequest(
         Short roomsToExpand,
         @PositiveOrZero(message = ValidationError.POSITIVE_OR_ZERO)
         BigDecimal aproximateCost,
+        @NullableNotBlank
         String notes,
         RequestStatus status,
         @PastOrPresent(message = ValidationError.PAST_OR_PRESENT)
