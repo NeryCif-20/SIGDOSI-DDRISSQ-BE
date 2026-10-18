@@ -1,6 +1,9 @@
 package com.ddrissq.sigdosi.infrastructure.request.service;
 
 import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageDirectoryDeletedEvent;
+import com.ddrissq.sigdosi.common.file.storage.model.StoragePath;
+import com.ddrissq.sigdosi.common.file.storage.model.StorageResource;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.model.HealthFacility;
 import com.ddrissq.sigdosi.healthcarenetwork.healthfacility.service.HealthFacilityService;
 import com.ddrissq.sigdosi.infrastructure.request.dto.RequestCreateRequest;
@@ -13,6 +16,7 @@ import com.ddrissq.sigdosi.infrastructure.request.model.Request;
 import com.ddrissq.sigdosi.infrastructure.request.repository.RequestRepository;
 import com.ddrissq.sigdosi.infrastructure.request.specification.RequestSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,6 +34,7 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository repository;
     private final RequestMapper mapper;
     private final HealthFacilityService healthFacilityService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public RequestResponse get(UUID id) {
@@ -59,6 +64,11 @@ public class RequestServiceImpl implements RequestService {
     public void delete(UUID id) {
         Request request = getByIdOrThrow(id);
         repository.delete(request);
+        eventPublisher.publishEvent(StorageDirectoryDeletedEvent.builder()
+                .path(StoragePath.forResource(
+                        StorageResource.HEALTH_FACILITIES, request.getHealthFacility().getId())
+                        .subResource(StorageResource.REQUESTS, request.getId()))
+                .build());
     }
 
     @Override
