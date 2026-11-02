@@ -68,7 +68,7 @@ CREATE TABLE flow_token
     id              UUID        NOT NULL DEFAULT uuidv7(),
     user_account_id UUID        NOT NULL,
     token_hash      VARCHAR(64) NOT NULL UNIQUE,
-    step            VARCHAR(20) NOT NULL CHECK (step IN ('PASSWORD', 'SET_PASSWORD')),
+    step            VARCHAR(20) NOT NULL CHECK (step IN ('PASSWORD', 'SETUP_PASSWORD')),
     revoked_at      TIMESTAMPTZ,
     expires_at      TIMESTAMPTZ NOT NULL,
     created_at      TIMESTAMPTZ NOT NULL,

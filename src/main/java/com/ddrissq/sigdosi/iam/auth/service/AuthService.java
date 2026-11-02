@@ -12,8 +12,7 @@ public interface AuthService {
     AuthIdentityResult identify(AuthIdentifyRequest request);
     AuthResult login(String token, AuthLoginRequest request);
     AuthResult refresh(String token);
-    void sendSetPasswordMail(String token);
-    void sendResetPasswordMail(String token);
+    void sendSetupPasswordMail(String token);
     void validatePasswordToken(AuthPasswordValidateRequest request);
     AuthResult setupPassword(AuthPasswordSetupRequest request);
     void logout(String token);

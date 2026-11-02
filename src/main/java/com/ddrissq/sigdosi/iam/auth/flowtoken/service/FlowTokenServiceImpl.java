@@ -47,12 +47,21 @@ public class FlowTokenServiceImpl implements FlowTokenService {
     }
 
     @Override
-    public FlowToken getByTokenOrThrow(String token, FlowTokenStep expectedStep) {
+    public FlowToken getByTokenOrThrow(String token) {
         String tokenHash = hashService.digestHex(token,  "SHA-256");
         return repository
-                .findValidByTokenHashAndStep(tokenHash, expectedStep)
+                .findValidByTokenHashAndStep(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
                         IamErrorDescriptor.CREDENTIALS_INVALID));
+    }
+
+    @Override
+    public FlowToken getByTokenOrThrow(String token, FlowTokenStep step) {
+        FlowToken flowToken = getByTokenOrThrow(token);
+        if (flowToken.getStep() != step) {
+            throw new AuthenticationException(IamErrorDescriptor.CREDENTIALS_INVALID);
+        }
+        return flowToken;
     }
 
     @Override

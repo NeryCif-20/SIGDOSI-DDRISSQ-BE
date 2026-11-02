@@ -1,7 +1,6 @@
 package com.ddrissq.sigdosi.iam.auth.flowtoken.repository;
 
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
-import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,10 +15,9 @@ public interface FlowTokenRepository extends JpaRepository<FlowToken, UUID> {
         FROM FlowToken ft
         WHERE ft.tokenHash = :tokenHash
             AND ft.expiresAt > CURRENT_TIMESTAMP
-            AND ft.step = :step
             AND ft.revokedAt IS NULL
     """)
-    Optional<FlowToken> findValidByTokenHashAndStep(String tokenHash, FlowTokenStep step);
+    Optional<FlowToken> findValidByTokenHashAndStep(String tokenHash);
 
     @Modifying
     @Query(value = """

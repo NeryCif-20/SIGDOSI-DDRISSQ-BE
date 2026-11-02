@@ -8,7 +8,8 @@ import com.ddrissq.sigdosi.iam.user.model.User;
 public interface FlowTokenService {
 
     FlowTokenCreateResult create(User user, FlowTokenStep step);
-    FlowToken getByTokenOrThrow(String token, FlowTokenStep expectedStep);
+    FlowToken getByTokenOrThrow(String token);
+    FlowToken getByTokenOrThrow(String token, FlowTokenStep step);
     void deleteAllExpiredTokens();
 
 

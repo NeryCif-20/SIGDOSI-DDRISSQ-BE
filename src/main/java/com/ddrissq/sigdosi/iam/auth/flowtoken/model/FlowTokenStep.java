@@ -3,6 +3,6 @@ package com.ddrissq.sigdosi.iam.auth.flowtoken.model;
 public enum FlowTokenStep {
 
     PASSWORD,
-    SET_PASSWORD
+    SETUP_PASSWORD
 
 }

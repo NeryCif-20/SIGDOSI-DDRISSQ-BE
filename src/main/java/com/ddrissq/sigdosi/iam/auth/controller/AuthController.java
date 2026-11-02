@@ -53,20 +53,10 @@ public class AuthController {
                 .body(response);
     }
 
-    @PostMapping(path = "/password/set")
-    public ResponseEntity<Void> setPassword(
+    @PostMapping(path = "/password/setup-mail")
+    public ResponseEntity<Void> sendSetupPasswordMail(
             @CookieValue(value = AuthCookieNames.FLOW_TOKEN) String token) {
-        service.sendSetPasswordMail(token);
-        ResponseCookie flowTokenCookie = cookieService.deleteFlowTokenCookie();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .header(HttpHeaders.SET_COOKIE, flowTokenCookie.toString())
-                .build();
-    }
-
-    @PostMapping(path = "/password/reset")
-    public ResponseEntity<Void> resetPassword(
-            @CookieValue(value = AuthCookieNames.FLOW_TOKEN) String token) {
-        service.sendResetPasswordMail(token);
+        service.sendSetupPasswordMail(token);
         ResponseCookie flowTokenCookie = cookieService.deleteFlowTokenCookie();
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .header(HttpHeaders.SET_COOKIE, flowTokenCookie.toString())

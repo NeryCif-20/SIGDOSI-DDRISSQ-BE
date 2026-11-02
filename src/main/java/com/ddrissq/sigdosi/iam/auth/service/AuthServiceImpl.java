@@ -97,26 +97,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void sendSetPasswordMail(String token) {
-        FlowToken flowToken = flowTokenService.getByTokenOrThrow(
-                token, FlowTokenStep.SET_PASSWORD);
+    public void sendSetupPasswordMail(String token) {
+        FlowToken flowToken = flowTokenService.getByTokenOrThrow(token);
         User user = flowToken.getUser();
+        PasswordSetupAction setupAction = flowToken.getStep() == FlowTokenStep.SETUP_PASSWORD
+                ? PasswordSetupAction.SET
+                : PasswordSetupAction.RESET;
         PasswordTokenCreateResult result = passwordTokenService.create(
-                user, PasswordSetupAction.SET);
-        mailService.sendPasswordSetupMail(
-                buildPasswordSetupMailData(result));
-        flowToken.setRevokedAt(Instant.now());
-    }
-
-    @Override
-    public void sendResetPasswordMail(String token) {
-        FlowToken flowToken = flowTokenService.getByTokenOrThrow(
-                token, FlowTokenStep.PASSWORD);
-        User user = flowToken.getUser();
-        PasswordTokenCreateResult result = passwordTokenService.create(
-                user, PasswordSetupAction.RESET);
-        mailService.sendPasswordSetupMail(
-                buildPasswordSetupMailData(result));
+                user, setupAction);
+        mailService.sendPasswordSetupMail(buildPasswordSetupMailData(result));
         flowToken.setRevokedAt(Instant.now());
     }
 
@@ -153,7 +142,7 @@ public class AuthServiceImpl implements AuthService {
     private FlowTokenStep resolveStep(UserStatus status) {
         return switch (status) {
             case ACTIVE -> FlowTokenStep.PASSWORD;
-            case PENDING -> FlowTokenStep.SET_PASSWORD;
+            case PENDING -> FlowTokenStep.SETUP_PASSWORD;
             default -> throw new AuthorizationException(
                     IamErrorDescriptor.AUTHENTICATION_DISABLED);
         };
