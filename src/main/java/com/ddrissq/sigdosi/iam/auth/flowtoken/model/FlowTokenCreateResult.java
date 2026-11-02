@@ -7,7 +7,6 @@ import java.time.Instant;
 @Builder
 public record FlowTokenCreateResult(
         String token,
-        FlowTokenStep step,
         Instant expiresAt
 ) {
 }

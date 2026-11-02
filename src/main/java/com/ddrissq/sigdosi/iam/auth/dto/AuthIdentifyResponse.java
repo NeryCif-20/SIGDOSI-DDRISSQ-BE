@@ -1,10 +1,10 @@
 package com.ddrissq.sigdosi.iam.auth.dto;
 
-import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
+import com.ddrissq.sigdosi.iam.auth.model.AuthNextStep;
 import lombok.Builder;
 
 @Builder
 public record AuthIdentifyResponse(
-        FlowTokenStep step
+        AuthNextStep nextStep
 ) {
 }

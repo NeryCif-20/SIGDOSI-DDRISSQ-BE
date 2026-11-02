@@ -19,8 +19,6 @@ public class FlowToken extends BaseEntity {
     @JoinColumn(name = "user_account_id")
     private User user;
     private String tokenHash;
-    @Enumerated(value = EnumType.STRING)
-    private FlowTokenStep step;
     private Instant revokedAt;
     private Instant expiresAt;
 

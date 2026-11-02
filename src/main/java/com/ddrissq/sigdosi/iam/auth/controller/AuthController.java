@@ -3,8 +3,10 @@ package com.ddrissq.sigdosi.iam.auth.controller;
 import com.ddrissq.sigdosi.iam.auth.cookie.model.AuthCookieNames;
 import com.ddrissq.sigdosi.iam.auth.cookie.service.AuthCookieService;
 import com.ddrissq.sigdosi.iam.auth.dto.*;
-import com.ddrissq.sigdosi.iam.auth.model.AuthIdentityResult;
+import com.ddrissq.sigdosi.iam.auth.model.AuthIdentifyResult;
 import com.ddrissq.sigdosi.iam.auth.model.AuthResult;
+import com.ddrissq.sigdosi.iam.auth.model.PasswordRequired;
+import com.ddrissq.sigdosi.iam.auth.model.PasswordSetupRequired;
 import com.ddrissq.sigdosi.iam.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +27,20 @@ public class AuthController {
     @PostMapping(path = "/identify")
     public ResponseEntity<AuthIdentifyResponse> identify(
             @RequestBody @Valid AuthIdentifyRequest request) {
-        AuthIdentityResult result = service.identify(request);
-        ResponseCookie flowTokenCookie = cookieService.createFlowTokenCookie(
-                result.flowToken(), result.expiresAt());
-        AuthIdentifyResponse response = AuthIdentifyResponse.builder()
-                .step(result.step())
-                .build();
-        return ResponseEntity.status(HttpStatus.OK)
-                .header(HttpHeaders.SET_COOKIE, flowTokenCookie.toString())
-                .body(response);
+        AuthIdentifyResult result = service.identify(request);
+        ResponseEntity<AuthIdentifyResponse> response = ResponseEntity.status(HttpStatus.OK)
+                .body(AuthIdentifyResponse.builder()
+                        .nextStep(result.nextStep())
+                        .build());
+        return switch (result) {
+            case PasswordSetupRequired ignored -> response;
+            case PasswordRequired ignored -> {
+                ResponseCookie flowTokenCookie = cookieService.createFlowTokenCookie(
+                        ignored.flowToken(), ignored.expiresAt());
+                response.getHeaders().add(HttpHeaders.SET_COOKIE, flowTokenCookie.toString());
+                yield response;
+            }
+        };
     }
 
     @PostMapping(path = "/login")
@@ -53,10 +60,10 @@ public class AuthController {
                 .body(response);
     }
 
-    @PostMapping(path = "/password/setup-mail")
-    public ResponseEntity<Void> sendSetupPasswordMail(
+    @PostMapping(path = "/password/forgot")
+    public ResponseEntity<Void> sendForgotPasswordMail(
             @CookieValue(value = AuthCookieNames.FLOW_TOKEN) String token) {
-        service.sendSetupPasswordMail(token);
+        service.sendForgotPasswordMail(token);
         ResponseCookie flowTokenCookie = cookieService.deleteFlowTokenCookie();
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .header(HttpHeaders.SET_COOKIE, flowTokenCookie.toString())
@@ -77,7 +84,7 @@ public class AuthController {
                 .body(response);
     }
 
-    @PostMapping(path = "/password/validate")
+    @PostMapping(path = "/password/token/validate")
     public ResponseEntity<Void> validate(
             @RequestBody @Valid AuthPasswordValidateRequest request) {
         service.validatePasswordToken(request);

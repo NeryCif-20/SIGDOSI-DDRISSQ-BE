@@ -3,7 +3,6 @@ package com.ddrissq.sigdosi.iam.auth.flowtoken.service;
 import com.ddrissq.sigdosi.iam.auth.configuration.AuthProperties;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowToken;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenCreateResult;
-import com.ddrissq.sigdosi.iam.auth.flowtoken.model.FlowTokenStep;
 import com.ddrissq.sigdosi.iam.auth.flowtoken.repository.FlowTokenRepository;
 import com.ddrissq.sigdosi.iam.error.IamErrorDescriptor;
 import com.ddrissq.sigdosi.iam.exception.AuthenticationException;
@@ -27,7 +26,7 @@ public class FlowTokenServiceImpl implements FlowTokenService {
     private final HashService hashService;
 
     @Override
-    public FlowTokenCreateResult create(User user, FlowTokenStep step) {
+    public FlowTokenCreateResult create(User user) {
         String token = tokenService.generate(32);
         String tokenHash = hashService.digestHex(token,  "SHA-256");
         Instant expiresAt = Instant.now().plus(
@@ -35,13 +34,11 @@ public class FlowTokenServiceImpl implements FlowTokenService {
         FlowToken flowToken = FlowToken.builder()
                 .user(user)
                 .tokenHash(tokenHash)
-                .step(step)
                 .expiresAt(expiresAt)
                 .build();
         repository.save(flowToken);
         return FlowTokenCreateResult.builder()
                 .token(token)
-                .step(step)
                 .expiresAt(expiresAt)
                 .build();
     }
@@ -53,15 +50,6 @@ public class FlowTokenServiceImpl implements FlowTokenService {
                 .findValidByTokenHashAndStep(tokenHash)
                 .orElseThrow(() -> new AuthenticationException(
                         IamErrorDescriptor.CREDENTIALS_INVALID));
-    }
-
-    @Override
-    public FlowToken getByTokenOrThrow(String token, FlowTokenStep step) {
-        FlowToken flowToken = getByTokenOrThrow(token);
-        if (flowToken.getStep() != step) {
-            throw new AuthenticationException(IamErrorDescriptor.CREDENTIALS_INVALID);
-        }
-        return flowToken;
     }
 
     @Override
