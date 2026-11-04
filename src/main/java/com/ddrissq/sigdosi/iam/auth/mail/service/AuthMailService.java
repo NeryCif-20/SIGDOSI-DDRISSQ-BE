@@ -4,10 +4,9 @@ import com.ddrissq.sigdosi.common.mail.model.SendMailCommand;
 import com.ddrissq.sigdosi.common.mail.service.MailService;
 import com.ddrissq.sigdosi.common.message.service.MessageService;
 import com.ddrissq.sigdosi.configuration.ApplicationProperties;
-import com.ddrissq.sigdosi.iam.auth.mail.model.PasswordSetupMailData;
 import com.ddrissq.sigdosi.iam.auth.mail.configuration.AuthMailProperties;
 import com.ddrissq.sigdosi.iam.auth.mail.model.AuthMailTemplate;
-import com.ddrissq.sigdosi.iam.auth.model.PasswordSetupAction;
+import com.ddrissq.sigdosi.iam.auth.mail.model.PasswordSetupMailData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -30,7 +29,7 @@ public class AuthMailService {
         String action = data.action().name().toLowerCase();
         String subject = messageService.getMessage(
                 "template.mail.auth.password-setup.%s.subject".formatted(action));
-        String buttonLink = buildPasswordSetupButtonLink(data.action(), data.token());
+        String buttonLink = buildPasswordSetupButtonLink(data.token());
         String expiresAt = formatPasswordSetupExpiration(data.expiresAt());
         SendMailCommand sendMailCommand = SendMailCommand.builder()
                 .to(data.to())
@@ -44,11 +43,10 @@ public class AuthMailService {
         service.sendMail(sendMailCommand);
     }
 
-    private String buildPasswordSetupButtonLink(PasswordSetupAction action, String token) {
+    private String buildPasswordSetupButtonLink(String token) {
         return UriComponentsBuilder
                 .fromUriString(applicationProps.client().origin())
-                .path(authMailProps.setPasswordPaths().get(action)
-                        .formatted(token))
+                .path(authMailProps.setupPasswordPath().formatted(token))
                 .build()
                 .toUriString();
     }
