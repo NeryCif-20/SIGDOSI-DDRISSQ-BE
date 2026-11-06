@@ -66,6 +66,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping(path = "/me")
+    public ResponseEntity<UserResponse> get() {
+        UserResponse response = service.get();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PatchMapping(path = "/me")
     public ResponseEntity<UserResponse> update(
             @RequestBody @Valid UserUpdateRequest request) {

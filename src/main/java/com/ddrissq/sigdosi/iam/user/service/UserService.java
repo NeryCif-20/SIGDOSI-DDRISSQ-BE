@@ -15,6 +15,7 @@ public interface UserService {
     UserResponse updateRole(UUID id, UserRoleUpdateRequest request);
     UserResponse updateStatus(UUID id, UserStatusUpdateRequest request);
     Page<UserResponse> getAll(UserSearchRequest request, Pageable pageable);
+    UserResponse get();
     UserResponse update(UserUpdateRequest request);
     void updatePassword(UserPasswordUpdateRequest request);
     UserResponse updateAvatar(UserAvatarUpdateRequest request);

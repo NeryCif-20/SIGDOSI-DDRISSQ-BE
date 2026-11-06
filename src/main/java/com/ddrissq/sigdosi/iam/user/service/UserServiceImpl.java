@@ -128,6 +128,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse get() {
+        UUID id = currentUserProvider.getUserId();
+        return get(id);
+    }
+
+    @Override
     public UserResponse update(UserUpdateRequest request) {
         UUID id = currentUserProvider.getUserId();
         return update(id, request);
