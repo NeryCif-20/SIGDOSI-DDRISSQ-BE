@@ -109,14 +109,14 @@ public class AuthController {
     @PostMapping(path = "/logout")
     public ResponseEntity<Void> logout(
             @CookieValue(value = AuthCookieNames.REFRESH_TOKEN, required = false) String token) {
+        ResponseEntity<Void> response = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         if (token != null) {
             service.logout(token);
+            ResponseCookie refreshTokenCookie = cookieService
+                    .deleteRefreshTokenCookie();
+            response.getHeaders().add(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
         }
-        ResponseCookie refreshTokenCookie = cookieService
-                .deleteRefreshTokenCookie();
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .build();
+        return response;
     }
 
 }
