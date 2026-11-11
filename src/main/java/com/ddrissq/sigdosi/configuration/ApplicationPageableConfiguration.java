@@ -12,6 +12,7 @@ public class ApplicationPageableConfiguration {
     PageableHandlerMethodArgumentResolverCustomizer resolverCustomizer() {
         return resolver -> {
             resolver.setFallbackPageable(Pageable.unpaged());
+            resolver.setOneIndexedParameters(true);
         };
     }
 
