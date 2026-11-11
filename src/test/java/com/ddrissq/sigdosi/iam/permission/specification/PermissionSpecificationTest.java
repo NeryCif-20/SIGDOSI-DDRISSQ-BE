@@ -1,6 +1,7 @@
 package com.ddrissq.sigdosi.iam.permission.specification;
 
 import com.ddrissq.sigdosi.iam.permission.model.Permission;
+import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import com.ddrissq.sigdosi.iam.permission.repository.PermissionRepository;
 import com.ddrissq.sigdosi.iam.permission.support.PermissionTestData;
 import com.ddrissq.sigdosi.shared.annotation.JpaTest;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.ddrissq.sigdosi.iam.permission.support.PermissionTestConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,10 +71,11 @@ class PermissionSpecificationTest {
     @DisplayName(value = "Filtra correctamente por la acción especificada cuando existe coincidencia")
     void givenMatchingAction_whenFindAll_thenReturnsMatchingPermissions() {
         // Given
+        Set<PermissionAction> actions = Set.of(ACTION);
         List<Permission> expectedPermissions = repository.saveAll(
                 PermissionTestData.generateForAction(ACTION));
         repository.saveAll(PermissionTestData.generateForAction(DIFFERENT_ACTION));
-        Specification<Permission> spec = PermissionSpecification.hasAction(ACTION);
+        Specification<Permission> spec = PermissionSpecification.hasActions(actions);
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then
@@ -85,7 +88,7 @@ class PermissionSpecificationTest {
         // Given
         List<Permission> expectedPermissions = repository.saveAll(
                 PermissionTestData.generateForAction(ACTION));
-        Specification<Permission> spec = PermissionSpecification.hasAction(null);
+        Specification<Permission> spec = PermissionSpecification.hasActions(null);
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then
@@ -96,8 +99,9 @@ class PermissionSpecificationTest {
     @DisplayName(value = "Devuelve lista vacía cuando ninguna entidad coincide con la acción especificada")
     void givenNonMatchingAction_whenFindAll_thenReturnsEmptyList() {
         // Given
+        Set<PermissionAction> differentActions = Set.of(DIFFERENT_ACTION);
         repository.saveAll(PermissionTestData.generateForAction(ACTION));
-        Specification<Permission> spec = PermissionSpecification.hasAction(DIFFERENT_ACTION);
+        Specification<Permission> spec = PermissionSpecification.hasActions(differentActions);
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then
@@ -108,6 +112,7 @@ class PermissionSpecificationTest {
     @DisplayName(value = "Filtra correctamente por módulo y acción cuando ambos criterios coinciden")
     void givenModuleAndAction_whenFindAll_thenReturnsMatchingPermission() {
         // Given
+        Set<PermissionAction> actions = Set.of(ACTION);
         Permission expectedPermission = repository.save(
                 PermissionTestData.aPermission()
                         .build());
@@ -116,7 +121,7 @@ class PermissionSpecificationTest {
                 .build());
         Specification<Permission> spec = Specification.allOf(
                 PermissionSpecification.hasModule(MODULE),
-                PermissionSpecification.hasAction(ACTION));
+                PermissionSpecification.hasActions(actions));
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then

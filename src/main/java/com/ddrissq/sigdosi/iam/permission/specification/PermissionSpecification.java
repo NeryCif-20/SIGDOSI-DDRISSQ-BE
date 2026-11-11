@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PermissionSpecification {
 
@@ -21,12 +23,12 @@ public final class PermissionSpecification {
         };
     }
 
-    public static Specification<Permission> hasAction(PermissionAction action) {
+    public static Specification<Permission> hasActions(Collection<PermissionAction> actions) {
         return (root, query, builder) -> {
-            if (action == null) {
+            if (actions == null || actions.isEmpty()) {
                 return null;
             }
-            return builder.equal(root.get("action"), action);
+            return root.get("action").in(actions);
         };
     }
 
