@@ -67,6 +67,12 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
+    public void delete(UUID id) {
+        Permission permission = getByIdOrThrow(id);
+        repository.delete(permission);
+    }
+
+    @Override
     public Permission getByIdOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(

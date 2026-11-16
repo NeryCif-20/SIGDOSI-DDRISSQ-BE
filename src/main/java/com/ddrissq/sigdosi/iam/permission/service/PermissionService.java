@@ -16,6 +16,7 @@ public interface PermissionService {
     PermissionResponse get(UUID id);
     PermissionResponse create(PermissionCreateRequest request);
     PermissionResponse update(UUID id, PermissionUpdateRequest request);
+    void delete(UUID id);
     Page<PermissionResponse> getAll(PermissionSearchRequest request, Pageable pageable);
     Permission getByIdOrThrow(UUID id);
     List<Permission> getAllById(List<UUID> ids);
