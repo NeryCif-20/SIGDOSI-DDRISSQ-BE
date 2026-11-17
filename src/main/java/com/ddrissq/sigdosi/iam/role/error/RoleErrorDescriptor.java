@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum RoleErrorDescriptor implements ErrorDescriptor {
 
     NOT_FOUND("error.role.not-found", ErrorTitle.RESOURCE_NOT_FOUND),
-    ALREADY_EXISTS("error.role.already-exists", ErrorTitle.RESOURCE_ALREADY_EXISTS);
+    ALREADY_EXISTS("error.role.already-exists", ErrorTitle.RESOURCE_ALREADY_EXISTS),
+    DELETE_FORBIDDEN("error.role.delete.forbidden", ErrorTitle.BUSINESS_RULE);
 
     private final String messageKey;
     private final ErrorTitle errorTitle;

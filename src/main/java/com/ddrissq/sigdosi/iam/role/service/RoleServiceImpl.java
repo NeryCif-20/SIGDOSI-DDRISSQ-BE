@@ -1,5 +1,6 @@
 package com.ddrissq.sigdosi.iam.role.service;
 
+import com.ddrissq.sigdosi.common.exception.BusinessRuleException;
 import com.ddrissq.sigdosi.common.exception.ResourceAlreadyExistsException;
 import com.ddrissq.sigdosi.common.exception.ResourceNotFoundException;
 import com.ddrissq.sigdosi.common.util.ValueResolver;
@@ -59,12 +60,20 @@ public class RoleServiceImpl implements RoleService{
     }
 
     @Override
+    public void delete(UUID id) {
+        Role role = getByIdOrThrow(id);
+        if (repository.existsUsersByRoleId(id)) {
+            throw new BusinessRuleException(RoleErrorDescriptor.DELETE_FORBIDDEN);
+        }
+        repository.delete(role);
+    }
+
+    @Override
     public Page<RoleResponse> getAll(RoleSearchRequest request, Pageable pageable) {
         Specification<Role> spec = Specification.allOf(
                 Specification.anyOf(
-                        RoleSpecification.hasName(request.q()),
-                        RoleSpecification.hasModule(request.q())),
-                RoleSpecification.hasAction(request.action()));
+                        RoleSpecification.hasName(request.search())),
+                RoleSpecification.hasPermissions(request.permissions()));
         return repository.findAll(spec, pageable)
                 .map(mapper::toResponse);
     }

@@ -15,6 +15,7 @@ public interface RoleService {
     RoleResponse get(UUID id);
     RoleResponse create(RoleCreateRequest request);
     RoleResponse update(UUID id, RoleUpdateRequest request);
+    void delete(UUID id);
     Page<RoleResponse> getAll(RoleSearchRequest request, Pageable pageable);
     Role getByIdOrThrow(UUID id);
 

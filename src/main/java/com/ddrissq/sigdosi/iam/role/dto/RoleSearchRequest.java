@@ -1,11 +1,13 @@
 package com.ddrissq.sigdosi.iam.role.dto;
 
-import com.ddrissq.sigdosi.iam.permission.model.PermissionAction;
 import lombok.Builder;
+
+import java.util.Set;
+import java.util.UUID;
 
 @Builder
 public record RoleSearchRequest(
-        String q,
-        PermissionAction action
+        String search,
+        Set<UUID> permissions
 ) {
 }
