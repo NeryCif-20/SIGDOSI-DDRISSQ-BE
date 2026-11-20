@@ -75,7 +75,7 @@ class PermissionSpecificationTest {
         List<Permission> expectedPermissions = repository.saveAll(
                 PermissionTestData.generateForAction(ACTION));
         repository.saveAll(PermissionTestData.generateForAction(DIFFERENT_ACTION));
-        Specification<Permission> spec = PermissionSpecification.hasActions(actions);
+        Specification<Permission> spec = PermissionSpecification.hasAction(actions);
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then
@@ -88,7 +88,7 @@ class PermissionSpecificationTest {
         // Given
         List<Permission> expectedPermissions = repository.saveAll(
                 PermissionTestData.generateForAction(ACTION));
-        Specification<Permission> spec = PermissionSpecification.hasActions(null);
+        Specification<Permission> spec = PermissionSpecification.hasAction(null);
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then
@@ -101,7 +101,7 @@ class PermissionSpecificationTest {
         // Given
         Set<PermissionAction> differentActions = Set.of(DIFFERENT_ACTION);
         repository.saveAll(PermissionTestData.generateForAction(ACTION));
-        Specification<Permission> spec = PermissionSpecification.hasActions(differentActions);
+        Specification<Permission> spec = PermissionSpecification.hasAction(differentActions);
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then
@@ -121,7 +121,7 @@ class PermissionSpecificationTest {
                 .build());
         Specification<Permission> spec = Specification.allOf(
                 PermissionSpecification.hasModule(MODULE),
-                PermissionSpecification.hasActions(actions));
+                PermissionSpecification.hasAction(actions));
         // When
         List<Permission> permissions = repository.findAll(spec);
         // Then

@@ -117,12 +117,13 @@ public class UserServiceImpl implements UserService {
     public Page<UserResponse> getAll(UserSearchRequest request, Pageable pageable) {
         Specification<User> spec = Specification.allOf(
                 Specification.anyOf(
-                        UserSpecification.hasEmail(request.q()),
-                        UserSpecification.hasCui(request.q()),
-                        UserSpecification.hasName(request.q()),
-                        UserSpecification.hasPhoneNumber(request.q())
+                        UserSpecification.hasEmail(request.search()),
+                        UserSpecification.hasCui(request.search()),
+                        UserSpecification.hasName(request.search()),
+                        UserSpecification.hasPhoneNumber(request.search())
                 ),
-                UserSpecification.hasStatus(request.status()));
+                UserSpecification.hasStatus(request.statuses()),
+                UserSpecification.hasRole(request.roles()));
         return repository.findAll(spec, pageable)
                 .map(mapper::toResponse);
     }

@@ -61,7 +61,7 @@ public class PermissionServiceImpl implements PermissionService {
     public Page<PermissionResponse> getAll(PermissionSearchRequest request, Pageable pageable) {
         Specification<Permission> spec = Specification.allOf(
                 PermissionSpecification.hasModule(request.search()),
-                PermissionSpecification.hasActions(request.actions()));
+                PermissionSpecification.hasAction(request.actions()));
         return repository.findAll(spec, pageable)
                 .map(mapper::toResponse);
     }

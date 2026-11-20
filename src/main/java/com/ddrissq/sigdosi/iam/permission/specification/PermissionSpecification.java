@@ -23,7 +23,7 @@ public final class PermissionSpecification {
         };
     }
 
-    public static Specification<Permission> hasActions(Collection<PermissionAction> actions) {
+    public static Specification<Permission> hasAction(Collection<PermissionAction> actions) {
         return (root, query, builder) -> {
             if (actions == null || actions.isEmpty()) {
                 return null;
